@@ -1,0 +1,132 @@
+body {
+  margin: 0;
+  color: #3b1d16;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 24px;
+  background: #fffdfb;
+}
+
+.intro {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.button {
+  background-color: #d78b74;
+  color: #fff;
+  border: 1px solid #c06b54;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.button:hover {
+  background-color: #c46d57;
+  transform: translateY(-1px);
+}
+.products {
+  padding: 40px;
+}
+.products h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+.card {
+  border: 1px solid #f2d5c0;
+  padding: 15px;
+  width: 250px;
+  text-align: center;
+  background: #fff;
+  border-radius: 6px;
+}
+.card img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+    padding-inline: 10px;
+    max-width: none;
+  }
+
+  .intro {
+    padding: 20px 10px;
+    font-size: 1rem;
+  }
+
+  .button {
+    font-size: 0.9rem;
+    padding: 8px 14px;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    justify-items: center;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 170px;
+    padding: 10px;
+    text-align: left;
+  }
+
+  .card h3 {
+    margin: 8px;
+    font-size: 1rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+  }
+
+  .hero {
+    padding: 32px 0;
+  }
+
+  .hero img {
+    width: 80%;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .intro {
+    font-size: 1.25rem;
+    line-height: 1.6;
+  }
+
+  .button {
+    font-size: 1.2rem;
+    padding: 14px 34px;
+  }
+}
