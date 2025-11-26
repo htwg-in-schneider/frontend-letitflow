@@ -35,4 +35,23 @@ npm run dev
 
 ```sh
 npm run build
+
 ```
+
+### Aufgabe 4
+7 Iterationen
+
+Interation 0: Vue project setup
+
+Created new Vue project with npm create vue:latest.
+
+
+Iteration 1: Static content
+
+Made static product page from mock work as a Vue project:
+
+    Source: index.html from static project
+    Logo, Images and CSS classes go into assets folder
+    main.js: links CSS classes and bootstrap JS
+    App.vue: Main content goes here. Logo image link adapted.
+
