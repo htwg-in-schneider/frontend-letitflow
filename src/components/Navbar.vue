@@ -6,7 +6,7 @@
     </div>
 
     <!-- Navigation Links -->
-    <div class="flex items-center gap-6">
+    <div class="flex items-center gap-6 text-sm">
       <router-link
           to="/"
           class="text-gray-700 hover:text-gray-900 transition"
@@ -22,13 +22,6 @@
       </router-link>
 
       <router-link
-          to="/about"
-          class="text-gray-700 hover:text-gray-900 transition"
-      >
-        Über uns
-      </router-link>
-
-      <router-link
           to="/cart"
           class="text-gray-700 hover:text-gray-900 transition"
       >
@@ -39,5 +32,4 @@
 </template>
 
 <script setup>
-// kein Script notwendig
 </script>

@@ -1,10 +1,9 @@
 <script setup>
-import HomePage from "@/pages/HomePage.vue";
 import Navbar from "@/components/Navbar.vue";
 </script>
 <template>
   <Navbar/>
-  <HomePage/>
+ <router-view/>
 </template>
 
 
