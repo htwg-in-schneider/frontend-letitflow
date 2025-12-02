@@ -6,16 +6,17 @@ import HomePage from '@/pages/HomePage.vue'
 
 import CartPage from '@/pages/CartPage.vue'
 import CategoryPage from "@/pages/CategoryPage.vue";
+import ProductPage from "@/pages/ProductPage.vue";
 
 
 const routes = [
     {
-        path: '/',            // http://localhost:5173/
+        path: '/',
         name: 'home',
         component: HomePage,
     },
     {
-        path: '/cart',        // http://localhost:5173/cart
+        path: '/cart',
         name: 'cart',
         component: CartPage,
     },
@@ -24,6 +25,9 @@ const routes = [
         name: 'category',
         component: CategoryPage,
     },
+    {path: '/product/:id',
+        name: 'product',
+        component: ProductPage}
 
 ]
 

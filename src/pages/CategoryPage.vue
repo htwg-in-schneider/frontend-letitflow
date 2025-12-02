@@ -1,7 +1,6 @@
 <template>
   <main class="min-h-screen bg-[#fff7f3] flex justify-center px-4 py-10">
     <section class="w-full max-w-5xl bg-white border border-orange-100 shadow-sm rounded-xl px-6 py-10">
-
       <h1 class="text-2xl font-semibold mb-6">
         {{ categoryTitle }}
       </h1>
@@ -16,6 +15,7 @@
             :colors="product.colors"
             :sizes="product.sizes"
             :availability="product.availability"
+            :product-id="product.id"
         />
       </div>
     </section>
@@ -27,15 +27,14 @@ import { useRoute } from 'vue-router'
 import ProductCard from '@/components/ProductCard.vue'
 
 const route = useRoute()
-
 const id = route.params.id
 
-// ⭐ Später ersetzt du das durch Fetch aus Firestore oder einer JSON-Datei
 const categoryMap = {
   'menstruationsscheiben-und-tassen': {
     title: 'Menstruationsscheiben und Tassen',
     products: [
       {
+        id: 'luna-queen',
         title: 'Luna Queen',
         image: '/img/menstruationsscheiben_und_tassen.png',
         price: '20,00€',
@@ -44,6 +43,7 @@ const categoryMap = {
         availability: 'verfügbar'
       },
       {
+        id: 'moon-tasse',
         title: 'Moon Tasse',
         image: '/img/menstruationsscheiben_und_tassen.png',
         price: '12,00€',
@@ -52,9 +52,7 @@ const categoryMap = {
         availability: 'nicht verfügbar'
       }
     ]
-  },
-
-  // weitere Kategorien…
+  }
 }
 
 const categoryTitle = categoryMap[id]?.title || 'Kategorie'
