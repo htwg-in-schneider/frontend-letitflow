@@ -1,6 +1,6 @@
 <template>
   <main class="min-h-screen bg-[#fff7f3] flex justify-center px-4 py-10">
-    <section class="w-full max-w-4xl bg-white border border-orange-100 shadow-sm rounded-xl px-6 py-10 space-y-8">
+    <section class="w-full max-w-4xl bg-white border border-orange-100 shadow-sm rounded-xl px-6 py-10 space-y-8" v-if="!loading && !error">
       <div>
         <p class="text-sm text-gray-700">{{ product.type }}</p>
         <h1 class="text-2xl font-semibold text-gray-900 mt-1">
@@ -73,51 +73,24 @@
         </div>
       </div>
     </section>
+    <p v-if="loading" class="text-center text-gray-500">Lade Produkt...</p>
+<p v-if="error" class="text-center text-red-500">{{ error }}</p>
   </main>
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { fetchProductById, fetchVariantsForProduct } from '@/services/api';
 
-const route = useRoute()
-const productId = route.params.id
+const route = useRoute();
+const productId = Number(route.params.id);
 
-const products = {
-  'luna-queen': {
-    name: 'Luna Queen',
-    type: 'Menstruationsscheibe',
-    image: '/img/menstruationsscheiben_und_tassen.png',
-    price: '20,00€',
-    colors: 'rot, blau, lila, gelb, grün, orange',
-    sizes: 'S, M, L',
-    colorOptions: ['rot', 'blau', 'lila', 'gelb', 'grün', 'orange'],
-    sizeOptions: ['S', 'M', 'L'],
-    material: 'Hier steht später der Material-Text.',
-    careHint: 'Hier steht später der Pflegehinweis.',
-    usageHint: 'Hier steht später der Anwendungshinweis.'
-  },
-
-
-  'moon-tasse': {
-    name: 'Moon Tasse',
-    type: 'Menstruationstasse',
-    image: '/img/menstruationsscheiben_und_tassen.png',
-    price: '12,00€',
-    colors: 'rot, blau, lila, gelb, grün, orange',
-    sizes: 'S, M, L',
-    colorOptions: ['rot', 'blau', 'lila', 'gelb', 'grün', 'orange'],
-    sizeOptions: ['S', 'M', 'L'],
-    material: 'Material-Info für Moon Tasse.',
-    careHint: 'Pflegehinweis für Moon Tasse.',
-    usageHint: 'Anwendungshinweis für Moon Tasse.'
-  }
-}
-
-const product = products[productId] ?? {
-  name: 'Unbekanntes Produkt',
+const product = ref({
+  name: '',
   type: '',
-  image: '/img/menstruationsscheiben_und_tassen.png',
-  price: '-',
+  image: '/img/placeholder.png',
+  price: '–',
   colors: '',
   sizes: '',
   colorOptions: [],
@@ -125,5 +98,40 @@ const product = products[productId] ?? {
   material: '',
   careHint: '',
   usageHint: ''
-}
+});
+
+const loading = ref(true);
+const error = ref(null);
+
+onMounted(async () => {
+  try {
+    loading.value = true;
+
+    // Produkt selbst laden
+    const p = await fetchProductById(productId);
+
+    product.value.name = p.title;
+    product.value.type = p.category?.name ?? '';
+    product.value.image = p.imageUrl || '/img/placeholder.png';
+
+    // Varianten laden
+    const variants = await fetchVariantsForProduct(productId);
+
+    const colors = [...new Set(variants.map(v => v.color))];
+    const sizes = [...new Set(variants.map(v => v.size))];
+
+    product.value.colors = colors.join(', ');
+    product.value.sizes = sizes.join(', ');
+    product.value.colorOptions = colors;
+    product.value.sizeOptions = sizes;
+
+  } catch (e) {
+    console.error(e);
+    error.value = 'Produkt konnte nicht geladen werden.';
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
+
+

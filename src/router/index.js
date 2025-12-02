@@ -9,6 +9,8 @@ import CategoryPage from "@/pages/CategoryPage.vue";
 import ProductPage from "@/pages/ProductPage.vue";
 
 
+
+
 const routes = [
     {
         path: '/',
@@ -21,14 +23,13 @@ const routes = [
         component: CartPage,
     },
     {
-        path: '/category/:id',
-        name: 'category',
-        component: CategoryPage,
+        path: '/category/:slug',
+        name: 'category',  
+        component: () => import('@/pages/CategoryPage.vue'),
     },
     {path: '/product/:id',
         name: 'product',
         component: ProductPage}
-
 ]
 
 const router = createRouter({
