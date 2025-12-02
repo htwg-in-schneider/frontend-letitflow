@@ -24,12 +24,12 @@
       {{ availability }}
     </p>
 
-    <button
-        type="button"
-        class="mt-4 inline-flex items-center justify-center rounded-full px-4 py-1 text-xs font-medium text-white bg-[#e09a82]"
+    <router-link
+        :to="`/product/${productId}`"
+        class="inline-flex items-center justify-center rounded-full px-4 py-1 text-xs font-medium text-white bg-[#e09a82] hover:bg-[#d48366] transition mt-4"
     >
       jetzt entdecken
-    </button>
+    </router-link>
   </div>
 </template>
 
@@ -40,6 +40,7 @@ defineProps({
   price: String,
   colors: String,
   sizes: String,
-  availability: String
+  availability: String,
+  productId: String
 })
 </script>
