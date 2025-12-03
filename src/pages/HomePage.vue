@@ -11,9 +11,9 @@
 
       <div class="mt-8">
         <img
-            src="/img/produktuebersicht.png"
-            alt="Produktübersicht"
-            class="w-full object-cover"
+          src="/img/produktuebersicht.png"
+          alt="Produktübersicht"
+          class="w-full object-cover"
         />
       </div>
 
@@ -33,8 +33,8 @@
 
       <div class="mt-8">
         <button
-            type="button"
-            class="inline-flex items-center justify-center rounded-full px-6 py-2 text-sm font-medium text-white bg-[#e09a82] hover:bg-[#d48366] transition"
+          type="button"
+          class="inline-flex items-center justify-center rounded-full px-6 py-2 text-sm font-medium text-white bg-[#e09a82] hover:bg-[#d48366] transition"
         >
           Erfahre mehr über uns hier
         </button>
@@ -45,43 +45,25 @@
           Welche Produkte kennst du bereits?
         </h2>
 
-        <div class="grid gap-6 md:grid-cols-3">
-          <CategoryCard
-              title="Menstruationsscheiben und Tassen"
-              image-src="/img/menstruationsscheiben_und_tassen.png"
-              link="menstruationsscheiben-und-tassen"
-          />
+        <!-- Ladezustand -->
+        <div v-if="loading" class="mt-4 text-gray-500">
+          Kategorien werden geladen...
+        </div>
 
-          <CategoryCard
-              title="Menstruationsschwämme und Soft-Tampons"
-              image-src="/img/menstruationsschwaemme_und_SoftTampons.png"
-              link="menstruationsschwaemme-und-softtampons"
-          />
+        <!-- Fehlermeldung -->
+        <p v-else-if="error" class="mt-4 text-red-500">
+          {{ error }}
+        </p>
 
+        <!-- Bildboxen mit Kategorien aus dem Backend -->
+        <div v-else class="grid gap-6 md:grid-cols-3">
           <CategoryCard
-              title="Periodenunterwäsche"
-              image-src="/img/periodenunterwaesche.png"
-              link="periodenunterwaesche"
+            v-for="category in categories"
+            :key="category.id"
+            :title="category.name"
+            :image-src="categoryImage(category.slug)"
+            :link="category.slug"
           />
-
-          <CategoryCard
-              title="Bio-Tampons"
-              image-src="/img/tampon.png"
-              link="bio-tampons"
-          />
-
-          <CategoryCard
-              title="Bio-Binden"
-              image-src="/img/binde.png"
-              link="bio-binden"
-          />
-
-          <CategoryCard
-              title="Wärmehelfer"
-              image-src="/img/waermehelfer.png"
-              link="waermehelfer"
-          />
-
         </div>
       </section>
     </section>
@@ -89,5 +71,46 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import CategoryCard from '@/components/CategoryCard.vue'
+import { fetchCategories } from '@/services/api'
+
+const categories = ref([])
+const loading = ref(true)
+const error = ref(null)
+
+// Zuordnung: Backend-Slug -> Bilddatei im Frontend
+const imageBySlug = {
+  'menstruationsscheiben-und-tassen': '/img/menstruationsscheiben_und_tassen.png',
+  'menstruationsschwaemme-und-softtampons': '/img/menstruationsschwaemme_und_SoftTampons.png',
+  'periodenunterwaesche': '/img/periodenunterwaesche.png',
+  'bio-tampons': '/img/tampon.png',
+  'bio-binden': '/img/binde.png',
+  'waermehelfer': '/img/waermehelfer.png'
+}
+
+// Wenn ein Slug kein eigenes Bild hat → Fallback
+function categoryImage(slug) {
+  return imageBySlug[slug] || '/img/produktuebersicht.png'
+}
+
+// Beim Laden der Seite Kategorien vom Backend holen
+onMounted(async () => {
+  loading.value = true
+  error.value = null
+
+  try {
+    const backendCategories = await fetchCategories()
+    // zur Sicherheit im Frontend nochmal alphabetisch sortieren
+    categories.value = backendCategories.sort((a, b) =>
+      a.name.localeCompare(b.name, 'de')
+    )
+  } catch (e) {
+    console.error('Fehler beim Laden der Kategorien:', e)
+    error.value = 'Kategorien konnten nicht geladen werden.'
+  } finally {
+    loading.value = false
+  }
+})
 </script>
+
