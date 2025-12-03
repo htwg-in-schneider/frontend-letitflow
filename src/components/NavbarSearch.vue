@@ -1,6 +1,5 @@
 <template>
   <div class="relative">
-    <!-- Lupe-Button -->
 
     <button
         type="button"
@@ -11,14 +10,11 @@
 
     </button>
 
-    <!-- Such-Overlay -->
     <div
         v-if="isOpen"
         class="absolute right-0 mt-2 w-80 bg-white border border-orange-100 shadow-lg rounded-xl p-4 z-50"
     >
 
-
-      <!-- Kategorie (aus DB) -->
       <div class="mb-3">
         <label class="block text-xs font-medium text-gray-700 mb-1">
           Kategorie
@@ -38,7 +34,6 @@
         </select>
       </div>
 
-      <!-- Preis -->
       <div class="mb-3">
         <label class="block text-xs font-medium text-gray-700 mb-1">
           Preis
@@ -55,7 +50,6 @@
         </select>
       </div>
 
-      <!-- Farbe (aus DB) -->
       <div class="mb-3">
         <label class="block text-xs font-medium text-gray-700 mb-1">
           Farbe
@@ -75,7 +69,6 @@
         </select>
       </div>
 
-      <!-- Größe (aus DB) -->
       <div class="mb-3">
         <label class="block text-xs font-medium text-gray-700 mb-1">
           Größe
@@ -95,7 +88,6 @@
         </select>
       </div>
 
-      <!-- Buttons -->
       <div class="mt-3 flex justify-end gap-2">
         <button
             type="button"
@@ -148,9 +140,6 @@ const handleKeydown = (event) => {
   if (event.key === 'Escape') close()
 }
 
-/**
- * Preisbereich -> min/max Werte für URL
- */
 const mapPriceRangeToQuery = (range) => {
   switch (range) {
     case 'unter-10':
@@ -166,9 +155,6 @@ const mapPriceRangeToQuery = (range) => {
   }
 }
 
-/**
- * Suche: baue nur die URL-Query, filtern machen wir auf der SearchResultsPage.
- */
 const onSearch = () => {
   const queryParams = {}
 
@@ -195,9 +181,6 @@ const onSearch = () => {
   close()
 }
 
-/**
- * Filteroptionen (Farben & Größen) aus allen Varianten der DB sammeln
- */
 const loadFilterOptions = async () => {
   try {
     const allProducts = await fetchProducts({})

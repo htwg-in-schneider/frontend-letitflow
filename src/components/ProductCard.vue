@@ -71,7 +71,6 @@ const props = defineProps({
   },
 })
 
-// alles, was "nicht verfügbar" enthält, rot markieren
 const availabilityIncludesNotAvailable = computed(() =>
   props.availability.toLowerCase().includes('nicht')
 )

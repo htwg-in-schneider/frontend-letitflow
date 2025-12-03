@@ -11,9 +11,9 @@
 
       <div class="mt-8">
         <img
-          src="/img/produktuebersicht.png"
-          alt="Produktübersicht"
-          class="w-full object-cover"
+            src="/img/produktuebersicht.png"
+            alt="Produktübersicht"
+            class="w-full object-cover"
         />
       </div>
 
@@ -33,8 +33,8 @@
 
       <div class="mt-8">
         <button
-          type="button"
-          class="inline-flex items-center justify-center rounded-full px-6 py-2 text-sm font-medium text-white bg-[#e09a82] hover:bg-[#d48366] transition"
+            type="button"
+            class="inline-flex items-center justify-center rounded-full px-6 py-2 text-sm font-medium text-white bg-[#e09a82] hover:bg-[#d48366] transition"
         >
           Erfahre mehr über uns hier
         </button>
@@ -58,11 +58,11 @@
         <!-- Bildboxen mit Kategorien aus dem Backend -->
         <div v-else class="grid gap-6 md:grid-cols-3">
           <CategoryCard
-            v-for="category in categories"
-            :key="category.id"
-            :title="category.name"
-            :image-src="categoryImage(category.slug)"
-            :link="category.slug"
+              v-for="category in categories"
+              :key="category.id"
+              :title="category.name"
+              :image-src="category.imageUrl"
+              :link="category.slug"
           />
         </div>
       </section>
@@ -79,31 +79,15 @@ const categories = ref([])
 const loading = ref(true)
 const error = ref(null)
 
-// Zuordnung: Backend-Slug -> Bilddatei im Frontend
-const imageBySlug = {
-  'menstruationsscheiben-und-tassen': '/img/menstruationsscheiben_und_tassen.png',
-  'menstruationsschwaemme-und-softtampons': '/img/menstruationsschwaemme_und_SoftTampons.png',
-  'periodenunterwaesche': '/img/periodenunterwaesche.png',
-  'bio-tampons': '/img/tampon.png',
-  'bio-binden': '/img/binde.png',
-  'waermehelfer': '/img/waermehelfer.png'
-}
-
-// Wenn ein Slug kein eigenes Bild hat → Fallback
-function categoryImage(slug) {
-  return imageBySlug[slug] || '/img/produktuebersicht.png'
-}
-
-// Beim Laden der Seite Kategorien vom Backend holen
+// Kategorien aus dem Backend laden
 onMounted(async () => {
   loading.value = true
   error.value = null
 
   try {
     const backendCategories = await fetchCategories()
-    // zur Sicherheit im Frontend nochmal alphabetisch sortieren
     categories.value = backendCategories.sort((a, b) =>
-      a.name.localeCompare(b.name, 'de')
+        a.name.localeCompare(b.name, 'de')
     )
   } catch (e) {
     console.error('Fehler beim Laden der Kategorien:', e)
@@ -113,4 +97,3 @@ onMounted(async () => {
   }
 })
 </script>
-
