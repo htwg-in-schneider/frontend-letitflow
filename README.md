@@ -32,10 +32,6 @@ The application provides:
 - Categories are loaded dynamically from the backend
 - Clicking a category shows products filtered by the category slug
 
-### 🔗 Backend Integration
-- All product, category and variant data is retrieved via REST API
-- Centralized API service handles requests
-
 ---
 
 ## 📦 Installation
