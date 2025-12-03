@@ -1,37 +1,50 @@
 // src/services/api.js
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081'
 
-async function getJson(path) {
-  const response = await fetch(`${API_BASE_URL}${path}`);
-  if (!response.ok) {
-    throw new Error(`Request failed: ${response.status} ${response.statusText}`);
+async function getJson(path, options = {}) {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    ...options
+  })
+
+  if (!res.ok) {
+    throw new Error(`Request failed: ${res.status} ${res.statusText}`)
   }
-  return await response.json();
+
+  return res.json()
 }
 
-// Alle Kategorien
+// Kategorien
 export function fetchCategories() {
-  return getJson('/api/categories');
+  return getJson('/api/categories')
 }
 
-// Produkte mit optionalen Filtern
-export function fetchProducts({ name, categorySlug } = {}) {
-  const params = new URLSearchParams();
-  if (name) params.append('name', name);
-  if (categorySlug) params.append('categorySlug', categorySlug);
+// Produkte (mit optionalen Filtern)
+export function fetchProducts(filters = {}) {
+  const params = new URLSearchParams()
 
-  const query = params.toString();
-  const path = query ? `/api/products?${query}` : '/api/products';
-  return getJson(path);
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      params.append(key, value)
+    }
+  })
+
+  const query = params.toString()
+  const url = query ? `/api/products?${query}` : '/api/products'
+
+  return getJson(url)
 }
 
-// Einzelnes Produkt
+// einzelnes Produkt
 export function fetchProductById(id) {
-  return getJson(`/api/products/${id}`);
+  return getJson(`/api/products/${id}`)
 }
 
-// Varianten zu einem Produkt
+// Varianten eines Produkts
 export function fetchProductVariants(id) {
-  return getJson(`/api/products/${id}/variants`);
+  return getJson(`/api/products/${id}/variants`)
 }
+

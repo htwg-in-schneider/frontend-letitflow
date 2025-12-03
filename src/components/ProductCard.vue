@@ -1,6 +1,10 @@
 <template>
   <div class="border border-[#f0c9b8] p-4 bg-white">
-    <img :src="imageSrc" :alt="title" class="w-full object-cover mb-4" />
+    <img
+      :src="imageSrc"
+      :alt="title"
+      class="w-full object-cover mb-4"
+    />
 
     <h3 class="font-semibold">{{ title }}</h3>
 
@@ -17,16 +21,16 @@
     </p>
 
     <p
-        v-if="availability"
-        :class="availability === 'nicht verfügbar' ? 'text-red-600' : 'text-green-600'"
-        class="mt-1 text-sm"
+      v-if="availability"
+      :class="availabilityIncludesNotAvailable ? 'text-red-600' : 'text-green-600'"
+      class="mt-1 text-sm"
     >
       {{ availability }}
     </p>
 
     <router-link
-        :to="`/product/${productId}`"
-        class="inline-flex items-center justify-center rounded-full px-4 py-1 text-xs font-medium text-white bg-[#e09a82] hover:bg-[#d48366] transition mt-4"
+      :to="`/product/${id}`"
+      class="inline-flex items-center justify-center rounded-full px-4 py-1 text-xs font-medium text-white bg-[#e09a82] hover:bg-[#d48366] transition mt-4"
     >
       jetzt entdecken
     </router-link>
@@ -34,13 +38,41 @@
 </template>
 
 <script setup>
-defineProps({
-  title: String,
-  imageSrc: String,
-  price: String,
-  colors: String,
-  sizes: String,
-  availability: String,
-  productId: String
+import { computed } from 'vue'
+
+const props = defineProps({
+  id: {
+    type: [String, Number],
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  imageSrc: {
+    type: String,
+    default: '',
+  },
+  price: {
+    type: String,
+    default: '',
+  },
+  colors: {
+    type: String,
+    default: '',
+  },
+  sizes: {
+    type: String,
+    default: '',
+  },
+  availability: {
+    type: String,
+    default: '',
+  },
 })
+
+// alles, was "nicht verfügbar" enthält, rot markieren
+const availabilityIncludesNotAvailable = computed(() =>
+  props.availability.toLowerCase().includes('nicht')
+)
 </script>
