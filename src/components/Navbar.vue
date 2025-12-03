@@ -3,12 +3,11 @@
     <div class="h-[4px] bg-[#e7b2a5]"></div>
 
     <nav class="w-full flex items-center justify-between px-8 py-4 bg-[#fff7f3]">
-      <!-- Logo -->
+
       <router-link to="/" class="flex items-center gap-3">
         <img src="/img/hauptlogo_Header.png" alt="LetItFlow Logo" class="h-10 w-auto" />
       </router-link>
 
-      <!-- Dropdown: PRODUKTE -->
       <div class="relative flex items-center ml-6">
         <button
             type="button"
@@ -19,7 +18,6 @@
           <span class="text-sm transition-transform" :class="isCategoriesOpen ? 'rotate-180' : ''">▼</span>
         </button>
 
-        <!-- Dropdown-Panel -->
         <div
             v-if="isCategoriesOpen"
             class="absolute left-0 top-full mt-2 w-72 bg-white border border-orange-200 shadow-lg rounded-xl py-2 z-50"
@@ -28,7 +26,6 @@
             Produktkategorien
           </p>
 
-          <!-- Kategorien -->
           <router-link
               v-for="category in categories"
               :key="category.id"
@@ -41,7 +38,6 @@
         </div>
       </div>
 
-      <!-- Search & Icons -->
       <div class="flex items-center gap-6 text-sm text-black">
         <NavbarSearch />
 
