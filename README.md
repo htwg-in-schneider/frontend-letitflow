@@ -1,57 +1,52 @@
-# vue-letitflow
+# periodenshop-frontend
+Frontend for a period products webshop.
 
-This template should help get you started developing with Vue 3 in Vite.
+## 🧱 Tech-Stack
+- Vue 3 
+- Vite (Development & Build Tool)
+- Tailwind CSS
+- Vue Router
 
-## Recommended IDE Setup
+---
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## 🚀 Features
 
-## Recommended Browser Setup
+### 🔍 Search & Filter
+The application provides:
+- Filtering by:
+    - Category
+    - Color (from product variants)
+    - Size (from product variants)
+    - Price ranges (unter 10 €, 10–20 €, 20–30 €, über 30 €)
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+### 🛍 Product Overview
+- Dynamic loading of products from the backend
+- Product cards display:
+    - Title
+    - Image
+    - Available colors & sizes
+    - Price
+    - Availability information
 
-## Customize configuration
+### 🗂 Category Overview
+- Categories are loaded dynamically from the backend
+- Clicking a category shows products filtered by the category slug
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### 🔗 Backend Integration
+- All product, category and variant data is retrieved via REST API
+- Centralized API service handles requests
 
-## Project Setup
+---
 
-```sh
+## 📦 Installation
+
+### Install dependencies
+```bash
 npm install
-```
 
-### Compile and Hot-Reload for Development
+### 🚀 *Run the application in development mode*
 
-```sh
 npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-
-```
-
-### Aufgabe 4
-7 Iterationen
-
-Interation 0: Vue project setup
-
-Created new Vue project with npm create vue:latest.
 
 
-Iteration 1: Static content
-
-Made static product page from mock work as a Vue project:
-
-    Source: index.html from static project
-    Logo, Images and CSS classes go into assets folder
-    main.js: links CSS classes and bootstrap JS
-    App.vue: Main content goes here. Logo image link adapted.
 
