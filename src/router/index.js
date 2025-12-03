@@ -1,9 +1,9 @@
-// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 
 import HomePage from '@/pages/HomePage.vue'
 import CategoryPage from '@/pages/CategoryPage.vue'
 import ProductPage from '@/pages/ProductPage.vue'
+import SearchResultsPage from '@/pages/SearchResultsPage.vue'
 
 const routes = [
   {
@@ -18,11 +18,15 @@ const routes = [
     props: true
   },
   {
-    // WICHTIG: :id als URL-Parameter
     path: '/product/:id',
     name: 'Product',
     component: ProductPage,
     props: true
+  },
+  {
+    path: '/search',
+    name: 'SearchResults',
+    component: SearchResultsPage
   }
 ]
 
@@ -32,4 +36,3 @@ const router = createRouter({
 })
 
 export default router
-
