@@ -1,4 +1,4 @@
-# periodenshop-frontend
+# LetItFlow
 Frontend for a period products webshop.
 
 ## 🧱 Tech-Stack
