@@ -45,17 +45,14 @@
           Welche Produkte kennst du bereits?
         </h2>
 
-        <!-- Ladezustand -->
         <div v-if="loading" class="mt-4 text-gray-500">
           Kategorien werden geladen...
         </div>
 
-        <!-- Fehlermeldung -->
         <p v-else-if="error" class="mt-4 text-red-500">
           {{ error }}
         </p>
 
-        <!-- Bildboxen mit Kategorien aus dem Backend -->
         <div v-else class="grid gap-6 md:grid-cols-3">
           <CategoryCard
               v-for="category in categories"

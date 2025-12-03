@@ -54,9 +54,6 @@ const products = ref([])
 const loading = ref(true)
 const error = ref(null)
 
-/**
- * Hauptfunktion: Ergebnisse laden + im Frontend filtern
- */
 const loadResults = async () => {
   loading.value = true
   error.value = null
@@ -78,12 +75,9 @@ const loadResults = async () => {
 
     const filters = {}
 
-    // diese Filter geben wir ans Backend (für weniger Daten),
-    // aber Preis/Größe filtern wir zusätzlich im Frontend
     if (q) filters.searchTerm = q
     if (categorySlug) filters.categorySlug = categorySlug
 
-    // Backend-Farbfilter optional, aber wir filtern auf jeden Fall nochmal vorne
     if (colorFilter) filters.color = colorFilter
 
     const backendProducts = await fetchProducts(filters)
@@ -143,7 +137,6 @@ const loadResults = async () => {
         })
     )
 
-    // 🔍 NEU: Freitext-Filter (Suchbegriff q)
     const term = String(q).trim().toLowerCase()
     if (term) {
       mapped = mapped.filter((p) => {
@@ -161,9 +154,6 @@ const loadResults = async () => {
       })
     }
 
-    // 🔍 Frontend-FILTER:
-
-    // Farbe
     if (colorFilter) {
       const colorLower = String(colorFilter).toLowerCase()
       mapped = mapped.filter((p) =>
@@ -173,14 +163,12 @@ const loadResults = async () => {
       )
     }
 
-    // Größe
     if (sizeFilter) {
       mapped = mapped.filter((p) =>
           p._sizesArray.includes(sizeFilter)
       )
     }
 
-    // Preis (min / max)
     if (minPrice !== null) {
       mapped = mapped.filter((p) =>
           p._numericPrice === null ? false : p._numericPrice >= minPrice
