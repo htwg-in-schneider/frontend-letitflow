@@ -1,33 +1,22 @@
 <template>
   <div class="relative">
     <!-- Lupe-Button -->
-     
+
     <button
-      type="button"
-      class="flex items-center justify-center rounded-full p-2 hover:bg-[#f5e0d8] transition"
-      @click="toggle"
+        type="button"
+        class="flex items-center justify-center rounded-full p-2 hover:bg-[#f5e0d8] transition"
+        @click="toggle"
     >
-      <img src="/img/lupe.png" alt="Suche" class="h-5 w-5" />
+      <img src="/img/lupe.png" alt="Suche" class="h-5 w-5"/>
 
     </button>
 
     <!-- Such-Overlay -->
     <div
-      v-if="isOpen"
-      class="absolute right-0 mt-2 w-80 bg-white border border-orange-100 shadow-lg rounded-xl p-4 z-50"
+        v-if="isOpen"
+        class="absolute right-0 mt-2 w-80 bg-white border border-orange-100 shadow-lg rounded-xl p-4 z-50"
     >
-      <!-- Suchfeld -->
-      <div class="mb-3">
-        <label class="block text-xs font-medium text-gray-700 mb-1">
-          Suchbegriff
-        </label>
-        <input
-          v-model="query"
-          type="text"
-          placeholder="z.B. Luna, Tampons..."
-          class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
-        />
-      </div>
+
 
       <!-- Kategorie (aus DB) -->
       <div class="mb-3">
@@ -35,14 +24,14 @@
           Kategorie
         </label>
         <select
-          v-model="selectedCategory"
-          class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
+            v-model="selectedCategory"
+            class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
         >
           <option value="">Alle Kategorien</option>
           <option
-            v-for="cat in categories"
-            :key="cat.id"
-            :value="cat.slug"
+              v-for="cat in categories"
+              :key="cat.id"
+              :value="cat.slug"
           >
             {{ cat.name }}
           </option>
@@ -55,8 +44,8 @@
           Preis
         </label>
         <select
-          v-model="selectedPriceRange"
-          class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
+            v-model="selectedPriceRange"
+            class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
         >
           <option value="">Alle Preise</option>
           <option value="unter-10">unter 10 €</option>
@@ -72,14 +61,14 @@
           Farbe
         </label>
         <select
-          v-model="selectedColor"
-          class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
+            v-model="selectedColor"
+            class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
         >
           <option value="">Alle Farben</option>
           <option
-            v-for="color in availableColors"
-            :key="color"
-            :value="color"
+              v-for="color in availableColors"
+              :key="color"
+              :value="color"
           >
             {{ color }}
           </option>
@@ -92,14 +81,14 @@
           Größe
         </label>
         <select
-          v-model="selectedSize"
-          class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
+            v-model="selectedSize"
+            class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
         >
           <option value="">Alle Größen</option>
           <option
-            v-for="size in availableSizes"
-            :key="size"
-            :value="size"
+              v-for="size in availableSizes"
+              :key="size"
+              :value="size"
           >
             {{ size }}
           </option>
@@ -109,20 +98,20 @@
       <!-- Buttons -->
       <div class="mt-3 flex justify-end gap-2">
         <button
-          type="button"
-          class="text-xs px-3 py-1 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100"
-          @click="close"
+            type="button"
+            class="text-xs px-3 py-1 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100"
+            @click="close"
         >
           Schließen
         </button>
 
         <button
-          type="button"
-          class="text-xs px-3 py-1 rounded-full bg-[#e09a82] text-white font-medium hover:bg-[#d48366] transition"
-          @click="onSearch"
+            type="button"
+            class="text-xs px-3 py-1 rounded-full bg-[#e09a82] text-white font-medium hover:bg-[#d48366] transition"
+            @click="onSearch"
         >
           Suchen
-          
+
         </button>
       </div>
     </div>
@@ -130,9 +119,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { useRouter } from 'vue-router'
-import { fetchCategories, fetchProducts, fetchProductVariants } from '@/services/api'
+import {ref, onMounted, onBeforeUnmount} from 'vue'
+import {useRouter} from 'vue-router'
+import {fetchCategories, fetchProducts, fetchProductVariants} from '@/services/api'
 
 const router = useRouter()
 
@@ -165,13 +154,13 @@ const handleKeydown = (event) => {
 const mapPriceRangeToQuery = (range) => {
   switch (range) {
     case 'unter-10':
-      return { maxPrice: 10 }
+      return {maxPrice: 10}
     case '10-20':
-      return { minPrice: 10, maxPrice: 20 }
+      return {minPrice: 10, maxPrice: 20}
     case '20-30':
-      return { minPrice: 20, maxPrice: 30 }
+      return {minPrice: 20, maxPrice: 30}
     case 'ueber-30':
-      return { minPrice: 30 }
+      return {minPrice: 30}
     default:
       return {}
   }
@@ -228,10 +217,10 @@ const loadFilterOptions = async () => {
     }
 
     availableColors.value = Array.from(colorSet).sort((a, b) =>
-      a.localeCompare(b, 'de')
+        a.localeCompare(b, 'de')
     )
     availableSizes.value = Array.from(sizeSet).sort((a, b) =>
-      a.localeCompare(b, 'de')
+        a.localeCompare(b, 'de')
     )
   } catch (e) {
     console.error('Filteroptionen (Farben/Größen) konnten nicht geladen werden:', e)
