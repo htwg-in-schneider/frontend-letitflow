@@ -36,7 +36,9 @@
             <h4 class="text-base font-semibold tracking-wide mb-2">RECHTLICHES</h4>
             <ul class="space-y-1 text-sm">
               <li>
-                <a href="#" class="hover:text-rose-500">Datenschutz</a>
+                <RouterLink :to="{ name: 'PrivacyPolicy' }" class="hover:text-rose-500">
+                  Datenschutzerklärung
+                </RouterLink>
               </li>
               <li>
                 <a href="#" class="hover:text-rose-500">Cookie-Richtlinie</a>
@@ -54,7 +56,7 @@
                 <a href="#" class="hover:text-rose-500">Unsere Geschichte</a>
               </li>
 
-              <!-- ✅ Kontakt: jetzt über Vue Router -->
+
               <li>
                 <RouterLink :to="{ name: 'Contact' }" class="hover:text-rose-500">
                   Kontakt
