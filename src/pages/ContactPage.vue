@@ -68,9 +68,13 @@
           </button>
 
           <span v-if="success" class="text-sm text-neutral-600">
-            Danke! Nachricht wurde gesendet.
+            Dein E-Mail-Programm wurde geöffnet.
           </span>
         </div>
+
+        <p class="text-xs text-neutral-500">
+          Beim Absenden öffnet sich dein E-Mail-Programm mit vorausgefüllter Nachricht.
+        </p>
 
       </form>
     </section>
@@ -78,30 +82,37 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, ref} from "vue";
+import { reactive, ref } from "vue";
 
 const success = ref(false);
 
 const form = reactive({
   firstName: "",
   lastName: "",
-  topic: "Retoure",
   email: "",
   message: "",
 });
 
 function submit() {
-  // TODO: später an Backend senden
-  console.log(form);
+  const to = "kontakt@letitflow.de"; // ⬅️ anpassen
+  const subject = encodeURIComponent("Kontaktanfrage über die Website");
+
+  const body = encodeURIComponent(
+      `Name: ${form.firstName} ${form.lastName}\n` +
+      `E-Mail: ${form.email}\n\n` +
+      `Nachricht:\n${form.message}`
+  );
+
+  const mailtoLink = `mailto:${to}?subject=${subject}&body=${body}`;
+
+  window.location.href = mailtoLink;
 
   success.value = true;
 
   form.firstName = "";
   form.lastName = "";
-  form.topic = "Retoure";
   form.email = "";
   form.message = "";
-
 
   setTimeout(() => (success.value = false), 3000);
 }
