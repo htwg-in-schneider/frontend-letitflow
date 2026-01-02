@@ -4,6 +4,9 @@ import HomePage from '@/pages/HomePage.vue'
 import CategoryPage from '@/pages/CategoryPage.vue'
 import ProductPage from '@/pages/ProductPage.vue'
 import SearchResultsPage from '@/pages/SearchResultsPage.vue'
+import ContactPage from "@/pages/ContactPage.vue";
+import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage.vue";
+import ImprintPage from "@/pages/ImprintPage.vue";
 
 const routes = [
   {
@@ -27,7 +30,22 @@ const routes = [
     path: '/search',
     name: 'SearchResults',
     component: SearchResultsPage
-  }
+  },
+    {
+        path: '/contact',
+        name: 'Contact',
+        component: ContactPage
+    },
+    {
+        path: '/privacypolicy',
+        name: 'PrivacyPolicy',
+        component: PrivacyPolicyPage
+    },
+    {
+        path: '/imprintpage',
+        name: 'ImprintPage',
+        component: ImprintPage
+    }
 ]
 
 const router = createRouter({
