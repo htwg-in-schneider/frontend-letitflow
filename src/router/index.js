@@ -6,6 +6,7 @@ import ProductPage from '@/pages/ProductPage.vue'
 import SearchResultsPage from '@/pages/SearchResultsPage.vue'
 import ContactPage from "@/pages/ContactPage.vue";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage.vue";
+import ImprintPage from "@/pages/ImprintPage.vue";
 
 const routes = [
   {
@@ -39,6 +40,11 @@ const routes = [
         path: '/privacypolicy',
         name: 'PrivacyPolicy',
         component: PrivacyPolicyPage
+    },
+    {
+        path: '/imprintpage',
+        name: 'ImprintPage',
+        component: ImprintPage
     }
 ]
 

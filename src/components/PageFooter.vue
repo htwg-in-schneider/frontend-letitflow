@@ -1,6 +1,6 @@
 <template>
   <footer class="bg-[#FFF7F0] w-full">
-    <div class="h-[4px] bg-[#e7b2a5]" />
+    <div class="h-[4px] bg-[#e7b2a5]"/>
 
     <div class="max-w-6xl mx-auto px-6 py-10 text-neutral-900">
       <div class="flex flex-col gap-10 md:flex-row md:justify-between">
@@ -56,7 +56,6 @@
                 <a href="#" class="hover:text-rose-500">Unsere Geschichte</a>
               </li>
 
-
               <li>
                 <RouterLink :to="{ name: 'Contact' }" class="hover:text-rose-500">
                   Kontakt
@@ -64,7 +63,9 @@
               </li>
 
               <li>
-                <a href="#" class="hover:text-rose-500">Impressum</a>
+                <RouterLink :to="{ name: 'ImprintPage' }" class="hover:text-rose-500">
+                  Impressum
+                </RouterLink>
               </li>
               <li>
                 <a href="#" class="hover:text-rose-500">AGB</a>
@@ -75,7 +76,7 @@
       </div>
     </div>
 
-    <div class="w-full h-[4px] bg-[#e7b2a5]" />
+    <div class="w-full h-[4px] bg-[#e7b2a5]"/>
 
     <div class="max-w-6xl mx-auto px-6">
       <div class="flex flex-col items-center gap-2 text-xs text-neutral-700 mt-4 text-right pb-6">
@@ -87,5 +88,5 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink } from "vue-router";
+import {RouterLink} from "vue-router";
 </script>
