@@ -31,7 +31,7 @@ import { fetchCategories, fetchProducts, fetchProductVariants } from '@/services
 
 const route = useRoute()
 
-// 1) Immer den aktuellen slug aus der URL nehmen (reaktiv!)
+
 const categorySlug = computed(() => route.params.slug)
 
 const categoryTitle = ref('Kategorie')
@@ -39,24 +39,24 @@ const products = ref([])
 const loading = ref(true)
 const error = ref(null)
 
-// 2) Lade-Logik in eine Funktion auslagern, damit wir sie mehrfach aufrufen können
+
 const loadCategoryPage = async (slug) => {
   try {
     loading.value = true
     error.value = null
     products.value = []
 
-    // Kategorie-Titel holen
+   
     const categories = await fetchCategories()
 
-    // robust: Backend kann slug ODER id liefern
+  
     const cat = categories.find((c) => (c.slug ?? c.id) === slug)
     categoryTitle.value = cat ? cat.name : 'Kategorie'
 
-    // Produkte zur Kategorie holen
+ 
     const backendProducts = await fetchProducts({ categorySlug: slug })
 
-    // Produkte + Varianten (Farben/Größen/Preis) mappen
+   
     const mappedProducts = await Promise.all(
         backendProducts.map(async (p) => {
           const variants = await fetchProductVariants(p.id)
@@ -74,7 +74,7 @@ const loadCategoryPage = async (slug) => {
               if (minPrice === null || v.price < minPrice) minPrice = v.price
             }
 
-            if (v.available) available = true
+            if (Number(v.stock ?? 0) > 0) available = true
           }
 
           return {
@@ -101,12 +101,12 @@ const loadCategoryPage = async (slug) => {
   }
 }
 
-// 3) Beim ersten Laden
+
 onMounted(() => {
   loadCategoryPage(categorySlug.value)
 })
 
-// 4) Und jedes Mal, wenn sich der slug in der URL ändert (Dropdown-Klick!)
+
 watch(categorySlug, (newSlug) => {
   loadCategoryPage(newSlug)
 })

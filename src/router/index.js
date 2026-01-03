@@ -8,6 +8,10 @@ import ContactPage from "@/pages/ContactPage.vue";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage.vue";
 import ImprintPage from "@/pages/ImprintPage.vue";
 
+import AdminCategoryListPage from '@/pages/AdminCategoryListPage.vue'
+import AdminCategoryDetailPage from '@/pages/AdminCategoryDetailPage.vue'
+import AdminProductDetailPage from '@/pages/AdminProductDetailPage.vue'
+
 const routes = [
   {
     path: '/',
@@ -45,7 +49,24 @@ const routes = [
         path: '/imprintpage',
         name: 'ImprintPage',
         component: ImprintPage
-    }
+    },
+  {
+    path: '/admin/categories',
+    name: 'AdminCategoryList',
+    component: AdminCategoryListPage
+  },
+  {
+    path: '/admin/categories/:id',
+    name: 'AdminCategoryDetail',
+    component: AdminCategoryDetailPage,
+    props: true
+  },
+  {
+    path: '/admin/products/:id',
+    name: 'AdminProductDetail',
+    component: AdminProductDetailPage,
+    props: true
+  }
 ]
 
 const router = createRouter({
