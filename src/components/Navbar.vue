@@ -36,7 +36,19 @@
               Produktkategorien
             </p>
 
+            <!-- Loading -->
+            <div v-if="categoriesLoading" class="px-4 py-2 text-sm text-gray-500">
+              Lade Kategorien...
+            </div>
+
+            <!-- Error -->
+            <div v-else-if="categoriesError" class="px-4 py-2 text-sm text-red-500">
+              {{ categoriesError }}
+            </div>
+
+            <!-- Categories -->
             <router-link
+                v-else
                 v-for="category in categories"
                 :key="category.slug"
                 :to="`/category/${category.slug}`"
@@ -68,9 +80,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import NavbarSearch from '@/components/NavbarSearch.vue'
-import { productCategories } from '@/constants/productCategories.js'
+import { fetchCategories } from '@/services/api'
 
 const isCategoriesOpen = ref(false)
 
@@ -78,5 +90,35 @@ const toggleCategories = () => {
   isCategoriesOpen.value = !isCategoriesOpen.value
 }
 
-const categories = productCategories
+const categories = ref([])
+const categoriesLoading = ref(false)
+const categoriesError = ref(null)
+
+const loadCategories = async () => {
+  try {
+    categoriesLoading.value = true
+    categoriesError.value = null
+
+    const data = await fetchCategories()
+
+    // Backend kann "slug" oder "id" liefern -> wir normalisieren auf "slug"
+    categories.value = (data || [])
+        .map((c) => ({
+          ...c,
+          slug: c.slug ?? c.id,
+        }))
+        // optional: alphabetisch sortieren
+        .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'de'))
+  } catch (e) {
+    console.error(e)
+    categoriesError.value = 'Kategorien konnten nicht geladen werden.'
+    categories.value = []
+  } finally {
+    categoriesLoading.value = false
+  }
+}
+
+onMounted(() => {
+  loadCategories()
+})
 </script>
