@@ -65,9 +65,9 @@
       <div class="flex items-center gap-6 text-sm text-black">
         <NavbarSearch />
 
-        <button type="button" class="flex items-center justify-center">
+        <router-link to="/account" class="flex items-center justify-center">
           <img src="/img/benutzerIcon_Desktop.png" alt="Benutzer" class="h-8 w-8" />
-        </button>
+        </router-link>
 
         <router-link to="/cart" class="flex items-center justify-center">
           <img src="/img/warenkorb_icon.png" alt="Warenkorb" class="h-7 w-7" />
