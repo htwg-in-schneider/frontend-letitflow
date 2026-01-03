@@ -4,6 +4,9 @@ import HomePage from '@/pages/HomePage.vue'
 import CategoryPage from '@/pages/CategoryPage.vue'
 import ProductPage from '@/pages/ProductPage.vue'
 import SearchResultsPage from '@/pages/SearchResultsPage.vue'
+import ContactPage from "@/pages/ContactPage.vue";
+import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage.vue";
+import ImprintPage from "@/pages/ImprintPage.vue";
 
 import AdminCategoryListPage from '@/pages/AdminCategoryListPage.vue'
 import AdminCategoryDetailPage from '@/pages/AdminCategoryDetailPage.vue'
@@ -32,6 +35,21 @@ const routes = [
     name: 'SearchResults',
     component: SearchResultsPage
   },
+    {
+        path: '/contact',
+        name: 'Contact',
+        component: ContactPage
+    },
+    {
+        path: '/privacypolicy',
+        name: 'PrivacyPolicy',
+        component: PrivacyPolicyPage
+    },
+    {
+        path: '/imprintpage',
+        name: 'ImprintPage',
+        component: ImprintPage
+    },
   {
     path: '/admin/categories',
     name: 'AdminCategoryList',
