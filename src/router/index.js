@@ -5,6 +5,10 @@ import CategoryPage from '@/pages/CategoryPage.vue'
 import ProductPage from '@/pages/ProductPage.vue'
 import SearchResultsPage from '@/pages/SearchResultsPage.vue'
 
+import AdminCategoryListPage from '@/pages/AdminCategoryListPage.vue'
+import AdminCategoryDetailPage from '@/pages/AdminCategoryDetailPage.vue'
+import AdminProductDetailPage from '@/pages/AdminProductDetailPage.vue'
+
 const routes = [
   {
     path: '/',
@@ -27,6 +31,23 @@ const routes = [
     path: '/search',
     name: 'SearchResults',
     component: SearchResultsPage
+  },
+  {
+    path: '/admin/categories',
+    name: 'AdminCategoryList',
+    component: AdminCategoryListPage
+  },
+  {
+    path: '/admin/categories/:id',
+    name: 'AdminCategoryDetail',
+    component: AdminCategoryDetailPage,
+    props: true
+  },
+  {
+    path: '/admin/products/:id',
+    name: 'AdminProductDetail',
+    component: AdminProductDetailPage,
+    props: true
   }
 ]
 

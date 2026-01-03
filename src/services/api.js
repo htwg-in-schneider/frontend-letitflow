@@ -16,10 +16,54 @@ async function getJson(path, options = {}) {
   return res.json()
 }
 
+// Helper für POST/PUT/DELETE
+async function requestJson(path, options = {}) {
+  const res = await fetch(`${API_BASE_URL}${path}`, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options
+  })
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    console.error('API error', res.status, text)
+    throw new Error(`Request failed: ${res.status} ${res.statusText}`)
+  }
+
+  if (res.status === 204) return null
+  return res.json()
+}
+
+// Kategorien
 export function fetchCategories() {
   return getJson('/api/categories')
 }
 
+export function createCategory(payload) {
+  return requestJson('/api/categories', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  })
+}
+// Einzelne Kategorie holen
+export function fetchCategoryById(id) {
+  return getJson(`/api/categories/${id}`)
+}
+
+
+// Kategorie aktualisieren
+export function updateCategory(id, payload) {
+  return requestJson(`/api/categories/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload)
+  })
+}
+
+// Kategorie löschen
+export function deleteCategory(id) {
+  return requestJson(`/api/categories/${id}`, {
+    method: 'DELETE'
+  })
+}
 export function fetchProducts(filters = {}) {
   const params = new URLSearchParams()
 
@@ -43,33 +87,7 @@ export function fetchProductVariants(id) {
   return getJson(`/api/products/${id}/variants`)
 }
 
-// Einzelne Kategorie holen
-export function fetchCategoryById(id) {
-  return getJson(`/api/categories/${id}`)
-}
 
-// Kategorie erstellen
-export function createCategory(payload) {
-  return requestJson('/api/categories', {
-    method: 'POST',
-    body: JSON.stringify(payload)
-  })
-}
-
-// Kategorie aktualisieren
-export function updateCategory(id, payload) {
-  return requestJson(`/api/categories/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(payload)
-  })
-}
-
-// Kategorie löschen
-export function deleteCategory(id) {
-  return requestJson(`/api/categories/${id}`, {
-    method: 'DELETE'
-  })
-}
 
 // Produkt erstellen
 export function createProduct(payload) {
@@ -116,6 +134,26 @@ export function deleteVariant(id) {
     method: 'DELETE'
   })
 }
+
+// Bild hochladen
+export async function uploadImage(file) {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const res = await fetch(`${API_BASE_URL}/api/upload`, {
+    method: 'POST',
+    body: formData
+  })
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '')
+    console.error('Upload error', res.status, text)
+    throw new Error(`Upload failed: ${res.status}`)
+  }
+
+  return res.json() // { url: "http://localhost:8081/uploads/..." }
+}
+
 
 
 
