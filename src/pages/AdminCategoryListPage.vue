@@ -2,19 +2,19 @@
   <section class="max-w-5xl mx-auto p-6">
     <h1 class="text-2xl font-semibold mb-4">Kategorien (Admin)</h1>
 
-    <!-- Lade-/Fehlerzustand -->
+   
     <div v-if="loading">Lade Kategorien...</div>
     <div v-else-if="error" class="text-red-600 mb-4">
       {{ error }}
     </div>
 
-    <!-- Card-Grid -->
+  
     <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <!-- Neue Kategorie Card -->
+      
       <div
         class="border border-dashed border-[#f0c9b8] bg-white flex flex-col rounded-md overflow-hidden shadow-sm"
       >
-        <!-- Bild / Upload -->
+        
         <label class="w-full cursor-pointer block">
           <input
             type="file"
@@ -40,7 +40,7 @@
         </label>
 
         <div class="flex-1 flex flex-col justify-between px-4 py-4 gap-3">
-          <!-- Name als „Titel“ -->
+          
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">
               Kategoriename
@@ -52,7 +52,7 @@
             />
           </div>
 
-          <!-- Slug automatisch -->
+          
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">
               Slug (automatisch)
@@ -64,7 +64,7 @@
             </div>
           </div>
 
-          <!-- Optional: kurze Beschreibung -->
+          
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">
               Beschreibung (optional)
@@ -87,7 +87,7 @@
         </div>
       </div>
 
-      <!-- Bestehende Kategorien -->
+    
       <div
         v-for="cat in categories"
         :key="cat.id"
@@ -110,7 +110,7 @@
           </div>
 
           <div class="mt-4 flex justify-between gap-2">
-            <!-- Bearbeiten: Admin-Detailseite -->
+           
             <router-link
               :to="{ name: 'AdminCategoryDetail', params: { id: cat.id } }"
               class="inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium text-white bg-[#e09a82]"
@@ -118,7 +118,7 @@
               Bearbeiten
             </router-link>
 
-            <!-- Löschen -->
+           
             <button
               class="inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium text-white bg-red-500"
               @click="handleDelete(cat.id)"
@@ -129,7 +129,7 @@
         </div>
       </div>
 
-      <!-- Falls es noch keine Kategorien gibt (abgesehen von der neuen Karte) -->
+      
       <div
         v-if="categories.length === 0"
         class="col-span-full text-center text-gray-500 text-sm"
@@ -153,19 +153,19 @@ const categories = ref([])
 const newCategory = ref({
   name: '',
   description: '',
-  imageUrl: '' // hier speichern wir Data-URL (oder später echte URL)
+  imageUrl: '' 
 })
 const loading = ref(false)
 const error = ref(null)
 
-// Hilfsfunktion, um aus dem Namen einen Slug zu bauen
+
 function slugify(str) {
   if (!str) return ''
   return str
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, '-') // Leerzeichen -> -
-    .replace(/[^a-z0-9\-]/g, '') // Sonderzeichen entfernen
+    .replace(/\s+/g, '-') 
+    .replace(/[^a-z0-9\-]/g, '') 
 }
 
 async function loadCategories() {
@@ -196,7 +196,7 @@ async function handleCreate() {
 
   try {
     await createCategory(payload)
-    // Karte zurücksetzen
+    
     newCategory.value = { name: '', description: '', imageUrl: '' }
     await loadCategories()
   } catch (e) {
@@ -216,14 +216,14 @@ async function handleDelete(id) {
   }
 }
 
-// Bildauswahl: Data-URL erzeugen und sofort anzeigen
+
 function onImageSelected(event) {
   const file = event.target.files?.[0]
   if (!file) return
 
   const reader = new FileReader()
   reader.onload = () => {
-    // reader.result ist eine Data-URL (base64)
+   
     newCategory.value.imageUrl = reader.result
   }
   reader.readAsDataURL(file)

@@ -123,13 +123,13 @@ const loadResults = async () => {
           return {
             id: p.id,
             title: p.title || p.name,
-            description: p.description || '',          // optional für Suche
+            description: p.description || '',      
             image: p.imageUrl || '/img/placeholder.png',
             colors: colorArray.join(', '),
             sizes: sizeArray.join(', '),
             price: displayPrice,
             availability: available ? 'verfügbar' : 'momentan nicht verfügbar',
-            // interne Felder für Filterlogik:
+         
             _colorsArray: colorArray,
             _sizesArray: sizeArray,
             _numericPrice: numericPrice

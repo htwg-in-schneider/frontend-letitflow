@@ -16,7 +16,7 @@ async function getJson(path, options = {}) {
   return res.json()
 }
 
-// Helper für POST/PUT/DELETE
+
 async function requestJson(path, options = {}) {
   const res = await fetch(`${API_BASE_URL}${path}`, {
     headers: { 'Content-Type': 'application/json' },
@@ -33,7 +33,7 @@ async function requestJson(path, options = {}) {
   return res.json()
 }
 
-// Kategorien
+
 export function fetchCategories() {
   return getJson('/api/categories')
 }
@@ -44,13 +44,13 @@ export function createCategory(payload) {
     body: JSON.stringify(payload)
   })
 }
-// Einzelne Kategorie holen
+
 export function fetchCategoryById(id) {
   return getJson(`/api/categories/${id}`)
 }
 
 
-// Kategorie aktualisieren
+
 export function updateCategory(id, payload) {
   return requestJson(`/api/categories/${id}`, {
     method: 'PUT',
@@ -58,7 +58,7 @@ export function updateCategory(id, payload) {
   })
 }
 
-// Kategorie löschen
+
 export function deleteCategory(id) {
   return requestJson(`/api/categories/${id}`, {
     method: 'DELETE'
@@ -89,7 +89,7 @@ export function fetchProductVariants(id) {
 
 
 
-// Produkt erstellen
+
 export function createProduct(payload) {
   return requestJson('/api/products', {
     method: 'POST',
@@ -97,7 +97,7 @@ export function createProduct(payload) {
   })
 }
 
-// Produkt aktualisieren
+
 export function updateProduct(id, payload) {
   return requestJson(`/api/products/${id}`, {
     method: 'PUT',
@@ -105,14 +105,14 @@ export function updateProduct(id, payload) {
   })
 }
 
-// Produkt löschen
+
 export function deleteProduct(id) {
   return requestJson(`/api/products/${id}`, {
     method: 'DELETE'
   })
 }
 
-// Variante für ein Produkt erstellen
+
 export function createVariant(productId, payload) {
   return requestJson(`/api/products/${productId}/variants`, {
     method: 'POST',
@@ -120,7 +120,6 @@ export function createVariant(productId, payload) {
   })
 }
 
-// Variante aktualisieren
 export function updateVariant(id, payload) {
   return requestJson(`/api/variants/${id}`, {
     method: 'PUT',
@@ -128,14 +127,14 @@ export function updateVariant(id, payload) {
   })
 }
 
-// Variante löschen
+
 export function deleteVariant(id) {
   return requestJson(`/api/variants/${id}`, {
     method: 'DELETE'
   })
 }
 
-// Bild hochladen
+
 export async function uploadImage(file) {
   const formData = new FormData()
   formData.append('file', file)
@@ -151,7 +150,7 @@ export async function uploadImage(file) {
     throw new Error(`Upload failed: ${res.status}`)
   }
 
-  return res.json() // { url: "http://localhost:8081/uploads/..." }
+  return res.json() 
 }
 
 
