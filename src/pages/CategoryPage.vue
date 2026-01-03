@@ -24,37 +24,39 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue'
-import {useRoute} from 'vue-router'
+import { ref, onMounted, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import ProductCard from '@/components/ProductCard.vue'
-import {
-  fetchCategories,
-  fetchProducts,
-  fetchProductVariants,
-} from '@/services/api'
+import { fetchCategories, fetchProducts, fetchProductVariants } from '@/services/api'
 
 const route = useRoute()
-const categorySlug = route.params.slug
+
+// 1) Immer den aktuellen slug aus der URL nehmen (reaktiv!)
+const categorySlug = computed(() => route.params.slug)
 
 const categoryTitle = ref('Kategorie')
 const products = ref([])
 const loading = ref(true)
 const error = ref(null)
 
-onMounted(async () => {
+// 2) Lade-Logik in eine Funktion auslagern, damit wir sie mehrfach aufrufen können
+const loadCategoryPage = async (slug) => {
   try {
     loading.value = true
+    error.value = null
+    products.value = []
 
+    // Kategorie-Titel holen
     const categories = await fetchCategories()
-    const cat = categories.find((c) => c.slug === categorySlug)
-    if (cat) {
-      categoryTitle.value = cat.name
-    } else {
-      categoryTitle.value = 'Kategorie'
-    }
 
-    const backendProducts = await fetchProducts({categorySlug})
+    // robust: Backend kann slug ODER id liefern
+    const cat = categories.find((c) => (c.slug ?? c.id) === slug)
+    categoryTitle.value = cat ? cat.name : 'Kategorie'
 
+    // Produkte zur Kategorie holen
+    const backendProducts = await fetchProducts({ categorySlug: slug })
+
+    // Produkte + Varianten (Farben/Größen/Preis) mappen
     const mappedProducts = await Promise.all(
         backendProducts.map(async (p) => {
           const variants = await fetchProductVariants(p.id)
@@ -65,20 +67,14 @@ onMounted(async () => {
           let available = false
 
           for (const v of variants) {
-            if (v.color) {
-              colorSet.add(v.color)
-            }
-            if (v.size) {
-              sizeSet.add(v.size)
-            }
+            if (v.color) colorSet.add(v.color)
+            if (v.size) sizeSet.add(v.size)
+
             if (typeof v.price === 'number') {
-              if (minPrice === null || v.price < minPrice) {
-                minPrice = v.price
-              }
+              if (minPrice === null || v.price < minPrice) minPrice = v.price
             }
-            if (v.available) {
-              available = true
-            }
+
+            if (v.available) available = true
           }
 
           return {
@@ -89,10 +85,7 @@ onMounted(async () => {
             sizes: Array.from(sizeSet).join(', '),
             price:
                 minPrice !== null
-                    ? minPrice.toLocaleString('de-DE', {
-                      style: 'currency',
-                      currency: 'EUR',
-                    })
+                    ? minPrice.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })
                     : '–',
             availability: available ? 'verfügbar' : 'momentan nicht verfügbar',
           }
@@ -106,5 +99,15 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+}
+
+// 3) Beim ersten Laden
+onMounted(() => {
+  loadCategoryPage(categorySlug.value)
+})
+
+// 4) Und jedes Mal, wenn sich der slug in der URL ändert (Dropdown-Klick!)
+watch(categorySlug, (newSlug) => {
+  loadCategoryPage(newSlug)
 })
 </script>
