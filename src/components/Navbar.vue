@@ -38,8 +38,8 @@
 
             <router-link
                 v-for="category in categories"
-                :key="category.id"
-                :to="`/category/${category.id}`"
+                :key="category.slug"
+                :to="`/category/${category.slug}`"
                 class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition"
                 @click="isCategoriesOpen = false"
             >

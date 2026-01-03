@@ -1,26 +1,26 @@
 export const productCategories = [
     {
-        id: 'menstruationsscheiben-und-tassen',
+        slug: 'menstruationsscheiben-und-tassen',
         name: 'Menstruationsscheiben und Tassen'
     },
     {
-        id: 'menstruationsschwaemme-und-soft-tampons',
+        slug: 'menstruationsschwaemme-und-soft-tampons',
         name: 'Menstruationsschwämme und Soft-Tampons'
     },
     {
-        id: 'periodenunterwaesche',
+        slug: 'periodenunterwaesche',
         name: 'Periodenunterwäsche'
     },
     {
-        id: 'bio-tampons',
+        slug: 'bio-tampons',
         name: 'Bio-Tampons'
     },
     {
-        id: 'bio-binden',
+        slug: 'bio-binden',
         name: 'Bio-Binden'
     },
     {
-        id: 'waermehelfer',
+        slug: 'waermehelfer',
         name: 'Wärmehelfer'
     }
 ]
