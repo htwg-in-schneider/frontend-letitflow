@@ -76,13 +76,14 @@
         <h2 class="text-xl font-semibold">Produkte</h2>
       </div>
 
-      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-start">>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-start">
         <AdminAddProduct
           v-if="category?.id"
           :categoryId="category.id"
           @created="loadCategoryAndProducts"
         />
-        
+
+
         <div
           v-for="p in productsWithInfo"
           :key="p.id"
