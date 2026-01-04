@@ -9,10 +9,9 @@
     </div>
 
     <div v-else-if="category">
-      <!-- Kategorie-Form (mit Components) -->
+      <!-- Kategorie-Form -->
       <form @submit.prevent="saveCategory" class="mb-10">
         <AdminFormCard>
-          <!-- LINKS: Bild -->
           <template #left>
             <ImagePickerCard
               v-model="category.imageUrl"
@@ -20,7 +19,6 @@
             />
           </template>
 
-          <!-- RECHTS: Details -->
           <template #fields>
             <div>
               <label class="block text-xs font-medium text-gray-600 mb-1">
@@ -84,25 +82,13 @@
         <div
           class="border border-dashed border-[#f0c9b8] bg-white rounded-md shadow-sm flex flex-col overflow-hidden"
         >
-          <label class="cursor-pointer">
-            <input
-              type="file"
-              accept="image/*"
-              class="hidden"
-              @change="onNewProductImageSelected"
+          <div class="p-4 pb-0">
+            <ImagePickerCard
+              v-model="newProduct.imageUrl"
+              alt="Neues Produkt Bild"
+              :confirmRemove="false"
             />
-            <div class="aspect-[4/3] bg-gray-50 flex items-center justify-center">
-              <img
-                v-if="newProduct.imageUrl"
-                :src="newProduct.imageUrl"
-                class="w-full h-full object-cover"
-                alt="Neues Produkt Bild"
-              />
-              <div v-else class="text-xs text-gray-500 text-center px-4">
-                Produktbild auswählen
-              </div>
-            </div>
-          </label>
+          </div>
 
           <div class="p-4 flex flex-col gap-3">
             <div>
@@ -128,58 +114,8 @@
               />
             </div>
 
-            <div class="border rounded-md p-3 bg-[#fff7f3] border-[#f0c9b8]">
-              <p class="text-xs font-semibold mb-2 text-gray-700">
-                Erste Variante (Pflicht)
-              </p>
-
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-xs text-gray-600 mb-1">Größe</label>
-                  <input
-                    v-model="newVariant.size"
-                    placeholder="z. B. S"
-                    class="border rounded px-2 py-1 text-sm w-full"
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs text-gray-600 mb-1">Farbe</label>
-                  <input
-                    v-model="newVariant.color"
-                    placeholder="z. B. Blau"
-                    class="border rounded px-2 py-1 text-sm w-full"
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs text-gray-600 mb-1">Bestand</label>
-                  <input
-                    type="number"
-                    v-model.number="newVariant.stock"
-                    min="0"
-                    class="border rounded px-2 py-1 text-sm w-full"
-                  />
-                </div>
-                <div>
-                  <label class="block text-xs text-gray-600 mb-1">Preis (€)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    v-model.number="newVariant.price"
-                    min="0"
-                    class="border rounded px-2 py-1 text-sm w-full"
-                  />
-                </div>
-              </div>
-
-              <label class="mt-2 flex items-center gap-2 text-xs text-gray-700">
-                <input type="checkbox" v-model="newVariant.available" />
-                Verfügbar
-              </label>
-
-              <p v-if="createError" class="mt-2 text-xs text-red-600">
-                {{ createError }}
-              </p>
-            </div>
+            <!-- NEU: Varianten als Component (mit + Variante hinzufügen) -->
+            <AdminAddVariant v-model="variantsToCreate" :error="createError" />
 
             <button
               type="button"
@@ -187,7 +123,7 @@
               :disabled="creating || !newProduct.title"
               @click="handleCreateProduct"
             >
-              {{ creating ? 'Speichere…' : 'Produkt + Variante speichern' }}
+              {{ creating ? 'Speichere…' : 'Produkt + Varianten speichern' }}
             </button>
           </div>
         </div>
@@ -275,6 +211,7 @@ import { useRoute } from 'vue-router'
 
 import AdminFormCard from '@/components/AdminFormCard.vue'
 import ImagePickerCard from '@/components/ImagePickerCard.vue'
+import AdminAddVariant from '@/components/AdminAddVariant.vue'
 
 import {
   fetchCategoryById,
@@ -308,30 +245,27 @@ const newProduct = ref({
   infotext3: ''
 })
 
-const newVariant = ref({
-  size: '',
-  color: '',
-  stock: 0,
-  available: true,
-  price: 0
-})
-
-function onNewProductImageSelected(e) {
-  const file = e.target.files?.[0]
-  if (!file) return
-  const reader = new FileReader()
-  reader.onload = () => (newProduct.value.imageUrl = reader.result)
-  reader.readAsDataURL(file)
-}
+/**
+ * NEU: mehrere Varianten beim Erstellen
+ * erste Variante Pflicht
+ */
+const variantsToCreate = ref([
+  { size: '', color: '', stock: 0, available: true, price: 0 }
+])
 
 function validateCreate() {
   if (!newProduct.value.title) return 'Titel darf nicht leer sein.'
+  if (!variantsToCreate.value.length) return 'Mindestens eine Variante ist erforderlich.'
 
-  const stockOk = typeof newVariant.value.stock === 'number' && newVariant.value.stock >= 0
-  const priceOk = typeof newVariant.value.price === 'number' && newVariant.value.price >= 0
+  for (let i = 0; i < variantsToCreate.value.length; i++) {
+    const v = variantsToCreate.value[i]
+    const stockOk = typeof v.stock === 'number' && v.stock >= 0
+    const priceOk = typeof v.price === 'number' && v.price >= 0
 
-  if (!stockOk) return 'Bitte einen gültigen Bestand (>= 0) angeben.'
-  if (!priceOk) return 'Bitte einen gültigen Preis (>= 0) angeben.'
+    if (!stockOk) return `Variante ${i + 1}: Bitte einen gültigen Bestand (>= 0) angeben.`
+    if (!priceOk) return `Variante ${i + 1}: Bitte einen gültigen Preis (>= 0) angeben.`
+  }
+
   return null
 }
 
@@ -344,13 +278,11 @@ function resetCreateForm() {
     infotext2: '',
     infotext3: ''
   }
-  newVariant.value = {
-    size: '',
-    color: '',
-    stock: 0,
-    available: true,
-    price: 0
-  }
+
+  variantsToCreate.value = [
+    { size: '', color: '', stock: 0, available: true, price: 0 }
+  ]
+
   createError.value = null
 }
 
@@ -430,14 +362,23 @@ async function handleCreateProduct() {
     })
 
     const productId = created?.id ?? created
-    await createVariant(productId, { ...newVariant.value })
+
+    // Alle Varianten anlegen (available optional automatisch aus stock)
+    await Promise.all(
+      variantsToCreate.value.map((v) =>
+        createVariant(productId, {
+          ...v,
+          available: Number(v.stock) > 0
+        })
+      )
+    )
 
     resetCreateForm()
     await loadCategoryAndProducts()
-    alert('Produkt und Variante wurden erstellt.')
+    alert('Produkt und Varianten wurden erstellt.')
   } catch (e) {
     console.error(e)
-    createError.value = 'Fehler beim Erstellen des Produkts oder der Variante.'
+    createError.value = 'Fehler beim Erstellen des Produkts oder der Varianten.'
   } finally {
     creating.value = false
   }
