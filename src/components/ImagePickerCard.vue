@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full md:w-[320px]">
+  <div class="w-full md:max-w-sm">
     <input
       ref="fileInput"
       type="file"
@@ -22,10 +22,10 @@
       </div>
     </div>
 
-    <div class="mt-3 flex gap-2">
+    <div class="mt-3 flex flex-col sm:flex-row gap-2">
       <button
         type="button"
-        class="flex-1 rounded-full px-3 py-2 text-xs font-medium text-white bg-[#e09a82]"
+        class="w-full sm:flex-1 rounded-full px-3 py-2 text-xs font-medium text-white bg-[#e09a82]"
         @click="triggerPicker"
       >
         Bild ändern
@@ -33,7 +33,7 @@
 
       <button
         type="button"
-        class="flex-1 rounded-full px-3 py-2 text-xs font-medium text-white bg-red-500 disabled:opacity-60"
+        class="w-full sm:flex-1 rounded-full px-3 py-2 text-xs font-medium text-white bg-red-500 disabled:opacity-60"
         :disabled="!modelValue"
         @click="removeImage"
       >
