@@ -3,103 +3,116 @@
     <h1 class="text-2xl font-semibold mb-4">Produkt bearbeiten (Admin)</h1>
 
     <div v-if="loading">Lade...</div>
+
     <div v-else-if="product">
-      <!-- Produkt-Form -->
-      <form @submit.prevent="saveProduct" class="mb-8 grid gap-4 md:grid-cols-2">
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium">Titel</label>
-          <input v-model="product.title" class="border rounded px-2 py-1 w-full" />
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium">Beschreibung</label>
-          <textarea v-model="product.description" class="border rounded px-2 py-1 w-full" />
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium">Bild-URL</label>
-          <input v-model="product.imageUrl" class="border rounded px-2 py-1 w-full" />
-        </div>
-        <div class="md:col-span-2 flex justify-end">
-          <button type="submit" class="px-4 py-2 border rounded">
-            Produkt speichern
-          </button>
-        </div>
+      <!-- Produkt-Form (mit Components) -->
+      <form @submit.prevent="saveProduct" class="mb-10">
+        <AdminFormCard>
+          <template #left>
+            <ImagePickerCard
+              v-model="product.imageUrl"
+              :alt="product.title || 'Produkt Bild'"
+            />
+          </template>
+
+          <template #fields>
+            <div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">
+                Produkttitel
+              </label>
+              <input
+                v-model="product.title"
+                class="w-full border rounded px-2 py-1 text-base font-semibold"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">
+                Beschreibung
+              </label>
+              <textarea
+                v-model="product.description"
+                rows="4"
+                class="w-full border rounded px-2 py-1 text-sm"
+              />
+            </div>
+
+            <div class="grid gap-3 md:grid-cols-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">
+                  Infotext 1
+                </label>
+                <input
+                  v-model="product.infotext1"
+                  class="w-full border rounded px-2 py-1 text-sm"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">
+                  Infotext 2
+                </label>
+                <input
+                  v-model="product.infotext2"
+                  class="w-full border rounded px-2 py-1 text-sm"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">
+                  Infotext 3
+                </label>
+                <input
+                  v-model="product.infotext3"
+                  class="w-full border rounded px-2 py-1 text-sm"
+                />
+              </div>
+            </div>
+
+            <p class="text-xs text-gray-500">
+              ID: <span class="font-mono">{{ product.id }}</span>
+            </p>
+          </template>
+
+          <template #leftActions>
+            <router-link to="/admin/categories" class="px-4 py-2 border rounded">
+              Zurück
+            </router-link>
+          </template>
+
+          <template #rightActions>
+            <button
+              type="submit"
+              class="rounded-full px-4 py-2 text-xs font-medium text-white bg-[#e09a82]"
+            >
+              Produkt speichern
+            </button>
+          </template>
+        </AdminFormCard>
       </form>
 
-      <!-- Varianten -->
-      <h2 class="text-xl font-semibold mb-2">Varianten</h2>
-
-      <!-- Neue Variante -->
-      <form @submit.prevent="createNewVariant" class="mb-4 flex flex-wrap gap-4 items-end">
-        <div>
-          <label class="block text-sm font-medium">Größe</label>
-          <input v-model="newVariant.size" class="border rounded px-2 py-1" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Farbe</label>
-          <input v-model="newVariant.color" class="border rounded px-2 py-1" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Bestand</label>
-          <input type="number" v-model.number="newVariant.stock" class="border rounded px-2 py-1 w-24" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Preis</label>
-          <input type="number" step="0.01" v-model.number="newVariant.price" class="border rounded px-2 py-1 w-24" />
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" v-model="newVariant.available" />
-          <span class="text-sm">Verfügbar</span>
-        </div>
-        <button type="submit" class="px-4 py-2 border rounded">
-          Variante anlegen
-        </button>
-      </form>
-
-      <table class="w-full border text-sm">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="border px-2 py-1">ID</th>
-            <th class="border px-2 py-1">Größe</th>
-            <th class="border px-2 py-1">Farbe</th>
-            <th class="border px-2 py-1">Bestand</th>
-            <th class="border px-2 py-1">Preis</th>
-            <th class="border px-2 py-1">Verfügbar</th>
-            <th class="border px-2 py-1">Aktionen</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="v in variants" :key="v.id">
-            <td class="border px-2 py-1">{{ v.id }}</td>
-            <td class="border px-2 py-1">
-              <input v-model="v.size" class="w-full border rounded px-1 py-0.5" />
-            </td>
-            <td class="border px-2 py-1">
-              <input v-model="v.color" class="w-full border rounded px-1 py-0.5" />
-            </td>
-            <td class="border px-2 py-1">
-              <input type="number" v-model.number="v.stock"
-                     class="w-20 border rounded px-1 py-0.5" />
-            </td>
-            <td class="border px-2 py-1">
-              <input type="number" step="0.01" v-model.number="v.price"
-                     class="w-20 border rounded px-1 py-0.5" />
-            </td>
-            <td class="border px-2 py-1 text-center">
-              <input type="checkbox" v-model="v.available" />
-            </td>
-            <td class="border px-2 py-1 text-center flex gap-2 justify-center">
-              <button class="underline" @click="saveVariant(v)">Speichern</button>
-              <button class="text-red-600 underline" @click="deleteVariantById(v.id)">Löschen</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- VARIANTEN (Card-Design) -->
+      <AdminVariantCard
+        :variants="variants"
+        :busy="variantBusy"
+        @create="createNewVariantFromCard"
+        @save="saveVariant"
+        @delete="deleteVariantById"
+      />
     </div>
+
+    <div v-else class="text-red-600">Produkt nicht gefunden</div>
   </section>
 </template>
+
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+
+import AdminFormCard from '@/components/AdminFormCard.vue'
+import ImagePickerCard from '@/components/ImagePickerCard.vue'
+import AdminVariantCard from '@/components/AdminVariantCard.vue'
+
 import {
   fetchProductById,
   fetchProductVariants,
@@ -115,14 +128,7 @@ const id = Number(route.params.id)
 const product = ref(null)
 const variants = ref([])
 const loading = ref(false)
-
-const newVariant = ref({
-  size: '',
-  color: '',
-  stock: 0,
-  available: true,
-  price: 0
-})
+const variantBusy = ref(false)
 
 async function loadProductAndVariants() {
   loading.value = true
@@ -155,18 +161,21 @@ async function saveProduct() {
   }
 }
 
-async function createNewVariant() {
+async function createNewVariantFromCard(payload) {
+  variantBusy.value = true
   try {
-    await createVariant(id, newVariant.value)
-    newVariant.value = { size: '', color: '', stock: 0, available: true, price: 0 }
+    await createVariant(id, payload)
     await loadProductAndVariants()
   } catch (e) {
     console.error(e)
     alert('Fehler beim Erstellen der Variante')
+  } finally {
+    variantBusy.value = false
   }
 }
 
 async function saveVariant(v) {
+  variantBusy.value = true
   try {
     await updateVariant(v.id, {
       size: v.size,
@@ -179,17 +188,21 @@ async function saveVariant(v) {
   } catch (e) {
     console.error(e)
     alert('Fehler beim Speichern der Variante')
+  } finally {
+    variantBusy.value = false
   }
 }
 
 async function deleteVariantById(variantId) {
-  if (!confirm('Variante wirklich löschen?')) return
+  variantBusy.value = true
   try {
     await deleteVariant(variantId)
     await loadProductAndVariants()
   } catch (e) {
     console.error(e)
     alert('Fehler beim Löschen der Variante')
+  } finally {
+    variantBusy.value = false
   }
 }
 
