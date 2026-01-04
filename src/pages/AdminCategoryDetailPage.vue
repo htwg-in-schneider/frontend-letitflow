@@ -9,7 +9,6 @@
     </div>
 
     <div v-else-if="category">
-      <!-- Kategorie-Form -->
       <form @submit.prevent="saveCategory" class="mb-10">
         <AdminFormCard>
           <template #left>
@@ -91,30 +90,10 @@
           </div>
 
           <div class="p-4 flex flex-col gap-3">
-            <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1">
-                Produkttitel
-              </label>
-              <input
-                v-model="newProduct.title"
-                placeholder="Produkttitel"
-                class="border rounded px-2 py-1 font-semibold w-full"
-              />
-            </div>
+            <!-- Produkt-Felder als Component -->
+            <AdminProductFields v-model="newProduct" :autoOpenIfHasInfo="false" />
 
-            <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1">
-                Beschreibung
-              </label>
-              <textarea
-                v-model="newProduct.description"
-                rows="2"
-                placeholder="Beschreibung"
-                class="border rounded px-2 py-1 text-sm w-full"
-              />
-            </div>
-
-            <!-- NEU: Varianten als Component (mit + Variante hinzufügen) -->
+            <!-- Varianten beim Erstellen -->
             <AdminAddVariant v-model="variantsToCreate" :error="createError" />
 
             <button
@@ -212,6 +191,7 @@ import { useRoute } from 'vue-router'
 import AdminFormCard from '@/components/AdminFormCard.vue'
 import ImagePickerCard from '@/components/ImagePickerCard.vue'
 import AdminAddVariant from '@/components/AdminAddVariant.vue'
+import AdminProductFields from '@/components/AdminProductFields.vue'
 
 import {
   fetchCategoryById,
@@ -245,12 +225,8 @@ const newProduct = ref({
   infotext3: ''
 })
 
-/**
- * NEU: mehrere Varianten beim Erstellen
- * erste Variante Pflicht
- */
 const variantsToCreate = ref([
-  { size: '', color: '', stock: 0, available: true, price: 0 }
+  { size: '', color: '', stock: 0, price: 0 } // available wird automatisch gesetzt
 ])
 
 function validateCreate() {
@@ -261,11 +237,9 @@ function validateCreate() {
     const v = variantsToCreate.value[i]
     const stockOk = typeof v.stock === 'number' && v.stock >= 0
     const priceOk = typeof v.price === 'number' && v.price >= 0
-
     if (!stockOk) return `Variante ${i + 1}: Bitte einen gültigen Bestand (>= 0) angeben.`
     if (!priceOk) return `Variante ${i + 1}: Bitte einen gültigen Preis (>= 0) angeben.`
   }
-
   return null
 }
 
@@ -280,7 +254,7 @@ function resetCreateForm() {
   }
 
   variantsToCreate.value = [
-    { size: '', color: '', stock: 0, available: true, price: 0 }
+    { size: '', color: '', stock: 0, price: 0 }
   ]
 
   createError.value = null
@@ -363,7 +337,6 @@ async function handleCreateProduct() {
 
     const productId = created?.id ?? created
 
-    // Alle Varianten anlegen (available optional automatisch aus stock)
     await Promise.all(
       variantsToCreate.value.map((v) =>
         createVariant(productId, {

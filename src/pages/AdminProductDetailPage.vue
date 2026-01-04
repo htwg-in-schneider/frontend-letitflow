@@ -5,7 +5,6 @@
     <div v-if="loading">Lade...</div>
 
     <div v-else-if="product">
-      <!-- Produkt-Form (mit Components) -->
       <form @submit.prevent="saveProduct" class="mb-10">
         <AdminFormCard>
           <template #left>
@@ -16,58 +15,7 @@
           </template>
 
           <template #fields>
-            <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1">
-                Produkttitel
-              </label>
-              <input
-                v-model="product.title"
-                class="w-full border rounded px-2 py-1 text-base font-semibold"
-              />
-            </div>
-
-            <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1">
-                Beschreibung
-              </label>
-              <textarea
-                v-model="product.description"
-                rows="4"
-                class="w-full border rounded px-2 py-1 text-sm"
-              />
-            </div>
-
-            <div class="grid gap-3 md:grid-cols-3">
-              <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">
-                  Infotext 1
-                </label>
-                <input
-                  v-model="product.infotext1"
-                  class="w-full border rounded px-2 py-1 text-sm"
-                />
-              </div>
-
-              <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">
-                  Infotext 2
-                </label>
-                <input
-                  v-model="product.infotext2"
-                  class="w-full border rounded px-2 py-1 text-sm"
-                />
-              </div>
-
-              <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">
-                  Infotext 3
-                </label>
-                <input
-                  v-model="product.infotext3"
-                  class="w-full border rounded px-2 py-1 text-sm"
-                />
-              </div>
-            </div>
+            <AdminProductFields v-model="product" />
 
             <p class="text-xs text-gray-500">
               ID: <span class="font-mono">{{ product.id }}</span>
@@ -76,7 +24,7 @@
 
           <template #leftActions>
             <router-link to="/admin/categories" class="px-4 py-2 border rounded">
-              Zurück
+              Zurück zu Kategorien
             </router-link>
           </template>
 
@@ -91,11 +39,9 @@
         </AdminFormCard>
       </form>
 
-      <!-- VARIANTEN (Card-Design) -->
       <AdminVariantCard
         :variants="variants"
         :busy="variantBusy"
-        @create="createNewVariantFromCard"
         @save="saveVariant"
         @delete="deleteVariantById"
       />
@@ -112,12 +58,12 @@ import { useRoute } from 'vue-router'
 import AdminFormCard from '@/components/AdminFormCard.vue'
 import ImagePickerCard from '@/components/ImagePickerCard.vue'
 import AdminVariantCard from '@/components/AdminVariantCard.vue'
+import AdminProductFields from '@/components/AdminProductFields.vue'
 
 import {
   fetchProductById,
   fetchProductVariants,
   updateProduct,
-  createVariant,
   updateVariant,
   deleteVariant
 } from '@/services/api'
@@ -161,19 +107,6 @@ async function saveProduct() {
   }
 }
 
-async function createNewVariantFromCard(payload) {
-  variantBusy.value = true
-  try {
-    await createVariant(id, payload)
-    await loadProductAndVariants()
-  } catch (e) {
-    console.error(e)
-    alert('Fehler beim Erstellen der Variante')
-  } finally {
-    variantBusy.value = false
-  }
-}
-
 async function saveVariant(v) {
   variantBusy.value = true
   try {
@@ -181,10 +114,11 @@ async function saveVariant(v) {
       size: v.size,
       color: v.color,
       stock: v.stock,
-      available: v.available,
+      available: Number(v.stock) > 0,
       price: v.price
     })
     alert('Variante gespeichert')
+    await loadProductAndVariants()
   } catch (e) {
     console.error(e)
     alert('Fehler beim Speichern der Variante')
