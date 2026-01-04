@@ -9,114 +9,78 @@
     </div>
 
     <div v-else-if="category">
-     
+      <!-- Kategorie-Form (mit Components) -->
       <form @submit.prevent="saveCategory" class="mb-10">
-        <div class="border border-[#f0c9b8] bg-white rounded-md shadow-sm">
-          <div class="flex flex-col md:flex-row gap-4 p-4">
-           
-            <div class="w-full md:w-[320px]">
+        <AdminFormCard>
+          <!-- LINKS: Bild -->
+          <template #left>
+            <ImagePickerCard
+              v-model="category.imageUrl"
+              :alt="category.name || 'Kategorie Bild'"
+            />
+          </template>
+
+          <!-- RECHTS: Details -->
+          <template #fields>
+            <div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">
+                Kategoriename
+              </label>
               <input
-                ref="categoryImageInput"
-                type="file"
-                accept="image/*"
-                class="hidden"
-                @change="onCategoryImageSelected"
+                v-model="category.name"
+                class="w-full border rounded px-2 py-1 text-base font-semibold"
               />
-
-              <div
-                class="w-full aspect-[4/3] flex items-center justify-center bg-gray-50 rounded-md overflow-hidden border border-[#f0c9b8]"
-              >
-                <img
-                  v-if="categoryPreviewImage"
-                  :src="categoryPreviewImage"
-                  :alt="category.name || 'Kategorie Bild'"
-                  class="w-full h-full object-cover"
-                />
-                <div v-else class="text-xs text-gray-500 text-center px-4">
-                  Kein Bild vorhanden
-                </div>
-              </div>
-
-              <div class="mt-3 flex gap-2">
-                <button
-                  type="button"
-                  class="flex-1 rounded-full px-3 py-2 text-xs font-medium text-white bg-[#e09a82]"
-                  @click="triggerCategoryImagePicker"
-                >
-                  Bild ändern
-                </button>
-
-                <button
-                  type="button"
-                  class="flex-1 rounded-full px-3 py-2 text-xs font-medium text-white bg-red-500 disabled:opacity-60"
-                  :disabled="!categoryPreviewImage"
-                  @click="removeCategoryImage"
-                >
-                  Bild löschen
-                </button>
-              </div>
             </div>
 
-            
-            <div class="flex-1 flex flex-col gap-3">
-              <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">
-                  Kategoriename
-                </label>
-                <input
-                  v-model="category.name"
-                  class="w-full border rounded px-2 py-1 text-base font-semibold"
-                />
-              </div>
-
-              <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">
-                  Beschreibung
-                </label>
-                <textarea
-                  v-model="category.description"
-                  rows="3"
-                  class="w-full border rounded px-2 py-1 text-sm"
-                />
-              </div>
-
-              <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">
-                  Slug
-                </label>
-                <input
-                  v-model="category.slug"
-                  class="w-full border rounded px-2 py-1 text-sm font-mono"
-                />
-              </div>
-
-              <div class="mt-2 flex justify-between gap-2">
-                <router-link
-                  to="/admin/categories"
-                  class="px-4 py-2 border rounded"
-                >
-                  Zurück
-                </router-link>
-
-                <button
-                  type="submit"
-                  class="rounded-full px-4 py-2 text-xs font-medium text-white bg-[#e09a82]"
-                >
-                  Kategorie speichern
-                </button>
-              </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">
+                Beschreibung
+              </label>
+              <textarea
+                v-model="category.description"
+                rows="3"
+                class="w-full border rounded px-2 py-1 text-sm"
+              />
             </div>
-          </div>
-        </div>
+
+            <div>
+              <label class="block text-xs font-medium text-gray-600 mb-1">
+                Slug
+              </label>
+              <input
+                v-model="category.slug"
+                class="w-full border rounded px-2 py-1 text-sm font-mono"
+              />
+            </div>
+
+            <p class="text-xs text-gray-500">
+              ID: <span class="font-mono">{{ category.id }}</span>
+            </p>
+          </template>
+
+          <template #leftActions>
+            <router-link to="/admin/categories" class="px-4 py-2 border rounded">
+              Zurück
+            </router-link>
+          </template>
+
+          <template #rightActions>
+            <button
+              type="submit"
+              class="rounded-full px-4 py-2 text-xs font-medium text-white bg-[#e09a82]"
+            >
+              Kategorie speichern
+            </button>
+          </template>
+        </AdminFormCard>
       </form>
 
-   
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-semibold">Produkte</h2>
       </div>
 
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      
+        <!-- NEUES Produkt -->
         <div
           class="border border-dashed border-[#f0c9b8] bg-white rounded-md shadow-sm flex flex-col overflow-hidden"
         >
@@ -164,7 +128,6 @@
               />
             </div>
 
-           
             <div class="border rounded-md p-3 bg-[#fff7f3] border-[#f0c9b8]">
               <p class="text-xs font-semibold mb-2 text-gray-700">
                 Erste Variante (Pflicht)
@@ -229,7 +192,7 @@
           </div>
         </div>
 
-      
+        <!-- PRODUKTE -->
         <div
           v-for="p in productsWithInfo"
           :key="p.id"
@@ -307,8 +270,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+
+import AdminFormCard from '@/components/AdminFormCard.vue'
+import ImagePickerCard from '@/components/ImagePickerCard.vue'
+
 import {
   fetchCategoryById,
   updateCategory,
@@ -329,8 +296,6 @@ const productsWithInfo = ref([])
 const loading = ref(false)
 const error = ref(null)
 
-const categoryImageInput = ref(null)
-
 const creating = ref(false)
 const createError = ref(null)
 
@@ -350,26 +315,6 @@ const newVariant = ref({
   available: true,
   price: 0
 })
-
-const categoryPreviewImage = computed(() => category.value?.imageUrl || '')
-
-function triggerCategoryImagePicker() {
-  categoryImageInput.value?.click()
-}
-
-function removeCategoryImage() {
-  if (!confirm('Bild wirklich löschen?')) return
-  category.value.imageUrl = ''
-  if (categoryImageInput.value) categoryImageInput.value.value = ''
-}
-
-function onCategoryImageSelected(e) {
-  const file = e.target.files?.[0]
-  if (!file) return
-  const reader = new FileReader()
-  reader.onload = () => (category.value.imageUrl = reader.result)
-  reader.readAsDataURL(file)
-}
 
 function onNewProductImageSelected(e) {
   const file = e.target.files?.[0]
@@ -417,7 +362,6 @@ async function loadCategoryAndProducts() {
     category.value = await fetchCategoryById(id)
     products.value = await fetchProducts({ categorySlug: category.value.slug })
 
-    
     productsWithInfo.value = await Promise.all(
       products.value.map(async (p) => {
         const variants = await fetchProductVariants(p.id)
