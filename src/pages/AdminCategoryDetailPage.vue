@@ -76,42 +76,17 @@
         <h2 class="text-xl font-semibold">Produkte</h2>
       </div>
 
-      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <!-- NEUES Produkt -->
-        <div
-          class="border border-dashed border-[#f0c9b8] bg-white rounded-md shadow-sm flex flex-col overflow-hidden"
-        >
-          <div class="p-4 pb-0">
-            <ImagePickerCard
-              v-model="newProduct.imageUrl"
-              alt="Neues Produkt Bild"
-              :confirmRemove="false"
-            />
-          </div>
-
-          <div class="p-4 flex flex-col gap-3">
-            <!-- Produkt-Felder als Component -->
-            <AdminProductFields v-model="newProduct" :autoOpenIfHasInfo="false" />
-
-            <!-- Varianten beim Erstellen -->
-            <AdminAddVariant v-model="variantsToCreate" :error="createError" />
-
-            <button
-              type="button"
-              class="rounded-full px-4 py-2 text-xs font-medium text-white bg-[#e09a82] disabled:opacity-60"
-              :disabled="creating || !newProduct.title"
-              @click="handleCreateProduct"
-            >
-              {{ creating ? 'Speichere…' : 'Produkt + Varianten speichern' }}
-            </button>
-          </div>
-        </div>
-
-        <!-- PRODUKTE -->
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-start">>
+        <AdminAddProduct
+          v-if="category?.id"
+          :categoryId="category.id"
+          @created="loadCategoryAndProducts"
+        />
+        
         <div
           v-for="p in productsWithInfo"
           :key="p.id"
-          class="border border-[#f0c9b8] bg-white rounded-md shadow-sm flex flex-col overflow-hidden"
+          class="border border-[#f0c9b8] bg-white rounded-md shadow-sm flex flex-col overflow-hidden self-start"
         >
           <img
             :src="p.imageUrl || 'https://via.placeholder.com/400x300?text=Produkt'"
@@ -134,22 +109,10 @@
               </p>
 
               <div class="text-xs text-gray-700 space-y-1">
-                <p>
-                  <span class="font-semibold">Farben:</span>
-                  <span class="font-normal">{{ p.colors || '—' }}</span>
-                </p>
-                <p>
-                  <span class="font-semibold">Größen:</span>
-                  <span class="font-normal">{{ p.sizes || '—' }}</span>
-                </p>
-                <p>
-                  <span class="font-semibold">Preis:</span>
-                  <span class="font-normal">{{ p.priceLabel }}</span>
-                </p>
-                <p>
-                  <span class="font-semibold">Status:</span>
-                  <span class="font-normal">{{ p.availability }}</span>
-                </p>
+                <p><span class="font-semibold">Farben:</span> {{ p.colors || '—' }}</p>
+                <p><span class="font-semibold">Größen:</span> {{ p.sizes || '—' }}</p>
+                <p><span class="font-semibold">Preis:</span> {{ p.priceLabel }}</p>
+                <p><span class="font-semibold">Status:</span> {{ p.availability }}</p>
               </div>
             </div>
 
@@ -190,16 +153,13 @@ import { useRoute } from 'vue-router'
 
 import AdminFormCard from '@/components/AdminFormCard.vue'
 import ImagePickerCard from '@/components/ImagePickerCard.vue'
-import AdminAddVariant from '@/components/AdminAddVariant.vue'
-import AdminProductFields from '@/components/AdminProductFields.vue'
+import AdminAddProduct from '@/components/AdminAddProduct.vue'
 
 import {
   fetchCategoryById,
   updateCategory,
   fetchProducts,
   fetchProductVariants,
-  createProduct,
-  createVariant,
   deleteProduct
 } from '@/services/api'
 
@@ -212,53 +172,6 @@ const productsWithInfo = ref([])
 
 const loading = ref(false)
 const error = ref(null)
-
-const creating = ref(false)
-const createError = ref(null)
-
-const newProduct = ref({
-  title: '',
-  description: '',
-  imageUrl: '',
-  infotext1: '',
-  infotext2: '',
-  infotext3: ''
-})
-
-const variantsToCreate = ref([
-  { size: '', color: '', stock: 0, price: 0 } // available wird automatisch gesetzt
-])
-
-function validateCreate() {
-  if (!newProduct.value.title) return 'Titel darf nicht leer sein.'
-  if (!variantsToCreate.value.length) return 'Mindestens eine Variante ist erforderlich.'
-
-  for (let i = 0; i < variantsToCreate.value.length; i++) {
-    const v = variantsToCreate.value[i]
-    const stockOk = typeof v.stock === 'number' && v.stock >= 0
-    const priceOk = typeof v.price === 'number' && v.price >= 0
-    if (!stockOk) return `Variante ${i + 1}: Bitte einen gültigen Bestand (>= 0) angeben.`
-    if (!priceOk) return `Variante ${i + 1}: Bitte einen gültigen Preis (>= 0) angeben.`
-  }
-  return null
-}
-
-function resetCreateForm() {
-  newProduct.value = {
-    title: '',
-    description: '',
-    imageUrl: '',
-    infotext1: '',
-    infotext2: '',
-    infotext3: ''
-  }
-
-  variantsToCreate.value = [
-    { size: '', color: '', stock: 0, price: 0 }
-  ]
-
-  createError.value = null
-}
 
 async function loadCategoryAndProducts() {
   loading.value = true
@@ -321,39 +234,6 @@ async function saveCategory() {
   } catch (e) {
     console.error(e)
     alert('Fehler beim Speichern der Kategorie')
-  }
-}
-
-async function handleCreateProduct() {
-  createError.value = validateCreate()
-  if (createError.value) return
-
-  creating.value = true
-  try {
-    const created = await createProduct({
-      ...newProduct.value,
-      categoryId: category.value.id
-    })
-
-    const productId = created?.id ?? created
-
-    await Promise.all(
-      variantsToCreate.value.map((v) =>
-        createVariant(productId, {
-          ...v,
-          available: Number(v.stock) > 0
-        })
-      )
-    )
-
-    resetCreateForm()
-    await loadCategoryAndProducts()
-    alert('Produkt und Varianten wurden erstellt.')
-  } catch (e) {
-    console.error(e)
-    createError.value = 'Fehler beim Erstellen des Produkts oder der Varianten.'
-  } finally {
-    creating.value = false
   }
 }
 

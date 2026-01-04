@@ -5,7 +5,6 @@
     </div>
 
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <!-- NEUE VARIANTE -->
       <div
         class="border border-dashed border-[#f0c9b8] bg-white rounded-md shadow-sm flex flex-col overflow-hidden"
       >
@@ -65,13 +64,12 @@
         </div>
       </div>
 
-      <!-- EXISTIERENDE VARIANTEN -->
       <div
         v-for="v in variants"
         :key="v.id"
         class="border border-[#f0c9b8] bg-white rounded-md shadow-sm flex flex-col overflow-hidden"
       >
-        <!-- HEADER MIT BADGE -->
+
         <div class="p-4 border-b border-[#f0c9b8] bg-[#fff7f3] flex justify-between items-start">
           <div>
             <p class="text-xs text-gray-500">
@@ -82,7 +80,6 @@
             </p>
           </div>
 
-          <!-- STATUS BADGE -->
           <span
             class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold"
             :class="badgeClass(v)"
@@ -207,7 +204,6 @@ function handleDelete(id) {
   emit('delete', id)
 }
 
-/* ===== STATUS HELPERS ===== */
 function badgeLabel(v) {
   if (v.stock === 0) return 'Ausverkauft'
   return 'Live'

@@ -7,12 +7,10 @@
       {{ error }}
     </div>
 
-    <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      <!-- NEUE KATEGORIE -->
+    <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-start">
       <div
         class="border border-dashed border-[#f0c9b8] bg-white flex flex-col rounded-md overflow-hidden shadow-sm"
       >
-        <!-- NEU: ImagePickerCard statt label/input -->
         <div class="p-4 pb-0">
           <ImagePickerCard
             v-model="newCategory.imageUrl"
@@ -66,7 +64,6 @@
         </div>
       </div>
 
-      <!-- LISTE -->
       <div
         v-for="cat in categories"
         :key="cat.id"
@@ -124,7 +121,6 @@ import {
   fetchCategories,
   createCategory,
   deleteCategory
-  // uploadImage // aktuell ungenutzt
 } from '@/services/api'
 
 const categories = ref([])
