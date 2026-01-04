@@ -2,45 +2,24 @@
   <section class="max-w-5xl mx-auto p-6">
     <h1 class="text-2xl font-semibold mb-4">Kategorien (Admin)</h1>
 
-   
     <div v-if="loading">Lade Kategorien...</div>
     <div v-else-if="error" class="text-red-600 mb-4">
       {{ error }}
     </div>
 
-  
-    <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      
+    <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-start">
       <div
         class="border border-dashed border-[#f0c9b8] bg-white flex flex-col rounded-md overflow-hidden shadow-sm"
       >
-        
-        <label class="w-full cursor-pointer block">
-          <input
-            type="file"
-            accept="image/*"
-            class="hidden"
-            @change="onImageSelected"
+        <div class="p-4 pb-0">
+          <ImagePickerCard
+            v-model="newCategory.imageUrl"
+            alt="Neue Kategorie Bild"
+            :confirmRemove="false"
           />
-          <div class="w-full aspect-[4/3] flex items-center justify-center bg-gray-50">
-            <img
-              v-if="newCategory.imageUrl"
-              :src="newCategory.imageUrl"
-              alt="Neue Kategorie Bild"
-              class="w-full h-full object-cover"
-            />
-            <div
-              v-else
-              class="text-xs text-gray-500 text-center px-4"
-            >
-              Klicke hier, um ein Bild<br />
-              von deinem Gerät auszuwählen
-            </div>
-          </div>
-        </label>
+        </div>
 
         <div class="flex-1 flex flex-col justify-between px-4 py-4 gap-3">
-          
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">
               Kategoriename
@@ -52,7 +31,6 @@
             />
           </div>
 
-          
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">
               Slug (automatisch)
@@ -64,7 +42,6 @@
             </div>
           </div>
 
-          
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">
               Beschreibung (optional)
@@ -87,7 +64,6 @@
         </div>
       </div>
 
-    
       <div
         v-for="cat in categories"
         :key="cat.id"
@@ -110,7 +86,6 @@
           </div>
 
           <div class="mt-4 flex justify-between gap-2">
-           
             <router-link
               :to="{ name: 'AdminCategoryDetail', params: { id: cat.id } }"
               class="inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium text-white bg-[#e09a82]"
@@ -118,7 +93,6 @@
               Bearbeiten
             </router-link>
 
-           
             <button
               class="inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium text-white bg-red-500"
               @click="handleDelete(cat.id)"
@@ -129,7 +103,6 @@
         </div>
       </div>
 
-      
       <div
         v-if="categories.length === 0"
         class="col-span-full text-center text-gray-500 text-sm"
@@ -142,30 +115,30 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import ImagePickerCard from '@/components/ImagePickerCard.vue'
+
 import {
   fetchCategories,
   createCategory,
-  deleteCategory,
-  uploadImage
+  deleteCategory
 } from '@/services/api'
 
 const categories = ref([])
 const newCategory = ref({
   name: '',
   description: '',
-  imageUrl: '' 
+  imageUrl: ''
 })
 const loading = ref(false)
 const error = ref(null)
-
 
 function slugify(str) {
   if (!str) return ''
   return str
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, '-') 
-    .replace(/[^a-z0-9\-]/g, '') 
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9\-]/g, '')
 }
 
 async function loadCategories() {
@@ -196,7 +169,6 @@ async function handleCreate() {
 
   try {
     await createCategory(payload)
-    
     newCategory.value = { name: '', description: '', imageUrl: '' }
     await loadCategories()
   } catch (e) {
@@ -216,20 +188,5 @@ async function handleDelete(id) {
   }
 }
 
-
-function onImageSelected(event) {
-  const file = event.target.files?.[0]
-  if (!file) return
-
-  const reader = new FileReader()
-  reader.onload = () => {
-   
-    newCategory.value.imageUrl = reader.result
-  }
-  reader.readAsDataURL(file)
-}
-
-onMounted(() => {
-  loadCategories()
-})
+onMounted(loadCategories)
 </script>
