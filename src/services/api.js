@@ -158,6 +158,7 @@ export async function fetchUsers(params = {}) {
   const qs = new URLSearchParams()
   if (params.firstName) qs.set('firstName', params.firstName)
   if (params.lastName) qs.set('lastName', params.lastName)
+  if (params.email) qs.set('email', params.email)
   if (params.role) qs.set('role', params.role)
 
   // FALSCH: fetch(`/api/users?...`) -> geht an Port 5173

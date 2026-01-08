@@ -6,7 +6,7 @@
     </div>
 
     <div class="bg-white border border-[#f0c9b8] rounded-xl p-5 mb-8 shadow-sm">
-      <div class="grid gap-4 md:grid-cols-3">
+      <div class="grid gap-4 md:grid-cols-4">
         <div>
           <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Vorname</label>
           <input
@@ -24,6 +24,15 @@
             placeholder="Suchen..."
           />
         </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">E-Mail</label>
+          <input
+            v-model="filters.email"
+            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#e09a82] outline-none transition-all"
+            placeholder="Suchen..." 
+          />
+        </div>  
 
         <div>
           <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Rolle</label>
