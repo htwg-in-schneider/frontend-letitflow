@@ -8,6 +8,10 @@ import ContactPage from "@/pages/ContactPage.vue";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage.vue";
 import ImprintPage from "@/pages/ImprintPage.vue";
 
+import LoginView from "@/pages/LoginView.vue";
+import LogoutView from "@/pages/LogoutView.vue";
+import UserView from "@/pages/UserView.vue";
+
 import AdminCategoryListPage from '@/pages/AdminCategoryListPage.vue'
 import AdminCategoryDetailPage from '@/pages/AdminCategoryDetailPage.vue'
 import AdminProductDetailPage from '@/pages/AdminProductDetailPage.vue'
@@ -49,6 +53,21 @@ const routes = [
         path: '/imprintpage',
         name: 'ImprintPage',
         component: ImprintPage
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: LoginView
+    },
+    {
+        path: '/logout',
+        name: 'Logout',
+        component: LogoutView
+    },
+    {
+        path: '/user',
+        name: 'User',
+        component: UserView
     },
   {
     path: '/admin/categories',

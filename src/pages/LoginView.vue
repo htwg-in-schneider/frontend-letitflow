@@ -1,33 +1,36 @@
 <template>
-  <div class="min-h-[60vh] flex items-center justify-center px-4 py-12">
-    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md border border-gray-100">
+  <div class="min-h-screen bg-[#fff7f3] flex items-center justify-center px-4 py-12">
+    <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-3xl shadow-sm border border-[#e7b2a5]/30">
       <div>
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 class="text-center text-3xl font-bold text-gray-800">
           Einloggen
         </h2>
+        <p class="mt-2 text-center text-sm text-gray-500">
+          Schön, dass du wieder da bist!
+        </p>
       </div>
-      <form class="mt-8 space-y-6" @submit.prevent>
-        <div class="rounded-md shadow-sm -space-y-px">
+      <form class="mt-8 space-y-6" @submit.prevent="handleLogin">
+        <div class="space-y-4">
           <div>
-            <label for="email-address" class="sr-only">E-Mail</label>
+            <label for="email-address" class="block text-sm font-medium text-gray-700 mb-1 ml-1">E-Mail</label>
             <input
               id="email-address"
               name="email"
               type="email"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              placeholder="E-Mail"
+              class="appearance-none block w-full px-4 py-3 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#e7b2a5] focus:border-transparent transition-all sm:text-sm"
+              placeholder="deine@email.de"
             />
           </div>
           <div>
-            <label for="password" class="sr-only">Passwort</label>
+            <label for="password" class="block text-sm font-medium text-gray-700 mb-1 ml-1">Passwort</label>
             <input
               id="password"
               name="password"
               type="password"
               required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              placeholder="Passwort"
+              class="appearance-none block w-full px-4 py-3 border border-gray-200 placeholder-gray-400 text-gray-900 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#e7b2a5] focus:border-transparent transition-all sm:text-sm"
+              placeholder="••••••••"
             />
           </div>
         </div>
@@ -35,7 +38,7 @@
         <div>
           <button
             type="submit"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            class="w-full flex justify-center py-3 px-4 border border-transparent text-base font-semibold rounded-full text-white bg-[#d58d7d] hover:bg-[#c47c6d] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#d58d7d] transition-all shadow-md"
           >
             Einloggen
           </button>
@@ -46,5 +49,12 @@
 </template>
 
 <script setup>
-// UI only - No logic yet
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const handleLogin = () => {
+  // Simulierter Login: Einfach zur Benutzerseite weiterleiten
+  router.push('/user')
+}
 </script>
