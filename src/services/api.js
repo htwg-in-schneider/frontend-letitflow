@@ -153,6 +153,32 @@ export async function uploadImage(file) {
   return res.json() 
 }
 
+// Ändere dies:
+export async function fetchUsers(params = {}) {
+  const qs = new URLSearchParams()
+  if (params.firstName) qs.set('firstName', params.firstName)
+  if (params.lastName) qs.set('lastName', params.lastName)
+  if (params.role) qs.set('role', params.role)
 
+  // FALSCH: fetch(`/api/users?...`) -> geht an Port 5173
+  // RICHTIG: Nutze deine getJson Funktion!
+  const query = qs.toString() ? `?${qs.toString()}` : ''
+  return getJson(`/api/users${query}`) 
+}
 
+// Mache das gleiche für die anderen User-Funktionen:
+export function fetchUserById(id) {
+  return getJson(`/api/users/${id}`)
+}
+
+export function deleteUser(id) {
+  return requestJson(`/api/users/${id}`, { method: 'DELETE' })
+}
+
+export function updateUser(id, payload) {
+  return requestJson(`/api/users/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload)
+  })
+}
 

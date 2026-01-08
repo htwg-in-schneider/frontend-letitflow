@@ -12,6 +12,9 @@ import AdminCategoryListPage from '@/pages/AdminCategoryListPage.vue'
 import AdminCategoryDetailPage from '@/pages/AdminCategoryDetailPage.vue'
 import AdminProductDetailPage from '@/pages/AdminProductDetailPage.vue'
 
+import AdminUserListPage from '@/pages/AdminUserListPage.vue'
+import AdminUserDetailPage from '@/pages/AdminUserDetailPage.vue'
+
 const routes = [
   {
     path: '/',
@@ -66,7 +69,19 @@ const routes = [
     name: 'AdminProductDetail',
     component: AdminProductDetailPage,
     props: true
-  }
+  },
+  {
+    path: '/admin/users',
+    name: 'AdminUserList',
+    component: AdminUserListPage,
+    
+  },
+{
+  path: '/admin/users/:id',
+  name: 'AdminUserDetail',
+  component: AdminUserDetailPage,
+  
+}
 ]
 
 const router = createRouter({
