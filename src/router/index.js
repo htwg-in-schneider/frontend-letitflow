@@ -15,6 +15,9 @@ import AdminProductDetailPage from '@/pages/AdminProductDetailPage.vue'
 import AdminUserListPage from '@/pages/AdminUserListPage.vue'
 import AdminUserDetailPage from '@/pages/AdminUserDetailPage.vue'
 
+import CartPage from '@/pages/CartPage.vue'
+import CardView from '@/pages/CardView.vue'
+
 const routes = [
   {
     path: '/',
@@ -81,7 +84,13 @@ const routes = [
   name: 'AdminUserDetail',
   component: AdminUserDetailPage,
   
-}
+},
+{
+    path: '/cart',
+    name: 'Cart',
+    component: CardView
+  },
+
 ]
 
 const router = createRouter({

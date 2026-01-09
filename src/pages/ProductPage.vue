@@ -109,6 +109,7 @@
               </div>
 
               <button
+                @click="addToCart"
                 class="w-full py-3 text-sm md:text-base text-white bg-[#e09a82] hover:bg-[#d48366] rounded-2xl transition disabled:opacity-40 disabled:cursor-not-allowed"
                 :disabled="!selectedVariant"
               >
@@ -238,10 +239,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { fetchProductById, fetchProductVariants } from "@/services/api";
 
 const route = useRoute();
+const router = useRouter();
 const productId = route.params.id;
 
 const product = ref(null);
@@ -304,6 +306,37 @@ const displayPrice = computed(() => {
   }
   return null;
 });
+
+const addToCart = () => {
+  if (!selectedVariant.value || !product.value) return;
+
+  const cartItem = {
+    productId: product.value.id,
+    variantId: selectedVariant.value.id,
+    title: product.value.title,
+    color: selectedColor.value,
+    size: selectedSize.value,
+    quantity: selectedQuantity.value,
+    price: displayPrice.value,
+    imageUrl: product.value.imageUrl
+  };
+
+  // Warenkorb aus localStorage laden
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  // Prüfen, ob exakt diese Variante schon drin ist
+  const existingIndex = cart.findIndex(item => item.variantId === cartItem.variantId);
+
+  if (existingIndex > -1) {
+    cart[existingIndex].quantity += selectedQuantity.value;
+  } else {
+    cart.push(cartItem);
+  }
+
+  // Speichern und zum Warenkorb navigieren
+  localStorage.setItem("cart", JSON.stringify(cart));
+  router.push("/cart");
+};
 
 const loadData = async () => {
   loading.value = true;
