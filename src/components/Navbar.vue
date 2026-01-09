@@ -65,9 +65,29 @@
       <div class="flex items-center gap-6 text-sm text-black">
         <NavbarSearch />
 
-        <router-link to="/login" class="flex items-center justify-center hover:opacity-80 transition" title="Einloggen">
-          <img src="/img/benutzerIcon_Desktop.png" alt="Benutzer" class="h-8 w-8" />
-        </router-link>
+        <!-- Auth0 Login/Logout -->
+        <template v-if="!isAuthenticated">
+          <router-link to="/login" class="flex items-center gap-2 hover:text-[#e09a82] transition font-semibold" title="Einloggen">
+            <img src="/img/benutzerIcon_Desktop.png" alt="Benutzer" class="h-8 w-8" />
+            <span>Einloggen</span>
+          </router-link>
+        </template>
+        <template v-else>
+          <div class="flex items-center gap-4">
+            <div class="flex flex-col items-end">
+              <span v-if="user?.email" class="text-[10px] text-gray-500">{{ user.email }}</span>
+              <button
+                  @click="handleLogout"
+                  class="hover:text-[#e09a82] transition font-semibold"
+              >
+                Ausloggen
+              </button>
+            </div>
+            <router-link to="/user" title="Profil">
+              <img src="/img/benutzerIcon_Desktop.png" alt="Benutzer" class="h-8 w-8" />
+            </router-link>
+          </div>
+        </template>
 
         <router-link to="/cart" class="flex items-center justify-center">
           <img src="/img/warenkorb_icon.png" alt="Warenkorb" class="h-7 w-7" />
@@ -83,6 +103,13 @@
 import { ref, onMounted } from 'vue'
 import NavbarSearch from '@/components/NavbarSearch.vue'
 import { fetchCategories } from '@/services/api'
+import { useAuth0 } from '@auth0/auth0-vue'
+
+const { user, isAuthenticated, logout } = useAuth0()
+
+const handleLogout = () => {
+  logout({ logoutParams: { returnTo: window.location.origin } })
+}
 
 const isCategoriesOpen = ref(false)
 

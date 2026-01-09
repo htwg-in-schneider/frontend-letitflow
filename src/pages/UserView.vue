@@ -13,19 +13,19 @@
           <div class="space-y-4 text-[17px] text-gray-700">
             <div class="flex justify-between items-center border-b border-gray-50 pb-2">
               <span class="font-medium text-gray-500">E-Mail</span>
-              <span class="font-semibold text-gray-800">Muster@muster.de</span>
+              <span class="font-semibold text-gray-800">{{ user?.email }}</span>
             </div>
-            <div class="flex justify-between items-center border-b border-gray-50 pb-2">
+            <div v-if="user?.given_name" class="flex justify-between items-center border-b border-gray-50 pb-2">
               <span class="font-medium text-gray-500">Vorname</span>
-              <span class="font-semibold text-gray-800">Laura</span>
+              <span class="font-semibold text-gray-800">{{ user.given_name }}</span>
             </div>
-            <div class="flex justify-between items-center border-b border-gray-50 pb-2">
+            <div v-if="user?.family_name" class="flex justify-between items-center border-b border-gray-50 pb-2">
               <span class="font-medium text-gray-500">Nachname</span>
-              <span class="font-semibold text-gray-800">Muster</span>
+              <span class="font-semibold text-gray-800">{{ user.family_name }}</span>
             </div>
-            <div class="flex justify-between items-center border-b border-gray-50 pb-2">
-              <span class="font-medium text-gray-500">Geburtstag</span>
-              <span class="font-semibold text-gray-800">01.01.2000</span>
+            <div v-if="user?.nickname" class="flex justify-between items-center border-b border-gray-50 pb-2">
+              <span class="font-medium text-gray-500">Nickname</span>
+              <span class="font-semibold text-gray-800">{{ user.nickname }}</span>
             </div>
           </div>
         </div>
@@ -51,5 +51,6 @@
 </template>
 
 <script setup>
-// Keine Logik benötigt für diese rein optische Darstellung
+import { useAuth0 } from '@auth0/auth0-vue'
+const { user } = useAuth0()
 </script>

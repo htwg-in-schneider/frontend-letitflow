@@ -49,12 +49,11 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { useAuth0 } from '@auth0/auth0-vue'
 
-const router = useRouter()
+const { loginWithRedirect } = useAuth0()
 
 const handleLogin = () => {
-  // Simulierter Login: Einfach zur Benutzerseite weiterleiten
-  router.push('/user')
+  loginWithRedirect()
 }
 </script>
