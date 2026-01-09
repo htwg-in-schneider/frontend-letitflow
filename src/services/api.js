@@ -181,5 +181,44 @@ export function updateUser(id, payload) {
     method: 'PUT',
     body: JSON.stringify(payload)
   })
+
+}
+
+// --- WARENKORB FUNKTIONEN ---
+
+/**
+ * Holt den Warenkorb eines Users anhand der ID
+ */
+export function fetchCartByUserId(userId) {
+  return getJson(`/api/cart?userId=${userId}`)
+}
+
+/**
+ * Fügt ein Produkt mit einer bestimmten Variante zum Warenkorb hinzu
+ */
+export function addToCart(userId, productId, variantId, quantity) {
+  // Wir nutzen requestJson, da es ein POST ist
+  // Die Parameter werden als Query-Strings angehängt, wie im Controller definiert
+  return requestJson(`/api/cart/add?userId=${userId}&productId=${productId}&variantId=${variantId}&quantity=${quantity}`, {
+    method: 'POST'
+  })
+}
+
+/**
+ * Löscht ein spezifisches Item aus dem Warenkorb
+ */
+export function deleteCartItem(userId, cartItemId) {
+  return requestJson(`/api/cart/item/${cartItemId}?userId=${userId}`, {
+    method: 'DELETE'
+  })
+}
+
+/**
+ * Optional: Aktualisiert die Menge eines Items direkt
+ */
+export function updateCartItemQuantity(userId, cartItemId, newQuantity) {
+  return requestJson(`/api/cart/item/${cartItemId}/quantity?userId=${userId}&quantity=${newQuantity}`, {
+    method: 'PUT'
+  })
 }
 
