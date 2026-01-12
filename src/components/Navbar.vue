@@ -65,9 +65,55 @@
       <div class="flex items-center gap-6 text-sm text-black">
         <NavbarSearch />
 
-        <button type="button" class="flex items-center justify-center">
-          <img src="/img/benutzerIcon_Desktop.png" alt="Benutzer" class="h-8 w-8" />
-        </button>
+        <!-- User Dropdown (Hover) -->
+        <div
+            class="relative flex items-center"
+            @mouseenter="isUserMenuOpen = true"
+            @mouseleave="isUserMenuOpen = false"
+        >
+          <div class="cursor-pointer py-1">
+            <img src="/img/benutzerIcon_Desktop.png" alt="Benutzer" class="h-8 w-8" />
+          </div>
+
+          <!-- Popup Menu -->
+          <div
+              v-if="isUserMenuOpen"
+              class="absolute right-0 top-full mt-0 w-48 bg-white border border-orange-200 shadow-lg rounded-xl py-2 z-50"
+          >
+            <template v-if="!isAuthenticated">
+              <router-link
+                  to="/login"
+                  class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition font-semibold"
+                  @click="isUserMenuOpen = false"
+              >
+                Login
+              </router-link>
+            </template>
+            <template v-else>
+              <router-link
+                  to="/profile"
+                  class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition font-semibold"
+                  @click="isUserMenuOpen = false"
+              >
+                Mein Profil
+              </router-link>
+              <router-link
+                  to="/orders"
+                  class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition font-semibold"
+                  @click="isUserMenuOpen = false"
+              >
+                Meine Bestellungen
+              </router-link>
+              <hr class="my-1 border-orange-100" />
+              <button
+                  @click="handleLogout"
+                  class="w-full text-left block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition font-semibold"
+              >
+                Ausloggen
+              </button>
+            </template>
+          </div>
+        </div>
 
         <router-link to="/cart" class="flex items-center justify-center">
           <img src="/img/warenkorb_icon.png" alt="Warenkorb" class="h-7 w-7" />
@@ -83,6 +129,15 @@
 import { ref, onMounted } from 'vue'
 import NavbarSearch from '@/components/NavbarSearch.vue'
 import { fetchCategories } from '@/services/api'
+import { useAuth0 } from '@auth0/auth0-vue'
+
+const { user, isAuthenticated, logout } = useAuth0()
+
+const isUserMenuOpen = ref(false)
+
+const handleLogout = () => {
+  logout({ logoutParams: { returnTo: window.location.origin } })
+}
 
 const isCategoriesOpen = ref(false)
 
