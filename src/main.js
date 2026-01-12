@@ -9,15 +9,15 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-app.use(
-    createAuth0({
-        domain: import.meta.env.VITE_AUTH0_DOMAIN,
-        clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
-        authorizationParams: {
-            redirect_uri: import.meta.env.VITE_AUTH0_CALLBACK_URL,
-            audience: import.meta.env.VITE_AUTH0_AUDIENCE,
-        }
-    })
-)
+export const auth0 = createAuth0({
+    domain: import.meta.env.VITE_AUTH0_DOMAIN,
+    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
+    authorizationParams: {
+        redirect_uri: import.meta.env.VITE_AUTH0_CALLBACK_URL,
+        audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+    }
+})
+
+app.use(auth0)
 
 app.mount('#app')

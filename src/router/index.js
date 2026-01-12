@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { authGuard } from '@auth0/auth0-vue'
 
 import HomePage from '@/pages/HomePage.vue'
 import CategoryPage from '@/pages/CategoryPage.vue'
@@ -68,6 +69,12 @@ const routes = [
         path: '/user',
         name: 'User',
         component: UserView
+    },
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: () => import('@/pages/ProfileView.vue'),
+        beforeEnter: authGuard
     },
   {
     path: '/admin/categories',
