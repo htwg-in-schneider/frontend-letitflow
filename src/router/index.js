@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { authGuard } from '@auth0/auth0-vue'
 
 import HomePage from '@/pages/HomePage.vue'
 import CategoryPage from '@/pages/CategoryPage.vue'
@@ -7,6 +8,10 @@ import SearchResultsPage from '@/pages/SearchResultsPage.vue'
 import ContactPage from "@/pages/ContactPage.vue";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage.vue";
 import ImprintPage from "@/pages/ImprintPage.vue";
+
+import LoginView from "@/pages/LoginView.vue";
+import LogoutView from "@/pages/LogoutView.vue";
+import UserView from "@/pages/UserView.vue";
 
 import AdminCategoryListPage from '@/pages/AdminCategoryListPage.vue'
 import AdminCategoryDetailPage from '@/pages/AdminCategoryDetailPage.vue'
@@ -55,6 +60,27 @@ const routes = [
         path: '/imprintpage',
         name: 'ImprintPage',
         component: ImprintPage
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: LoginView
+    },
+    {
+        path: '/logout',
+        name: 'Logout',
+        component: LogoutView
+    },
+    {
+        path: '/user',
+        name: 'User',
+        component: UserView
+    },
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: () => import('@/pages/ProfileView.vue'),
+        beforeEnter: authGuard
     },
   {
     path: '/admin/categories',
