@@ -220,5 +220,49 @@ export function updateCartItemQuantity(userId, cartItemId, newQuantity) {
   return requestJson(`/api/cart/item/${cartItemId}/quantity?userId=${userId}&quantity=${newQuantity}`, {
     method: 'PUT'
   })
+
 }
 
+// --- ADRESS FUNKTIONEN ---
+
+/**
+ * Holt die Adresse eines Users anhand seiner ID.
+ * Falls keine Adresse existiert, wird ein Fehler (404) geworfen, 
+ * den wir in der Komponente abfangen können.
+ */
+export function fetchAddressByUserId(userId) {
+  return getJson(`/api/addresses/user/${userId}`)
+}
+
+/**
+ * Erstellt eine neue Adresse oder aktualisiert eine bestehende.
+ * Im Backend sollte ein POST auf /api/addresses beides handhaben können.
+ */
+export function saveAddress(payload) {
+  return requestJson('/api/addresses', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  })
+}
+
+/**
+ * Holt eine spezifische Adresse anhand ihrer ID
+ */
+export function fetchAddressById(id) {
+  return getJson(`/api/addresses/${id}`)
+}
+
+// In deiner api.js hinzufügen oder anpassen:
+export function fetchAddressByUserAndType(userId, type) {
+  // Wir hängen den Typ als Query-Parameter an
+  return getJson(`/api/addresses/user/${userId}?type=${type}`)
+}
+
+/**
+ * Löscht eine Adresse
+ */
+export function deleteAddress(id) {
+  return requestJson(`/api/addresses/${id}`, {
+    method: 'DELETE'
+  })
+}
