@@ -22,6 +22,7 @@ import AdminUserDetailPage from '@/pages/AdminUserDetailPage.vue'
 
 import CartPage from '@/pages/CartPage.vue'
 import CardView from '@/pages/CardView.vue'
+import OrderView from '@/pages/OrderView.vue'
 
 const routes = [
   {
@@ -114,8 +115,14 @@ const routes = [
 {
     path: '/cart',
     name: 'Cart',
-    component: CardView
+    component: CardView,
   },
+
+  {
+    path: '/orderView',
+    name: 'OrderView',
+    component: OrderView
+  }
 
 ]
 

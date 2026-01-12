@@ -5,8 +5,21 @@ import PageFooter from "@/components/PageFooter.vue";
 
 <template>
   <Navbar/>
- <router-view/>
- <PageFooter/>
+
+  <div class="app-content">
+    <router-view/>
+  </div>
+
+  <PageFooter/>
 </template>
 
-
+<style>
+/* Sicherstellen, dass der Content-Bereich 
+  kein "overflow: hidden" hat, da dies 
+  Sticky-Elemente in den Unterseiten deaktiviert.
+*/
+.app-content {
+  display: block;
+  width: 100%;
+}
+</style>
