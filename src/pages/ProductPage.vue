@@ -109,7 +109,7 @@
               </div>
 
               <button
-                @click="addToCart"
+                @click="handleAddToCart"
                 class="w-full py-3 text-sm md:text-base text-white bg-[#e09a82] hover:bg-[#d48366] rounded-2xl transition disabled:opacity-40 disabled:cursor-not-allowed"
                 :disabled="!selectedVariant"
               >
@@ -141,7 +141,7 @@
         <div>
           <h2 class="text-lg font-semibold text-gray-900 mb-2">Details</h2>
           <ul class="list-disc list-inside space-y-1 text-gray-700">
-            <li v-if="product.title">Produktbeschreibung: {{ product.description }}</li>
+            <li v-if="product.description">Produktbeschreibung: {{ product.description }}</li>
             <li v-if="product.material">Material: {{ product.material }}</li>
             <li v-if="product.flow">Blutungsstärke: {{ product.flow }}</li>
             <li v-if="product.cycleLength">
@@ -154,81 +154,55 @@
           <div
             class="border border-orange-200 bg-[#fff7f3] rounded-xl px-6 py-5 space-y-3"
           >
-            <p class="text-sm font-semibold text-gray-800">
-              Farben:
-              <span class="font-normal">
-                {{ uniqueColors.length ? uniqueColors.join(', ') : '—' }}
-              </span>
-            </p>
+            <div>
+              <button
+                @click="showMaterial = !showMaterial"
+                class="flex justify-between w-full font-semibold text-gray-800"
+                type="button"
+              >
+                <span>Materialhinweis</span>
+                <span>{{ showMaterial ? "▴" : "▾" }}</span>
+              </button>
+              <p
+                v-if="showMaterial && product.infotext1"
+                class="mt-1 whitespace-pre-line text-sm text-gray-700"
+              >
+                {{ product.infotext1 }}
+              </p>
+            </div>
 
-            <p class="text-sm font-semibold text-gray-800">
-              Größen:
-              <span class="font-normal">
-                {{ uniqueSizes.length ? uniqueSizes.join(', ') : '—' }}
-              </span>
-            </p>
+            <div>
+              <button
+                @click="showApplication = !showApplication"
+                class="flex justify-between w-full font-semibold text-gray-800"
+                type="button"
+              >
+                <span>Anwendungshinweis</span>
+                <span>{{ showApplication ? "▴" : "▾" }}</span>
+              </button>
+              <p
+                v-if="showApplication && product.infotext2"
+                class="mt-1 whitespace-pre-line text-sm text-gray-700"
+              >
+                {{ product.infotext2 }}
+              </p>
+            </div>
 
-            <p class="text-sm font-semibold text-gray-800">
-              Preis:
-              <span class="font-normal" v-if="displayPrice !== null">
-                ab {{ displayPrice.toFixed(2) }} €
-              </span>
-              <span class="font-normal" v-else>
-                Preis auf Anfrage
-              </span>
-            </p>
-
-            <div class="space-y-3 pt-3 text-sm text-gray-800">
-              <div>
-                <button
-                  @click="showMaterial = !showMaterial"
-                  class="flex justify-between w-full font-semibold"
-                  type="button"
-                >
-                  <span>Materialhinweis</span>
-                  <span>{{ showMaterial ? "▴" : "▾" }}</span>
-                </button>
-                <p
-                  v-if="showMaterial && product.infotext1"
-                  class="mt-1 whitespace-pre-line"
-                >
-                  {{ product.infotext1 }}
-                </p>
-              </div>
-
-              <div>
-                <button
-                  @click="showApplication = !showApplication"
-                  class="flex justify-between w-full font-semibold"
-                  type="button"
-                >
-                  <span>Anwendungshinweis</span>
-                  <span>{{ showApplication ? "▴" : "▾" }}</span>
-                </button>
-                <p
-                  v-if="showApplication && product.infotext2"
-                  class="mt-1 whitespace-pre-line"
-                >
-                  {{ product.infotext2 }}
-                </p>
-              </div>
-
-              <div>
-                <button
-                  @click="showCare = !showCare"
-                  class="flex justify-between w-full font-semibold"
-                  type="button"
-                >
-                  <span>Pflegehinweis</span>
-                  <span>{{ showCare ? "▴" : "▾" }}</span>
-                </button>
-                <p
-                  v-if="showCare && product.infotext3"
-                  class="mt-1 whitespace-pre-line"
-                >
-                  {{ product.infotext3 }}
-                </p>
-              </div>
+            <div>
+              <button
+                @click="showCare = !showCare"
+                class="flex justify-between w-full font-semibold text-gray-800"
+                type="button"
+              >
+                <span>Pflegehinweis</span>
+                <span>{{ showCare ? "▴" : "▾" }}</span>
+              </button>
+              <p
+                v-if="showCare && product.infotext3"
+                class="mt-1 whitespace-pre-line text-sm text-gray-700"
+              >
+                {{ product.infotext3 }}
+              </p>
             </div>
           </div>
         </div>
@@ -241,9 +215,12 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { fetchProductById, fetchProductVariants } from "@/services/api";
+import { useCartStore } from "@/stores/cartStores"; // NEU: Import des Pinia Stores
 
 const route = useRoute();
 const router = useRouter();
+const cartStore = useCartStore(); // NEU: Store nutzen
+
 const productId = route.params.id;
 
 const product = ref(null);
@@ -307,10 +284,11 @@ const displayPrice = computed(() => {
   return null;
 });
 
-const addToCart = () => {
+// GEÄNDERT: Nutzt jetzt die addItem Action aus dem Pinia Store
+const handleAddToCart = async () => {
   if (!selectedVariant.value || !product.value) return;
 
-  const cartItem = {
+  const itemToAdd = {
     productId: product.value.id,
     variantId: selectedVariant.value.id,
     title: product.value.title,
@@ -321,21 +299,11 @@ const addToCart = () => {
     imageUrl: product.value.imageUrl
   };
 
-  // Warenkorb aus localStorage laden
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-  // Prüfen, ob exakt diese Variante schon drin ist
-  const existingIndex = cart.findIndex(item => item.variantId === cartItem.variantId);
-
-  if (existingIndex > -1) {
-    cart[existingIndex].quantity += selectedQuantity.value;
-  } else {
-    cart.push(cartItem);
-  }
-
-  // Speichern und zum Warenkorb navigieren
-  localStorage.setItem("cart", JSON.stringify(cart));
-  router.push("/cart");
+  // Die gesamte Logik (API vs LocalStorage) passiert im Store!
+  await cartStore.addItem(itemToAdd);
+  
+  // Navigation zur Warenkorb-Seite
+  router.push("/cartView");
 };
 
 const loadData = async () => {

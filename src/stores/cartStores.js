@@ -1,41 +1,96 @@
-import { defineStore } from 'pinia'    // Falls du die API aufgeteilt hast
+import { defineStore } from 'pinia'
+import * as api from '@/services/api'
 
 export const useCartStore = defineStore('cart', {
-  state() {
-    return {
-      items: [],
-      totalSum: 0,
-      currentUserId: null // Hier speichern wir die ID dynamisch
-    }
-  },
+  state: () => ({
+    items: [],
+    totalSum: 0,
+    currentUserId: null
+  }),
   actions: {
-    // Setzt den User (wird z.B. beim Login aufgerufen)
     setUserId(id) {
       this.currentUserId = id
     },
 
     async loadCart() {
-      if (!this.currentUserId) return;
-      try {
-        const data = await cartApi.fetchByUserId(this.currentUserId)
-        this.items = data.items
-        this.totalSum = data.totalSum
-      } catch (error) {
-        console.error("Fehler beim Laden:", error)
+      if (this.currentUserId) {
+        try {
+          const data = await api.fetchCartByUserId(this.currentUserId)
+          this.items = data.items || []
+          this.totalSum = data.totalSum || 0
+        } catch (error) {
+          console.error("Fehler beim Laden (API):", error)
+        }
+      } else {
+        const data = localStorage.getItem('cart')
+        if (data) {
+          this.items = JSON.parse(data)
+          this.totalSum = this.items.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0)
+        } else {
+          this.items = []
+          this.totalSum = 0
+        }
       }
     },
 
-    async addItemToCart(productId, variantId, quantity) {
-      if (!this.currentUserId) {
-        alert("Bitte logge dich zuerst ein!");
-        return;
+    async addItem(cartItem) {
+      if (this.currentUserId) {
+        try {
+          await api.addToCart(this.currentUserId, cartItem.productId, cartItem.variantId, cartItem.quantity)
+          await this.loadCart() 
+        } catch (error) {
+          console.error("API Error:", error)
+        }
+      } else {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+        const existingIndex = cart.findIndex(item => item.variantId === cartItem.variantId)
+        if (existingIndex > -1) {
+          cart[existingIndex].quantity += cartItem.quantity
+        } else {
+          cart.push(cartItem)
+        }
+        localStorage.setItem('cart', JSON.stringify(cart))
+        await this.loadCart()
       }
-      try {
-        await cartApi.add(this.currentUserId, productId, variantId, quantity)
-        await this.loadCart() 
-      } catch (error) {
-        console.error("Fehler beim Hinzufügen:", error)
+    },
+
+    async removeItem(variantId) {
+      if (this.currentUserId) {
+        try {
+          // KORREKTUR: API-Call aktiviert und Name angepasst
+          await api.deleteCartItem(this.currentUserId, variantId)
+          await this.loadCart() 
+        } catch (error) {
+          console.error("Fehler beim Löschen (API):", error)
+        }
+      } else {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+        const updatedCart = cart.filter(item => item.variantId !== variantId)
+        localStorage.setItem('cart', JSON.stringify(updatedCart))
+        await this.loadCart()
+      }
+    },
+
+    async updateQuantity(variantId, newQuantity) {
+      if (this.currentUserId) {
+        try {
+          // KORREKTUR: Sicherstellen, dass es eine Zahl ist
+          const qty = Number(newQuantity)
+          await api.updateCartItemQuantity(this.currentUserId, variantId, qty)
+          await this.loadCart()
+        } catch (error) {
+          console.error("Fehler beim Aktualisieren der Menge:", error)
+        }
+      } else {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+        const item = cart.find(i => i.variantId === variantId)
+        if (item) {
+          item.quantity = Number(newQuantity)
+          localStorage.setItem('cart', JSON.stringify(cart))
+          await this.loadCart()
+        }
       }
     }
   }
+
 })

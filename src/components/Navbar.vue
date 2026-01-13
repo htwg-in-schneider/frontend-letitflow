@@ -121,7 +121,7 @@
           </div>
         </div>
 
-        <router-link to="/cart" class="flex items-center justify-center">
+        <router-link to="/cartView" class="flex items-center justify-center">
           <img src="/img/warenkorb_icon.png" alt="Warenkorb" class="h-7 w-7" />
         </router-link>
       </div>

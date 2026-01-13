@@ -25,8 +25,8 @@ import AdminProductDetailPage from '@/pages/AdminProductDetailPage.vue'
 import AdminUserListPage from '@/pages/AdminUserListPage.vue'
 import AdminUserDetailPage from '@/pages/AdminUserDetailPage.vue'
 
-import CartPage from '@/pages/CartPage.vue'
 import CardView from '@/pages/CardView.vue'
+import OrderView from '@/pages/OrderView.vue'
 
 const routes = [
   {
@@ -51,102 +51,112 @@ const routes = [
     name: 'SearchResults',
     component: SearchResultsPage
   },
-    {
-        path: '/contact',
-        name: 'Contact',
-        component: ContactPage
-    },
-    {
-        path: '/privacypolicy',
-        name: 'PrivacyPolicy',
-        component: PrivacyPolicyPage
-    },
-    {
-        path: '/imprintpage',
-        name: 'ImprintPage',
-        component: ImprintPage
-    },
-    {
-        path: '/about',
-        name: 'AboutUs',
-        component: AboutUsPage
-    },
-    {
-        path: '/agb',
-        name: 'TermsAndConditions',
-        component: TermsAndConditionsPage
-    },
-    {
-        path: '/payment-methods',
-        name: 'PaymentMethods',
-        component: PaymentMethodsPage
-    },
-    {
-        path: '/shipping-info',
-        name: 'ShippingInfo',
-        component: ShippingInfoPage
-    },
-    {
-        path: '/returns',
-        name: 'Returns',
-        component: ReturnsPage
-    },
-    {
-        path: '/login',
-        name: 'Login',
-        component: LoginView
-    },
-    {
-        path: '/logout',
-        name: 'Logout',
-        component: LogoutView
-    },
-    {
-        path: '/user',
-        name: 'User',
-        component: UserView
-    },
-    {
-        path: '/profile',
-        name: 'Profile',
-        component: () => import('@/pages/ProfileView.vue'),
-        beforeEnter: authGuard
-    },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: ContactPage
+  },
+  {
+    path: '/privacypolicy',
+    name: 'PrivacyPolicy',
+    component: PrivacyPolicyPage
+  },
+  {
+    path: '/imprintpage',
+    name: 'ImprintPage',
+    component: ImprintPage
+  },
+  {
+    path: '/about',
+    name: 'AboutUs',
+    component: AboutUsPage
+  },
+  {
+    path: '/agb',
+    name: 'TermsAndConditions',
+    component: TermsAndConditionsPage
+  },
+  {
+    path: '/payment-methods',
+    name: 'PaymentMethods',
+    component: PaymentMethodsPage
+  },
+  {
+    path: '/shipping-info',
+    name: 'ShippingInfo',
+    component: ShippingInfoPage
+  },
+  {
+    path: '/returns',
+    name: 'Returns',
+    component: ReturnsPage
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginView
+  },
+  {
+    path: '/logout',
+    name: 'Logout',
+    component: LogoutView
+  },
+  {
+    path: '/user',
+    name: 'User',
+    component: UserView
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('@/pages/ProfileView.vue'),
+    beforeEnter: authGuard
+  },
+  // ADMIN BEREICHE (Jetzt geschützt)
   {
     path: '/admin/categories',
     name: 'AdminCategoryList',
-    component: AdminCategoryListPage
+    component: AdminCategoryListPage,
+    beforeEnter: authGuard
   },
   {
     path: '/admin/categories/:id',
     name: 'AdminCategoryDetail',
     component: AdminCategoryDetailPage,
-    props: true
+    props: true,
+    beforeEnter: authGuard
   },
   {
     path: '/admin/products/:id',
     name: 'AdminProductDetail',
     component: AdminProductDetailPage,
-    props: true
+    props: true,
+    beforeEnter: authGuard
   },
   {
     path: '/admin/users',
     name: 'AdminUserList',
     component: AdminUserListPage,
-    
+    beforeEnter: authGuard
   },
-{
-  path: '/admin/users/:id',
-  name: 'AdminUserDetail',
-  component: AdminUserDetailPage,
-  
-},
-{
-    path: '/cart',
-    name: 'Cart',
+  {
+    path: '/admin/users/:id',
+    name: 'AdminUserDetail',
+    component: AdminUserDetailPage,
+    beforeEnter: authGuard
+  },
+  // WARENKORB & BESTELLUNG
+  {
+    path: '/cartView',
+    name: 'CartView',
     component: CardView
   },
-
+  {
+    path: '/orderView',
+    name: 'OrderView',
+    component: OrderView,
+    beforeEnter: authGuard // Jetzt geschützt
+  }
 ]
 
 const router = createRouter({

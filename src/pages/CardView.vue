@@ -1,75 +1,69 @@
 <template>
   <main class="min-h-screen bg-[#fff7f3] flex justify-center px-4 py-10">
     <section class="w-full max-w-4xl bg-white border border-orange-100 shadow-sm rounded-xl px-6 py-8">
-      
-      <div class="flex justify-between items-center mb-8">
-        <h1 class="text-2xl md:text-3xl font-semibold text-gray-900">Dein Warenkorb</h1>
-        <button 
-          @click="$router.push('/')" 
-          class="px-4 py-2 bg-white border border-[#e09a82] text-[#e09a82] text-sm font-medium rounded-xl hover:bg-[#fff7f3] transition shadow-sm"
-        >
-          ← Weiter einkaufen
-        </button>
+      <h1 class="text-2xl font-semibold mb-8">Dein Warenkorb</h1>
+
+      <div v-if="cartStore.items.length === 0" class="text-center py-16">
+        <p>Dein Warenkorb ist noch leer.</p>
+        <button @click="$router.push('/')" class="mt-4 text-[#e09a82] underline">Produkte entdecken</button>
       </div>
 
-      <div v-if="!cartItems || cartItems.length === 0" class="text-center py-16 bg-[#fffcf9] rounded-2xl border border-dashed border-orange-200">
-        <p class="text-gray-500 text-lg">Dein Warenkorb ist noch leer.</p>
-        <button @click="$router.push('/')" class="mt-4 px-6 py-2 bg-[#e09a82] text-white rounded-xl hover:bg-[#d48366] transition">
-          Jetzt Produkte entdecken
-        </button>
+      <div v-else class="space-y-6">
+        <CardItem 
+          v-for="item in cartStore.items" 
+          :key="item.variantId" 
+          :item="item" 
+          @remove="(variantId) => handleRemove(variantId)"
+          @update="handleUpdateQuantity"
+        />
+        <PriceSummary 
+          :subtotal="cartStore.totalSum" 
+          @checkout="handleCheckout"
+        />
       </div>
-
-     <div v-else class="space-y-6">
-  <CardItem 
-    v-for="item in cartItems" 
-    :key="item.variantId" 
-    :item="item" 
-    @update="updateQuantity"
-    @remove="removeItem"
-  />
-     </div>
-
-  <div class="mt-6 ml-auto"> 
-    <PriceSummary 
-      :subtotal="totalSum" 
-      @checkout="handleCheckout"
-    />
-  </div>
     </section>
   </main>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { onMounted } from 'vue'; // Hinzugefügt
+import { useAuth0 } from '@auth0/auth0-vue';
+import { useRouter } from 'vue-router';
+import { useCartStore } from '@/stores/cartStores';
 import CardItem from '@/components/cardComponents/CardItem.vue';
 import PriceSummary from '@/components/cardComponents/PriceSummary.vue';
 
+const cartStore = useCartStore();
+const { isAuthenticated, loginWithRedirect, user } = useAuth0();
+const router = useRouter();
 
-const cartItems = ref([]);
-
-const loadCart = () => {
-  const data = localStorage.getItem('cart');
-  if (data) {
-    try {
-      cartItems.value = JSON.parse(data);
-    } catch (e) {
-      cartItems.value = [];
-    }
+// Warenkorb beim Laden der Seite initialisieren
+onMounted(async () => {
+  // WICHTIG: Wenn Nutzer authentifiziert ist, zuerst UserId setzen
+  if (isAuthenticated.value && user.value) {
+    cartStore.setUserId(user.value.sub);
   }
-};
-
-const updateQuantity = () => {
-  localStorage.setItem('cart', JSON.stringify(cartItems.value));
-};
-
-const removeItem = (variantId) => {
-  cartItems.value = cartItems.value.filter(item => item.variantId !== variantId);
-  localStorage.setItem('cart', JSON.stringify(cartItems.value));
-};
-
-const totalSum = computed(() => {
-  return cartItems.value.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
+  // Dann Warenkorb laden
+  await cartStore.loadCart();
 });
 
-onMounted(loadCart);
+const handleUpdateQuantity = async ({ variantId, quantity }) => {
+  if (!variantId || quantity === undefined) return;
+  
+  // WICHTIG: Wir rufen die Methode im STORE auf, damit dieser 
+  // das Backend kontaktiert UND sich selbst aktualisiert.
+  await cartStore.updateQuantity(variantId, quantity);
+};
+
+const handleRemove = async (variantId) => {
+  await cartStore.removeItem(variantId);
+};
+
+const handleCheckout = async () => {
+  if (isAuthenticated.value) {
+    router.push('/orderView');
+  } else {
+    await loginWithRedirect({ appState: { target: '/orderView' } });
+  }
+};
 </script>
