@@ -1,13 +1,13 @@
 <template>
-  <main class="min-h-screen bg-neutral-50 px-4 py-12">
-    <section class="mx-auto max-w-3xl bg-white rounded-xl border border-neutral-200 p-8">
+  <main class="min-h-screen bg-[#fff7f3] px-4 py-12">
+    <section class="mx-auto max-w-3xl bg-white rounded-2xl border border-orange-100 p-8 shadow-sm">
 
       <!-- Headline -->
-      <h1 class="text-4xl md:text-5xl tracking-widest uppercase mb-4">
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-[#e09a82]">
         Hast du noch Fragen?
       </h1>
 
-      <p class="text-neutral-600 max-w-2xl mb-10 leading-relaxed">
+      <p class="text-neutral-600 max-w-2xl mb-10 leading-relaxed text-lg">
         Dann fülle einfach das folgende Kontaktformular aus – unser
         Customer Team hilft dir gerne weiter.
       </p>
@@ -16,45 +16,45 @@
       <form class="space-y-6" @submit.prevent="submit">
 
         <div>
-          <label class="block text-sm mb-2">Vorname</label>
+          <label class="block text-sm font-medium mb-2 text-neutral-700">Vorname</label>
           <input
               v-model="form.firstName"
               type="text"
               required
               placeholder="Vorname eingeben ..."
-              class="w-full rounded-lg border px-4 py-3 focus:outline-none focus:border-neutral-400"
+              class="w-full rounded-xl border border-orange-100 px-4 py-3 focus:outline-none focus:border-orange-300 transition"
           />
         </div>
 
         <div>
-          <label class="block text-sm mb-2">Nachname</label>
+          <label class="block text-sm font-medium mb-2 text-neutral-700">Nachname</label>
           <input
               v-model="form.lastName"
               type="text"
               placeholder="Nachname eingeben ..."
-              class="w-full rounded-lg border px-4 py-3 focus:outline-none focus:border-neutral-400"
+              class="w-full rounded-xl border border-orange-100 px-4 py-3 focus:outline-none focus:border-orange-300 transition"
           />
         </div>
 
         <div>
-          <label class="block text-sm mb-2">Deine E-Mail*</label>
+          <label class="block text-sm font-medium mb-2 text-neutral-700">Deine E-Mail*</label>
           <input
               v-model="form.email"
               type="email"
               required
               placeholder="E-Mail Adresse"
-              class="w-full rounded-lg border px-4 py-3 focus:outline-none focus:border-neutral-400"
+              class="w-full rounded-xl border border-orange-100 px-4 py-3 focus:outline-none focus:border-orange-300 transition"
           />
         </div>
 
         <div>
-          <label class="block text-sm mb-2">Deine Nachricht *</label>
+          <label class="block text-sm font-medium mb-2 text-neutral-700">Deine Nachricht *</label>
           <textarea
               v-model="form.message"
               rows="5"
               required
               placeholder="Kommentar eingeben ..."
-              class="w-full rounded-lg border px-4 py-3 resize-none focus:outline-none focus:border-neutral-400"
+              class="w-full rounded-xl border border-orange-100 px-4 py-3 resize-none focus:outline-none focus:border-orange-300 transition"
           />
         </div>
 
@@ -62,12 +62,12 @@
         <div class="flex items-center gap-4">
           <button
               type="submit"
-              class="bg-black text-white px-6 py-3 rounded-lg hover:bg-neutral-800 transition"
+              class="bg-[#e09a82] text-white px-8 py-3 rounded-full hover:bg-[#d48366] transition font-semibold"
           >
             Nachricht senden
           </button>
 
-          <span v-if="success" class="text-sm text-neutral-600">
+          <span v-if="success" class="text-sm text-neutral-600 font-medium">
             Dein E-Mail-Programm wurde geöffnet.
           </span>
         </div>
