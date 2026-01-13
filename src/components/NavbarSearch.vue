@@ -1,5 +1,9 @@
 <template>
-  <div class="relative">
+  <div 
+      class="relative"
+      @mouseenter="isOpen = true"
+      @mouseleave="isOpen = false"
+  >
 
     <button
         type="button"
@@ -12,98 +16,143 @@
 
     <div
         v-if="isOpen"
-        class="absolute right-0 mt-2 w-80 bg-white border border-orange-100 shadow-lg rounded-xl p-4 z-50"
+        class="absolute right-0 mt-0 w-80 bg-white border border-orange-100 shadow-lg rounded-xl p-4 z-50"
     >
-
-      <div class="mb-3">
-        <label class="block text-xs font-medium text-gray-700 mb-1">
-          Kategorie
+      <div class="mb-5">
+        <label class="block text-[10px] font-bold text-[#e09a82] uppercase tracking-[0.1em] mb-2 px-1">
+          Wonach suchst du?
         </label>
-        <select
-            v-model="selectedCategory"
-            class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
-        >
-          <option value="">Alle Kategorien</option>
-          <option
-              v-for="cat in categories"
-              :key="cat.id"
-              :value="cat.slug"
+        <div class="relative">
+          <input
+              v-model="query"
+              type="text"
+              placeholder="z.B. Bio-Tampons..."
+              class="w-full border border-orange-100 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]/30 bg-[#fffcf9] transition-all"
+              @keyup.enter="onSearch"
+          />
+          <button 
+            @click="onSearch"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-[#e09a82] hover:scale-110 transition-transform"
           >
-            {{ cat.name }}
-          </option>
-        </select>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <div class="mb-3">
-        <label class="block text-xs font-medium text-gray-700 mb-1">
-          Preis
-        </label>
-        <select
-            v-model="selectedPriceRange"
-            class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
-        >
-          <option value="">Alle Preise</option>
-          <option value="unter-10">unter 10 €</option>
-          <option value="10-20">10–20 €</option>
-          <option value="20-30">20–30 €</option>
-          <option value="ueber-30">über 30 €</option>
-        </select>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-2 px-1">
+            Kategorie
+          </label>
+          <div class="relative">
+            <select
+                v-model="selectedCategory"
+                class="w-full border border-orange-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]/30 bg-[#fffcf9] appearance-none cursor-pointer"
+            >
+              <option value="">Alle Kategorien</option>
+              <option
+                  v-for="cat in categories"
+                  :key="cat.slug"
+                  :value="cat.slug"
+              >
+                {{ cat.name }}
+              </option>
+            </select>
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#e09a82]">
+              <span class="text-[10px]">▼</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-2 px-1">
+              Preis
+            </label>
+            <div class="relative">
+              <select
+                  v-model="selectedPriceRange"
+                  class="w-full border border-orange-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]/30 bg-[#fffcf9] appearance-none cursor-pointer"
+              >
+                <option value="">Alle</option>
+                <option value="unter-10">bis 10 €</option>
+                <option value="10-20">10–20 €</option>
+                <option value="20-30">20–30 €</option>
+                <option value="ueber-30">ab 30 €</option>
+              </select>
+              <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#e09a82]">
+                <span class="text-[10px]">▼</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-2 px-1">
+              Farbe
+            </label>
+            <div class="relative">
+              <select
+                  v-model="selectedColor"
+                  class="w-full border border-orange-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]/30 bg-[#fffcf9] appearance-none cursor-pointer"
+              >
+                <option value="">Alle</option>
+                <option
+                    v-for="color in availableColors"
+                    :key="color"
+                    :value="color"
+                >
+                  {{ color }}
+                </option>
+              </select>
+              <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#e09a82]">
+                <span class="text-[10px]">▼</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-2 px-1">
+            Größe
+          </label>
+          <div class="relative">
+            <select
+                v-model="selectedSize"
+                class="w-full border border-orange-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]/30 bg-[#fffcf9] appearance-none cursor-pointer"
+            >
+              <option value="">Alle Größen</option>
+              <option
+                  v-for="size in availableSizes"
+                  :key="size"
+                  :value="size"
+              >
+                {{ size }}
+              </option>
+            </select>
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#e09a82]">
+              <span class="text-[10px]">▼</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="mb-3">
-        <label class="block text-xs font-medium text-gray-700 mb-1">
-          Farbe
-        </label>
-        <select
-            v-model="selectedColor"
-            class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
-        >
-          <option value="">Alle Farben</option>
-          <option
-              v-for="color in availableColors"
-              :key="color"
-              :value="color"
-          >
-            {{ color }}
-          </option>
-        </select>
-      </div>
-
-      <div class="mb-3">
-        <label class="block text-xs font-medium text-gray-700 mb-1">
-          Größe
-        </label>
-        <select
-            v-model="selectedSize"
-            class="w-full border border-gray-300 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e09a82]"
-        >
-          <option value="">Alle Größen</option>
-          <option
-              v-for="size in availableSizes"
-              :key="size"
-              :value="size"
-          >
-            {{ size }}
-          </option>
-        </select>
-      </div>
-
-      <div class="mt-3 flex justify-end gap-2">
+      <div class="mt-8 flex items-center gap-3">
         <button
             type="button"
-            class="text-xs px-3 py-1 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100"
+            class="flex-1 text-sm font-semibold py-3 rounded-full border border-orange-100 text-gray-400 hover:bg-gray-50 transition-colors"
             @click="close"
         >
-          Schließen
+          Abbrechen
         </button>
 
         <button
             type="button"
-            class="text-xs px-3 py-1 rounded-full bg-[#e09a82] text-white font-medium hover:bg-[#d48366] transition"
+            class="flex-[2] text-sm font-bold py-3 rounded-full bg-[#e09a82] text-white shadow-md shadow-orange-200 hover:bg-[#d48366] hover:shadow-lg transition-all"
             @click="onSearch"
         >
-          Suchen
-
+          Ergebnisse zeigen
         </button>
       </div>
     </div>
@@ -111,13 +160,23 @@
 </template>
 
 <script setup>
-import {ref, onMounted, onBeforeUnmount} from 'vue'
-import {useRouter} from 'vue-router'
+import {ref, onMounted, onBeforeUnmount, watch} from 'vue'
+import {useRouter, useRoute} from 'vue-router'
 import {fetchCategories, fetchProducts, fetchProductVariants} from '@/services/api'
 
 const router = useRouter()
+const route = useRoute()
 
 const isOpen = ref(false)
+
+// Schließe die Suche, wenn sich die Route ändert
+watch(
+  () => route.fullPath,
+  () => {
+    isOpen.value = false
+  }
+)
+
 const query = ref('')
 const selectedCategory = ref('')
 const selectedPriceRange = ref('')
@@ -178,6 +237,13 @@ const onSearch = () => {
     query: queryParams
   })
 
+  // Felder zurücksetzen
+  query.value = ''
+  selectedCategory.value = ''
+  selectedPriceRange.value = ''
+  selectedColor.value = ''
+  selectedSize.value = ''
+
   close()
 }
 
@@ -214,7 +280,13 @@ onMounted(async () => {
   window.addEventListener('keydown', handleKeydown)
 
   try {
-    categories.value = await fetchCategories()
+    const data = await fetchCategories()
+    categories.value = (data || [])
+        .map((c) => ({
+          ...c,
+          slug: c.slug ?? c.id,
+        }))
+        .sort((a, b) => (a.name || '').localeCompare(b.name || '', 'de'))
   } catch (e) {
     console.error('Kategorien konnten nicht geladen werden:', e)
   }

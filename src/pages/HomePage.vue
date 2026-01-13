@@ -84,9 +84,14 @@ onMounted(async () => {
 
   try {
     const backendCategories = await fetchCategories()
-    categories.value = backendCategories.sort((a, b) =>
-        a.name.localeCompare(b.name, 'de')
-    )
+    categories.value = (backendCategories || [])
+        .map((c) => ({
+          ...c,
+          slug: c.slug ?? c.id,
+        }))
+        .sort((a, b) =>
+            (a.name || '').localeCompare(b.name || '', 'de')
+        )
   } catch (e) {
     console.error('Fehler beim Laden der Kategorien:', e)
     error.value = 'Kategorien konnten nicht geladen werden.'

@@ -189,4 +189,11 @@ const loadResults = async () => {
   }
 }
 
+onMounted(loadResults)
+
+watch(
+    () => route.query,
+    () => loadResults(),
+    { deep: true }
+)
 </script>
