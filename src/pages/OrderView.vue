@@ -3,7 +3,7 @@
     <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
       
       <div class="lg:col-span-2 space-y-6">
-        <h1 class="text-2xl font-semibold text-gray-900 mb-2">Bestellübersicht</h1>
+        <h1 class="text-2xl font-semibold text-gray-900 mb-2">Bestellübersich</h1>
         
         <AddressCard title="Lieferadresse" type="SHIPPING" :userId="mockUserId" />
         <AddressCard title="Rechnungsadresse" type="BILLING" :userId="mockUserId" />
