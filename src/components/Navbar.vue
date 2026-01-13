@@ -13,7 +13,11 @@
           />
         </router-link>
 
-        <div class="relative flex items-center ml-14">
+        <div
+            class="relative flex items-center ml-14"
+            @mouseenter="isCategoriesOpen = true"
+            @mouseleave="isCategoriesOpen = false"
+        >
           <button
               type="button"
               class="flex items-center gap-1 text-xl font-semibold text-black hover:text-[#e09a82] transition"
@@ -30,33 +34,35 @@
 
           <div
               v-if="isCategoriesOpen"
-              class="absolute left-0 top-full mt-2 w-72 bg-white border border-orange-200 shadow-lg rounded-xl py-2 z-50"
+              class="absolute left-0 top-full mt-0 w-72 bg-white border border-orange-100 shadow-xl rounded-2xl py-3 z-50 overflow-hidden"
           >
-            <p class="px-4 pb-2 text-xs font-medium text-gray-500 uppercase tracking-wide">
-              Produktkategorien
+            <p class="px-5 pb-2 text-[10px] font-bold text-[#e09a82] uppercase tracking-[0.1em]">
+              Entdecke unsere Welt
             </p>
 
             <!-- Loading -->
-            <div v-if="categoriesLoading" class="px-4 py-2 text-sm text-gray-500">
+            <div v-if="categoriesLoading" class="px-5 py-3 text-sm text-gray-400 italic">
               Lade Kategorien...
             </div>
 
             <!-- Error -->
-            <div v-else-if="categoriesError" class="px-4 py-2 text-sm text-red-500">
+            <div v-else-if="categoriesError" class="px-5 py-3 text-sm text-red-400">
               {{ categoriesError }}
             </div>
 
             <!-- Categories -->
-            <router-link
-                v-else
-                v-for="category in categories"
-                :key="category.slug"
-                :to="`/category/${category.slug}`"
-                class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition"
-                @click="isCategoriesOpen = false"
-            >
-              {{ category.name }}
-            </router-link>
+            <div v-else class="flex flex-col">
+              <router-link
+                  v-for="category in categories"
+                  :key="category.slug"
+                  :to="`/category/${category.slug}`"
+                  class="group flex items-center justify-between px-5 py-2.5 text-sm text-gray-700 hover:bg-[#fff7f3] hover:text-[#e09a82] transition-all"
+                  @click="isCategoriesOpen = false"
+              >
+                <span class="font-medium">{{ category.name }}</span>
+                <span class="opacity-0 group-hover:opacity-100 transition-opacity text-[#e09a82]">→</span>
+              </router-link>
+            </div>
           </div>
         </div>
       </div>
@@ -126,12 +132,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import NavbarSearch from '@/components/NavbarSearch.vue'
 import { fetchCategories } from '@/services/api'
 import { useAuth0 } from '@auth0/auth0-vue'
 
 const { user, isAuthenticated, logout } = useAuth0()
+const route = useRoute()
 
 const isUserMenuOpen = ref(false)
 
@@ -140,6 +148,14 @@ const handleLogout = () => {
 }
 
 const isCategoriesOpen = ref(false)
+
+// Schließe das Menü, wenn sich die Route ändert
+watch(
+  () => route.fullPath,
+  () => {
+    isCategoriesOpen.value = false
+  }
+)
 
 const toggleCategories = () => {
   isCategoriesOpen.value = !isCategoriesOpen.value
