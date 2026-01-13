@@ -156,3 +156,26 @@ export function saveAddress(payload) {
 export function deleteAddress(id) {
   return requestJson(`/api/addresses/${id}`, { method: 'DELETE' })
 }
+
+// --- BESTELLUNGEN ---
+
+/**
+ * Holt alle Bestellungen eines Nutzers
+ */
+export function fetchOrdersByUserId(userId) {
+  return getJson(`/api/orders/user/${encodeURIComponent(userId)}`)
+}
+
+/**
+ * Holt die Details einer spezifischen Bestellung
+ */
+export function fetchOrderById(orderId) {
+  return getJson(`/api/orders/${orderId}`)
+}
+
+/**
+ * Holt die Artikel (Positionen) einer Bestellung
+ */
+export function fetchOrderDetailsByOrderId(orderId) {
+  return getJson(`/api/order-details/order/${orderId}`)
+}

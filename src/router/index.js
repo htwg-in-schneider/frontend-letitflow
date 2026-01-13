@@ -27,6 +27,8 @@ import AdminUserDetailPage from '@/pages/AdminUserDetailPage.vue'
 
 import CardView from '@/pages/CardView.vue'
 import OrderView from '@/pages/OrderView.vue'
+import OrderListPage from '@/pages/OrderListPage.vue'
+import OrderDetailPage from '@/pages/OrderDetailPage.vue'
 
 const routes = [
   {
@@ -155,7 +157,20 @@ const routes = [
     path: '/orderView',
     name: 'OrderView',
     component: OrderView,
-    beforeEnter: authGuard // Jetzt geschützt
+    beforeEnter: authGuard
+  },
+  {
+    path: '/orders',
+    name: 'OrderList',
+    component: OrderListPage,
+    beforeEnter: authGuard
+  },
+  {
+    path: '/orders/:id',
+    name: 'OrderDetail',
+    component: OrderDetailPage,
+    props: true,
+    beforeEnter: authGuard
   }
 ]
 
