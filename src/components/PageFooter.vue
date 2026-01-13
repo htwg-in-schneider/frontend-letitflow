@@ -18,16 +18,19 @@
             <h4 class="text-base font-semibold tracking-wide mb-2">HILFETHEMEN</h4>
             <ul class="space-y-1 text-sm">
               <li>
-                <a href="#" class="hover:text-rose-500">Alle Hilfethemen</a>
+                <RouterLink :to="{ name: 'PaymentMethods' }" class="hover:text-rose-500">
+                  Bezahlarten
+                </RouterLink>
               </li>
               <li>
-                <a href="#" class="hover:text-rose-500">Bezahlarten</a>
+                <RouterLink :to="{ name: 'ShippingInfo' }" class="hover:text-rose-500">
+                  Versandinformationen
+                </RouterLink>
               </li>
               <li>
-                <a href="#" class="hover:text-rose-500">Versandinformationen</a>
-              </li>
-              <li>
-                <a href="#" class="hover:text-rose-500">Bestellung retournieren</a>
+                <RouterLink :to="{ name: 'Returns' }" class="hover:text-rose-500">
+                  Bestellung retournieren
+                </RouterLink>
               </li>
             </ul>
           </div>
