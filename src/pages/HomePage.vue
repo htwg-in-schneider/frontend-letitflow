@@ -32,12 +32,12 @@
       </div>
 
       <div class="mt-8">
-        <button
-            type="button"
+        <RouterLink
+            :to="{ name: 'AboutUs' }"
             class="inline-flex items-center justify-center rounded-full px-6 py-2 text-sm font-medium text-white bg-[#e09a82] hover:bg-[#d48366] transition"
         >
           Erfahre mehr über uns hier
-        </button>
+        </RouterLink>
       </div>
 
       <section class="mt-12">
@@ -69,6 +69,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { RouterLink } from 'vue-router'
 import CategoryCard from '@/components/CategoryCard.vue'
 import { fetchCategories } from '@/services/api'
 
