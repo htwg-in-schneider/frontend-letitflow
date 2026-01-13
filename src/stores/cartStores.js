@@ -52,6 +52,45 @@ export const useCartStore = defineStore('cart', {
         localStorage.setItem('cart', JSON.stringify(cart))
         await this.loadCart()
       }
+    },
+
+    async removeItem(variantId) {
+      if (this.currentUserId) {
+        try {
+          // KORREKTUR: API-Call aktiviert und Name angepasst
+          await api.deleteCartItem(this.currentUserId, variantId)
+          await this.loadCart() 
+        } catch (error) {
+          console.error("Fehler beim Löschen (API):", error)
+        }
+      } else {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+        const updatedCart = cart.filter(item => item.variantId !== variantId)
+        localStorage.setItem('cart', JSON.stringify(updatedCart))
+        await this.loadCart()
+      }
+    },
+
+    async updateQuantity(variantId, newQuantity) {
+      if (this.currentUserId) {
+        try {
+          // KORREKTUR: Sicherstellen, dass es eine Zahl ist
+          const qty = Number(newQuantity)
+          await api.updateCartItemQuantity(this.currentUserId, variantId, qty)
+          await this.loadCart()
+        } catch (error) {
+          console.error("Fehler beim Aktualisieren der Menge:", error)
+        }
+      } else {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+        const item = cart.find(i => i.variantId === variantId)
+        if (item) {
+          item.quantity = Number(newQuantity)
+          localStorage.setItem('cart', JSON.stringify(cart))
+          await this.loadCart()
+        }
+      }
     }
   }
+
 })

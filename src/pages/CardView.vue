@@ -5,7 +5,7 @@
 
       <div v-if="cartStore.items.length === 0" class="text-center py-16">
         <p>Dein Warenkorb ist noch leer.</p>
-        <button @click="$router.push('/')" class="mt-4 text-[#e09a82]">Produkte entdecken</button>
+        <button @click="$router.push('/')" class="mt-4 text-[#e09a82] underline">Produkte entdecken</button>
       </div>
 
       <div v-else class="space-y-6">
@@ -13,7 +13,8 @@
           v-for="item in cartStore.items" 
           :key="item.variantId" 
           :item="item" 
-          @remove="removeItem"
+          @remove="(variantId) => handleRemove(variantId)"
+          @update="handleUpdateQuantity"
         />
         <PriceSummary 
           :subtotal="cartStore.totalSum" 
@@ -25,6 +26,7 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'; // Hinzugefügt
 import { useAuth0 } from '@auth0/auth0-vue';
 import { useRouter } from 'vue-router';
 import { useCartStore } from '@/stores/cartStores';
@@ -32,18 +34,29 @@ import CardItem from '@/components/cardComponents/CardItem.vue';
 import PriceSummary from '@/components/cardComponents/PriceSummary.vue';
 
 const cartStore = useCartStore();
-const { isAuthenticated, loginWithRedirect } = useAuth0();
+const { isAuthenticated, loginWithRedirect, user } = useAuth0();
 const router = useRouter();
 
-const removeItem = async (variantId) => {
-  // Für Gast:
-  if (!isAuthenticated.value) {
-    const data = JSON.parse(localStorage.getItem('cart') || '[]');
-    const filtered = data.filter(i => i.variantId !== variantId);
-    localStorage.setItem('cart', JSON.stringify(filtered));
+// Warenkorb beim Laden der Seite initialisieren
+onMounted(async () => {
+  // WICHTIG: Wenn Nutzer authentifiziert ist, zuerst UserId setzen
+  if (isAuthenticated.value && user.value) {
+    cartStore.setUserId(user.value.sub);
   }
-  // Danach Store neu laden (egal ob Gast oder API)
+  // Dann Warenkorb laden
   await cartStore.loadCart();
+});
+
+const handleUpdateQuantity = async ({ variantId, quantity }) => {
+  if (!variantId || quantity === undefined) return;
+  
+  // WICHTIG: Wir rufen die Methode im STORE auf, damit dieser 
+  // das Backend kontaktiert UND sich selbst aktualisiert.
+  await cartStore.updateQuantity(variantId, quantity);
+};
+
+const handleRemove = async (variantId) => {
+  await cartStore.removeItem(variantId);
 };
 
 const handleCheckout = async () => {
