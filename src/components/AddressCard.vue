@@ -4,7 +4,7 @@
 
     <div v-if="addressExists && !isEditing" class="space-y-2 text-gray-600">
       <p class="font-semibold text-gray-900 text-lg">{{ address.firstName }} {{ address.lastName }}</p>
-      <p>{{ address.street }} {{ address.houseNumber }}</p>
+      <p>{{ address.street }} {{ address.housenumber }}</p>
       <p>{{ address.postalCode }} {{ address.city }}</p>
       <p>{{ address.country }}</p>
       
@@ -29,7 +29,7 @@
           <label class="text-xs font-semibold text-gray-500 mb-1 ml-1">Straße & Hausnummer</label>
           <div class="flex gap-2">
             <input v-model="address.street" placeholder="Straße" class="flex-[3] border border-orange-100 bg-[#fffcf9] p-3 rounded-xl focus:ring-2 focus:ring-[#e09a82] outline-none transition" required>
-            <input v-model="address.houseNumber" placeholder="Nr." class="flex-1 border border-orange-100 bg-[#fffcf9] p-3 rounded-xl focus:ring-2 focus:ring-[#e09a82] outline-none transition" required>
+            <input v-model="address.housenumber" placeholder="Nr." class="flex-1 border border-orange-100 bg-[#fffcf9] p-3 rounded-xl focus:ring-2 focus:ring-[#e09a82] outline-none transition" required>
           </div>
       </div>
 
@@ -52,10 +52,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { fetchAddressByUserAndType, saveAddress } from '@/services/api.js';
 
-const props = defineProps(['userId', 'type']);
+const props = defineProps(['title', 'userId', 'type']);
 const addressExists = ref(false);
 const isEditing = ref(false);
 
@@ -64,30 +64,58 @@ const address = ref({
   firstName: '',
   lastName: '',
   street: '',
+  housenumber: '',
   postalCode: '',
   city: '',
+  country: '',
   adressType: props.type // Wird automatisch SHIPPING oder BILLING
 });
 
-onMounted(async () => {
+const loadAddress = async () => {
+  if (!props.userId) {
+    console.warn('No userId provided to AddressCard');
+    return;
+  }
   try {
     const data = await fetchAddressByUserAndType(props.userId, props.type);
     if (data) {
       address.value = data;
       addressExists.value = true;
+    } else {
+      addressExists.value = false;
     }
   } catch (e) {
-    addressExists.value = false; // Zeigt Formular an, wenn nichts gefunden wurde
+    console.error('Fehler beim Laden der Adresse:', e);
+    // Bei 400 oder wenn keine Adresse existiert, einfach Formular anzeigen
+    addressExists.value = false;
+    address.value.userId = props.userId;
+    address.value.adressType = props.type;
   }
+};
+
+onMounted(() => {
+  loadAddress();
+});
+
+// WICHTIG: Wenn userId sich ändert, Adresse neu laden!
+watch(() => props.userId, () => {
+  loadAddress();
 });
 
 const handleSave = async () => {
   try {
+    // WICHTIG: Stelle sicher, dass userId und adressType aktuell sind
+    address.value.userId = props.userId;
+    address.value.adressType = props.type;
+    
+    console.log('Sending address to backend:', JSON.stringify(address.value, null, 2));
+    
     const saved = await saveAddress(address.value);
     address.value = saved;
     addressExists.value = true;
     isEditing.value = false;
   } catch (e) {
+    console.error('Fehler beim Speichern:', e);
     alert("Fehler beim Speichern");
   }
 };

@@ -22,8 +22,8 @@
         </div>
 
         <div class="space-y-6">
-          <AddressCard title="Lieferadresse" type="SHIPPING" :userId="cartStore.currentUserId" />
-          <AddressCard title="Rechnungsadresse" type="BILLING" :userId="cartStore.currentUserId" />
+          <AddressCard v-if="cartStore.currentUserId" title="Lieferadresse" type="SHIPPING" :userId="cartStore.currentUserId" />
+          <AddressCard v-if="cartStore.currentUserId" title="Rechnungsadresse" type="BILLING" :userId="cartStore.currentUserId" />
         </div>
 
         <div class="bg-white border border-orange-100 rounded-xl p-6 flex justify-between items-center shadow-sm">
