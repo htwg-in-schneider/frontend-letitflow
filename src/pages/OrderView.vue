@@ -22,8 +22,8 @@
         </div>
 
         <div class="space-y-6">
-          <AddressCard v-if="cartStore.currentUserId" title="Lieferadresse" type="SHIPPING" :userId="cartStore.currentUserId" />
-          <AddressCard v-if="cartStore.currentUserId" title="Rechnungsadresse" type="BILLING" :userId="cartStore.currentUserId" />
+          <AddressCard v-if="cartStore.currentUserId" title="Lieferadresse" type="SHIPPING" :userId="cartStore.currentUserId" @loaded="handleAddressLoaded" />
+          <AddressCard v-if="cartStore.currentUserId" title="Rechnungsadresse" type="BILLING" :userId="cartStore.currentUserId" @loaded="handleAddressLoaded" />
         </div>
 
         <div class="bg-white border border-orange-100 rounded-xl p-6 flex justify-between items-center shadow-sm">
@@ -55,10 +55,11 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth0 } from '@auth0/auth0-vue';
 import { useCartStore } from '@/stores/cartStores';
+import * as api from '@/services/api';
 
 import AddressCard from '@/components/AddressCard.vue';
 import CardItem from '@/components/cardComponents/CardItem.vue';
@@ -67,6 +68,17 @@ import PriceSummary from '@/components/cardComponents/PriceSummary.vue';
 const cartStore = useCartStore();
 const { user, isAuthenticated } = useAuth0();
 const router = useRouter();
+const shippingAddressId = ref(null);
+const billingAddressId = ref(null);
+
+const handleAddressLoaded = ({ type, addressId }) => {
+  console.log(`Address loaded: ${type} = ${addressId}`);
+  if (type === 'SHIPPING') {
+    shippingAddressId.value = addressId;
+  } else if (type === 'BILLING') {
+    billingAddressId.value = addressId;
+  }
+};
 
 onMounted(async () => {
   // WICHTIG: UserId ZUERST setzen, dann Warenkorb laden!
@@ -89,10 +101,66 @@ const handleUpdateQuantity = async ({ variantId, quantity }) => {
 };
 
 const finishOrder = async () => {
-  alert("Bestellung abgeschlossen!");
-  if (!cartStore.currentUserId) localStorage.removeItem('cart');
-  await cartStore.loadCart();
-  router.push("/");
+  console.group('Checkout flow');
+  console.log('Auth state', { isAuthenticated: isAuthenticated.value, user: user.value });
+  console.log('Current userId in cartStore', cartStore.currentUserId);
+  console.log('Cart items', cartStore.items);
+  console.log('Total sum', cartStore.totalSum);
+
+  if (!cartStore.items.length) {
+    alert('Dein Warenkorb ist leer.');
+    console.groupEnd();
+    return;
+  }
+
+  if (!shippingAddressId.value || !billingAddressId.value) {
+    alert('Liefer- und Rechnungsadresse nicht gefunden. Bitte lege diese unter Adressen an.');
+    console.warn('Missing addresses', { shippingAddressId: shippingAddressId.value, billingAddressId: billingAddressId.value });
+    console.groupEnd();
+    return;
+  }
+
+  const itemsPayload = cartStore.items.map((item) => {
+    const unitPrice = Number(item.price ?? item.pricePerUnit ?? 0);
+    const qty = Number(item.quantity ?? 0);
+    return {
+      productId: item.productId ?? item.id ?? null,
+      variantId: item.variantId ?? null,
+      quantity: qty,
+      pricePerUnit: unitPrice,
+      totalPrice: unitPrice * qty,
+    };
+  });
+
+  const orderPayload = {
+    userId: cartStore.currentUserId,  // oauthId direkt verwenden
+    billingAdressId: billingAddressId.value,
+    shippingAdressId: shippingAddressId.value,
+    totalAmount: cartStore.totalSum,
+    items: itemsPayload,
+  };
+
+  console.log('Sending order payload', orderPayload);
+
+  try {
+    const response = await api.createOrder(orderPayload);
+    console.log('Order response', response);
+    alert('Bestellung abgeschlossen!');
+
+    if (!cartStore.currentUserId) {
+      console.log('No userId found, clearing local cart');
+      localStorage.removeItem('cart');
+    }
+
+    await cartStore.loadCart();
+    console.log('Cart reloaded, redirecting to home');
+    router.push('/');
+  } catch (err) {
+    console.error('Checkout error', err);
+    alert('Beim Abschluss der Bestellung ist ein Fehler aufgetreten.');
+  } finally {
+    console.groupEnd();
+  }
 };
 </script>
 
