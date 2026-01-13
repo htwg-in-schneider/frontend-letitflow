@@ -135,14 +135,24 @@ export function updateCartItemQuantity(userId, variantId, newQuantity) {
   });
 }
 
-// --- ADRESSEN (MIT ENCODING) ---
+// --- ORDERS ---
+
+export function createOrder(payload) {
+  return requestJson('/api/orders', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function getOrdersByOauthId(oauthId) {
+  return getJson(`/api/orders/user/${encodeURIComponent(oauthId)}`)
+}
+
+// --- ADRESSEN (MIT ENCODING / OAUTH-ID) ---
 
 export function fetchAddressByUserId(userId) {
   return getJson(`/api/addresses/user/${encodeURIComponent(userId)}`)
 }
 
-export function fetchAddressByUserAndType(userId, type) {
-  return getJson(`/api/addresses/user/${encodeURIComponent(userId)}?type=${type}`)
+export function fetchAddressByUserAndType(oauthId, type) {
+  return getJson(`/api/addresses/user/${encodeURIComponent(oauthId)}?type=${type}`)
 }
 
 export function fetchAddressById(id) {
