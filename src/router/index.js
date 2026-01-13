@@ -8,6 +8,8 @@ import SearchResultsPage from '@/pages/SearchResultsPage.vue'
 import ContactPage from "@/pages/ContactPage.vue";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage.vue";
 import ImprintPage from "@/pages/ImprintPage.vue";
+import AboutUsPage from "@/pages/AboutUsPage.vue";
+import TermsAndConditionsPage from "@/pages/TermsAndConditionsPage.vue";
 
 import LoginView from "@/pages/LoginView.vue";
 import LogoutView from "@/pages/LogoutView.vue";
@@ -60,6 +62,16 @@ const routes = [
         path: '/imprintpage',
         name: 'ImprintPage',
         component: ImprintPage
+    },
+    {
+        path: '/about',
+        name: 'AboutUs',
+        component: AboutUsPage
+    },
+    {
+        path: '/agb',
+        name: 'TermsAndConditions',
+        component: TermsAndConditionsPage
     },
     {
         path: '/login',

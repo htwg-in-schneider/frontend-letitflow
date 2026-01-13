@@ -1,9 +1,9 @@
 <template>
-  <main class="min-h-screen bg-neutral-50 px-4 py-12">
-    <section class="mx-auto max-w-4xl bg-white rounded-xl border border-neutral-200 p-8">
+  <main class="min-h-screen bg-[#fff7f3] px-4 py-12">
+    <section class="mx-auto max-w-4xl bg-white rounded-2xl border border-orange-100 p-8 shadow-sm">
 
       <!-- Headline -->
-      <h1 class="text-3xl md:text-4xl tracking-wide uppercase mb-8">
+      <h1 class="text-3xl md:text-4xl tracking-wide uppercase mb-8 text-[#e09a82] font-semibold">
         Datenschutzerklärung
       </h1>
 

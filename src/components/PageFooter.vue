@@ -36,39 +36,39 @@
             <h4 class="text-base font-semibold tracking-wide mb-2">RECHTLICHES</h4>
             <ul class="space-y-1 text-sm">
               <li>
+                <RouterLink :to="{ name: 'ImprintPage' }" class="hover:text-rose-500">
+                  Impressum
+                </RouterLink>
+              </li>
+              <li>
+                <RouterLink :to="{ name: 'TermsAndConditions' }" class="hover:text-rose-500">
+                  AGB
+                </RouterLink>
+              </li>
+              <li>
                 <RouterLink :to="{ name: 'PrivacyPolicy' }" class="hover:text-rose-500">
                   Datenschutzerklärung
                 </RouterLink>
               </li>
-              <li>
-                <a href="#" class="hover:text-rose-500">Cookie-Richtlinie</a>
-              </li>
-              <li>
-                <a href="#" class="hover:text-rose-500">Widerrufsrecht</a>
-              </li>
             </ul>
+            <p class="text-[10px] text-neutral-500 mt-4 leading-tight">
+              Hinweis: Diese Website ist ein nicht-kommerzielles Hochschulprojekt.
+            </p>
           </div>
 
           <div>
             <h4 class="text-base font-semibold tracking-wide mb-2">ÜBER UNS</h4>
             <ul class="space-y-1 text-sm">
               <li>
-                <a href="#" class="hover:text-rose-500">Unsere Geschichte</a>
+                <RouterLink :to="{ name: 'AboutUs' }" class="hover:text-rose-500">
+                  Unsere Geschichte
+                </RouterLink>
               </li>
 
               <li>
                 <RouterLink :to="{ name: 'Contact' }" class="hover:text-rose-500">
                   Kontakt
                 </RouterLink>
-              </li>
-
-              <li>
-                <RouterLink :to="{ name: 'ImprintPage' }" class="hover:text-rose-500">
-                  Impressum
-                </RouterLink>
-              </li>
-              <li>
-                <a href="#" class="hover:text-rose-500">AGB</a>
               </li>
             </ul>
           </div>
