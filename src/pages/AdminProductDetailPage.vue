@@ -42,6 +42,7 @@
       <AdminVariantCard
         :variants="variants"
         :busy="variantBusy"
+        @create="createVariantHandler"
         @save="saveVariant"
         @delete="deleteVariantById"
       />
@@ -64,6 +65,7 @@ import {
   fetchProductById,
   fetchProductVariants,
   updateProduct,
+  createVariant,
   updateVariant,
   deleteVariant
 } from '@/services/api'
@@ -107,9 +109,23 @@ async function saveProduct() {
   }
 }
 
+async function createVariantHandler(variantData) {
+  variantBusy.value = true
+  try {
+    await createVariant(id, variantData)
+    await loadProductAndVariants()
+  } catch (e) {
+    console.error(e)
+    alert('Fehler beim Erstellen der Variante')
+  } finally {
+    variantBusy.value = false
+  }
+}
+
 async function saveVariant(v) {
   variantBusy.value = true
   try {
+    console.log('saveVariant called with:', v)
     await updateVariant(v.id, {
       size: v.size,
       color: v.color,
@@ -117,7 +133,6 @@ async function saveVariant(v) {
       available: Number(v.stock) > 0,
       price: v.price
     })
-    alert('Variante gespeichert')
     await loadProductAndVariants()
   } catch (e) {
     console.error(e)
@@ -134,7 +149,6 @@ async function deleteVariantById(variantId) {
     await loadProductAndVariants()
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Löschen der Variante')
   } finally {
     variantBusy.value = false
   }

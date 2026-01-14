@@ -124,14 +124,16 @@
 
           <div class="mt-2 flex justify-between gap-2">
             <button
-              class="rounded-full px-3 py-1 text-xs font-medium text-white bg-[#e09a82]"
+              class="rounded-full px-3 py-1 text-xs font-medium text-white bg-[#e09a82] disabled:opacity-60"
+              :disabled="busy"
               @click="$emit('save', normalizeVariant(v))"
             >
-              Speichern
+              {{ busy ? 'Speichere...' : 'Speichern' }}
             </button>
 
             <button
-              class="rounded-full px-3 py-1 text-xs font-medium text-white bg-red-500"
+              class="rounded-full px-3 py-1 text-xs font-medium text-white bg-red-500 disabled:opacity-60"
+              :disabled="busy"
               @click="handleDelete(v.id)"
             >
               Löschen
@@ -154,7 +156,8 @@
 import { reactive, ref } from 'vue'
 
 defineProps({
-  variants: { type: Array, default: () => [] }
+  variants: { type: Array, default: () => [] },
+  busy: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['create', 'save', 'delete'])

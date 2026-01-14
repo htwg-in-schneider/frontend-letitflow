@@ -71,6 +71,7 @@ export function createVariant(productId, payload) {
   return authFetch(`/api/products/${productId}/variants`, { method: 'POST', body: JSON.stringify(payload) })
 }
 export function updateVariant(id, payload) {
+  console.log('updateVariant API call:', id, payload)
   return authFetch(`/api/variants/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
 }
 export function deleteVariant(id) {
