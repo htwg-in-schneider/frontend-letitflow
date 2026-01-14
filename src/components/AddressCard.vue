@@ -54,9 +54,11 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { fetchAddressByUserAndType, saveAddress } from '@/services/api.js';
+import { useToast } from '@/composables/useToast';
 
 const props = defineProps(['title', 'userId', 'type']);
 const emit = defineEmits(['loaded']);
+const { error } = useToast();
 const addressExists = ref(false);
 const isEditing = ref(false);
 
@@ -116,7 +118,7 @@ const handleSave = async () => {
     emit('loaded', { type: props.type, addressId: saved.id });
   } catch (e) {
     console.error('Fehler beim Speichern:', e);
-    alert("Fehler beim Speichern");
+    error('Fehler beim Speichern');
   }
 };
 </script>

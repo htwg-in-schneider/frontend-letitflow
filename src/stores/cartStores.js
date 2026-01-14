@@ -90,6 +90,20 @@ export const useCartStore = defineStore('cart', {
           await this.loadCart()
         }
       }
+    },
+
+    async clearCart() {
+      if (this.currentUserId) {
+        try {
+          await api.clearCart(this.currentUserId)
+          await this.loadCart()
+        } catch (error) {
+          console.error("Fehler beim Leeren des Warenkorbs:", error)
+        }
+      } else {
+        localStorage.removeItem('cart')
+        await this.loadCart()
+      }
     }
   }
 

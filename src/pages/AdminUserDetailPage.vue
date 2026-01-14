@@ -168,6 +168,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useToast } from '@/composables/useToast'
 import CardItem from '@/components/cardComponents/CardItem.vue'
 import { fetchUserById, updateUser, fetchOrdersByUserId, fetchOrderDetailsByOrderId } from '@/services/api'
 import AddressCard from '@/components/AddressCard.vue'
@@ -175,10 +176,11 @@ import AdminOrderDisplay from '@/components/AdminOrderDisplay.vue'
 
 const route = useRoute()
 const id = Number(route.params.id)
+const { success, error } = useToast()
 
 const user = ref(null)
 const loading = ref(false)
-const error = ref(null)
+const userError = ref(null)
 
 const orders = ref([])
 const ordersLoading = ref(false)
@@ -305,7 +307,7 @@ async function save() {
     await load()
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Speichern (E-Mail evtl. schon vergeben?)')
+    error('Fehler beim Speichern (E-Mail evtl. schon vergeben?)')
   }
 }
 

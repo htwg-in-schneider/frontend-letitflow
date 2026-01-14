@@ -3,9 +3,6 @@
     <h1 class="text-2xl font-semibold mb-4">Kategorien (Admin)</h1>
 
     <div v-if="loading">Lade Kategorien...</div>
-    <div v-else-if="error" class="text-red-600 mb-4">
-      {{ error }}
-    </div>
 
     <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-start">
       <div
@@ -128,6 +125,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useToast } from '@/composables/useToast'
 import ImagePickerCard from '@/components/ImagePickerCard.vue'
 
 import {
@@ -137,6 +135,7 @@ import {
 } from '@/services/api'
 
 const authStore = useAuthStore()
+const { success, error, warning } = useToast()
 const categories = ref([])
 const newCategory = ref({
   name: '',
@@ -144,7 +143,6 @@ const newCategory = ref({
   imageUrl: ''
 })
 const loading = ref(false)
-const error = ref(null)
 
 function slugify(str) {
   if (!str) return ''
@@ -157,11 +155,10 @@ function slugify(str) {
 
 async function loadCategories() {
   loading.value = true
-  error.value = null
   try {
     categories.value = await fetchCategories()
   } catch (e) {
-    error.value = 'Kategorien konnten nicht geladen werden.'
+    error('Kategorien konnten nicht geladen werden.')
     console.error(e)
   } finally {
     loading.value = false
@@ -177,31 +174,32 @@ async function handleCreate() {
   }
 
   if (!payload.name) {
-    alert('Name darf nicht leer sein')
+    warning('Name darf nicht leer sein')
     return
   }
 
   try {
     await createCategory(payload)
+    success('Kategorie erstellt')
     newCategory.value = { name: '', description: '', imageUrl: '' }
     await loadCategories()
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Erstellen der Kategorie (Slug evtl. schon vergeben?)')
+    error('Fehler beim Erstellen der Kategorie (Slug evtl. schon vergeben?)')
   }
 }
 
 async function handleDelete(id) {
-  if (!confirm('Kategorie wirklich löschen?')) return
   try {
     await deleteCategory(id)
+    success('Kategorie gelöscht')
     await loadCategories()
   } catch (e) {
     console.error(e)
     if (e.status === 500) {
-      alert('Kategorie kann nicht gelöscht werden, da sie noch Produkte enthält. Bitte löschen aus dieser Kategorie.')
+      error('Kategorie kann nicht gelöscht werden, da sie noch Produkte enthält. Bitte löschen oder verschieben Sie zuerst alle Produkte aus dieser Kategorie.')
     } else {
-      alert('Fehler beim Löschen der Kategorie')
+      error('Fehler beim Löschen der Kategorie')
     }
   }
 }

@@ -143,6 +143,11 @@ export function updateCartItemQuantity(userId, variantId, newQuantity) {
   });
 }
 
+export function clearCart(userId) {
+  const uId = encodeURIComponent(userId);
+  return authFetch(`/api/cart/clear?userId=${uId}`, { method: 'DELETE' });
+}
+
 // --- ORDERS ---
 
 export function createOrder(payload) {

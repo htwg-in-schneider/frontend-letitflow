@@ -1,14 +1,24 @@
 <script setup>
-import { watch, onMounted } from 'vue';
+import { watch, onMounted, ref } from 'vue';
 import { useAuth0 } from '@auth0/auth0-vue';
 import { useRouter } from 'vue-router';
 import { useCartStore } from '@/stores/cartStores';
+import { useToast } from '@/composables/useToast';
 import Navbar from "@/components/Navbar.vue";
 import PageFooter from "@/components/PageFooter.vue";
+import Toast from "@/components/Toast.vue";
 
 const auth0 = useAuth0();
 const router = useRouter();
 const cartStore = useCartStore();
+const toastComponent = ref(null);
+const { setComponent } = useToast();
+
+onMounted(() => {
+  if (toastComponent.value) {
+    setComponent(toastComponent.value);
+  }
+});
 
 // 1. Sicherheit für den Login-Redirect
 watch(
@@ -40,5 +50,6 @@ watch(
     <Navbar />
     <router-view class="flex-grow" />
     <PageFooter />
+    <Toast ref="toastComponent" />
   </div>
 </template>

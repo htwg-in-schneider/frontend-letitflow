@@ -59,6 +59,7 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth0 } from '@auth0/auth0-vue';
 import { useCartStore } from '@/stores/cartStores';
+import { useToast } from '@/composables/useToast';
 import * as api from '@/services/api';
 
 import AddressCard from '@/components/AddressCard.vue';
@@ -68,6 +69,7 @@ import PriceSummary from '@/components/cardComponents/PriceSummary.vue';
 const cartStore = useCartStore();
 const { user, isAuthenticated } = useAuth0();
 const router = useRouter();
+const { success, error, warning } = useToast();
 const shippingAddressId = ref(null);
 const billingAddressId = ref(null);
 
@@ -108,13 +110,13 @@ const finishOrder = async () => {
   console.log('Total sum', cartStore.totalSum);
 
   if (!cartStore.items.length) {
-    alert('Dein Warenkorb ist leer.');
+    warning('Dein Warenkorb ist leer.');
     console.groupEnd();
     return;
   }
 
   if (!shippingAddressId.value || !billingAddressId.value) {
-    alert('Liefer- und Rechnungsadresse nicht gefunden. Bitte lege diese unter Adressen an.');
+    warning('Liefer- und Rechnungsadresse nicht gefunden. Bitte lege diese unter Adressen an.');
     console.warn('Missing addresses', { shippingAddressId: shippingAddressId.value, billingAddressId: billingAddressId.value });
     console.groupEnd();
     return;
@@ -145,15 +147,26 @@ const finishOrder = async () => {
   try {
     const response = await api.createOrder(orderPayload);
     console.log('Order response', response);
-    alert('Bestellung abgeschlossen!');
+    success('Bestellung abgeschlossen!');
 
-    if (!cartStore.currentUserId) {
-      console.log('No userId found, clearing local cart');
-      localStorage.removeItem('cart');
+    // Warenkorb auf dem Server löschen
+    try {
+      await fetch('http://localhost:8081/api/cart', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth0_token')}`
+        }
+      });
+    } catch (deleteError) {
+      console.error('Warenkorb konnte nicht gelöscht werden:', deleteError);
     }
 
-    await cartStore.loadCart();
-    console.log('Cart reloaded, redirecting to home');
+    // Frontend Warenkorb leeren
+    cartStore.items = [];
+    cartStore.totalSum = 0;
+    localStorage.removeItem('cart');
+    
+    console.log('Cart cleared, redirecting to home');
     router.push('/');
   } catch (err) {
     console.error('Checkout error', err);
@@ -183,7 +196,7 @@ const finishOrder = async () => {
       }
     }
     
-    alert(errorMessage);
+    error(errorMessage);
   } finally {
     console.groupEnd();
   }

@@ -104,16 +104,15 @@ async function loadData() {
 }
 
 async function handleDeleteProduct(id) {
-  if (!confirm('Produkt wirklich löschen?')) return
   try {
     await deleteProduct(id)
     await loadData()
   } catch (e) {
     console.error(e)
     if (e.status === 500) {
-      alert('Produkt kann nicht gelöscht werden, da es noch Varianten enthält. Bitte löschen Sie zuerst alle Varianten dieses Produkts.')
+      error('Produkt kann nicht gelöscht werden, da es noch Varianten enthält. Bitte löschen Sie zuerst alle Varianten dieses Produkts.')
     } else {
-      alert('Fehler beim Löschen des Produkts')
+      error('Fehler beim Löschen des Produkts')
     }
   }
 }

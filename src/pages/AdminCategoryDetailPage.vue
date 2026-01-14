@@ -4,8 +4,8 @@
 
     <div v-if="loading">Lade...</div>
 
-    <div v-else-if="error" class="text-red-600 mb-4">
-      {{ error }}
+    <div v-else-if="categoryError" class="text-red-600 mb-4">
+      {{ categoryError }}
     </div>
 
     <div v-else-if="category">
@@ -151,6 +151,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useToast } from '@/composables/useToast'
 
 import AdminFormCard from '@/components/AdminFormCard.vue'
 import ImagePickerCard from '@/components/ImagePickerCard.vue'
@@ -166,17 +167,18 @@ import {
 
 const route = useRoute()
 const id = Number(route.params.id)
+const { success, error } = useToast()
 
 const category = ref(null)
 const products = ref([])
 const productsWithInfo = ref([])
 
 const loading = ref(false)
-const error = ref(null)
+const categoryError = ref(null)
 
 async function loadCategoryAndProducts() {
   loading.value = true
-  error.value = null
+  categoryError.value = null
 
   try {
     category.value = await fetchCategoryById(id)
@@ -221,7 +223,7 @@ async function loadCategoryAndProducts() {
     )
   } catch (e) {
     console.error(e)
-    error.value = 'Kategorie oder Produkte konnten nicht geladen werden.'
+    categoryError.value = 'Kategorie oder Produkte konnten nicht geladen werden.'
   } finally {
     loading.value = false
   }
@@ -229,25 +231,25 @@ async function loadCategoryAndProducts() {
 
 async function saveCategory() {
   try {
-    await updateCategory(id, category.value)
+    success('Kategorie gespeichert')
     await loadCategoryAndProducts()
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Speichern der Kategorie')
+    error('Fehler beim Speichern der Kategorie')
   }
 }
 
 async function deleteProductById(productId) {
   if (!confirm('Produkt wirklich löschen?')) return
   try {
-    await deleteProduct(productId)
+    success('Produkt gelöscht')
     await loadCategoryAndProducts()
   } catch (e) {
     console.error(e)
     if (e.status === 500) {
-      alert('Produkt kann nicht gelöscht werden, da es noch Varianten enthält. Bitte löschen Sie zuerst alle Varianten dieses Produkts.')
+      error('Produkt kann nicht gelöscht werden, da es noch Varianten enthält. Bitte löschen Sie zuerst alle Varianten dieses Produkts.')
     } else {
-      alert('Fehler beim Löschen des Produkts')
+      error('Fehler beim Löschen des Produkts')
     }
   }
 }

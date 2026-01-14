@@ -268,13 +268,16 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
+import { useToast } from '@/composables/useToast'
 import { fetchAllOrders, fetchUserById, searchOrders } from '@/services/api'
 import CardItem from '@/components/cardComponents/CardItem.vue'
+
+const { error } = useToast()
 
 const orders = ref([])
 const allOrders = ref([]) // Speichere alle Orders für Filterung
 const loading = ref(false)
-const error = ref(null)
+const orderError = ref(null)
 
 const filters = ref({
   customerName: '',
@@ -293,7 +296,7 @@ const loadingDetail = ref(false)
 
 const loadOrders = async () => {
   loading.value = true
-  error.value = null
+  orderError.value = null
   try {
     const data = await fetchAllOrders()
     allOrders.value = data
@@ -301,7 +304,7 @@ const loadOrders = async () => {
     // Keine zusätzlichen Customer-Daten mehr nötig - Backend liefert jetzt customerName
   } catch (e) {
     console.error(e)
-    error.value = 'Bestellungen konnten nicht geladen werden.'
+    orderError.value = 'Bestellungen konnten nicht geladen werden.'
   } finally {
     loading.value = false
   }
@@ -309,7 +312,7 @@ const loadOrders = async () => {
 
 const applyFilters = () => {
   loading.value = true
-  error.value = null
+  orderError.value = null
   
   try {
     // Clientseitige Filterung auf allOrders
@@ -374,7 +377,7 @@ const applyFilters = () => {
     orders.value = filtered
   } catch (e) {
     console.error(e)
-    error.value = 'Filter konnte nicht angewendet werden.'
+    orderError.value = 'Filter konnte nicht angewendet werden.'
   } finally {
     loading.value = false
   }
@@ -488,7 +491,7 @@ const updateQuantity = async (item, event) => {
     item.quantity = newQuantity
   } catch (e) {
     console.error('Fehler beim Update:', e)
-    alert('Menge konnte nicht aktualisiert werden')
+    error('Menge konnte nicht aktualisiert werden')
   }
 }
 
@@ -502,7 +505,7 @@ const updateQuantityDirect = async (item, newQuantity) => {
     item.quantity = newQuantity
   } catch (e) {
     console.error('Fehler beim Update:', e)
-    alert('Menge konnte nicht aktualisiert werden')
+    error('Menge konnte nicht aktualisiert werden')
   }
 }
 
@@ -515,7 +518,7 @@ const removeItem = async (item) => {
     selectedOrderDetails.value = selectedOrderDetails.value.filter(i => i.id !== item.id)
   } catch (e) {
     console.error('Fehler beim Löschen:', e)
-    alert('Artikel konnte nicht entfernt werden')
+    error('Artikel konnte nicht entfernt werden')
   }
 }
 
