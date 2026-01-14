@@ -44,9 +44,6 @@
               <h3 class="text-lg font-bold text-gray-900">
                 Bestellt am {{ formatDate(order.orderDate || order.createdAt) }}
               </h3>
-              <p class="text-sm text-gray-500">
-                {{ order.itemCount || 0 }} Artikel • Versand an {{ order.shippingName || 'Dich' }}
-              </p>
             </div>
 
             <div class="flex items-center justify-between md:justify-end gap-6">
@@ -76,6 +73,8 @@ import { useAuth0 } from '@auth0/auth0-vue';
 import { fetchOrdersByUserId } from '@/services/api';
 import { authFetch } from '@/api/authFetch.js';
 
+import { formatDate, parseRobustDate } from '@/utils/dateUtils';
+
 const { user } = useAuth0();
 const orders = ref([]);
 const loading = ref(true);
@@ -86,8 +85,6 @@ const loadOrders = async () => {
   error.value = null;
   
   try {
-    // 1. Zuerst das eigene Profil vom Backend laden, um die numerische Datenbank-ID zu erhalten
-    // Das ist wichtig, da das Backend Long-IDs erwartet, Auth0 aber Strings liefert.
     const profile = await authFetch('/api/users/me');
     const dbUserId = profile.id;
 
@@ -95,7 +92,6 @@ const loadOrders = async () => {
       throw new Error('Konnte deine Benutzer-ID im System nicht finden.');
     }
     
-    // 2. Mit der numerischen ID die Bestellungen laden
     orders.value = await fetchOrdersByUserId(dbUserId);
   } catch (e) {
     console.error('Fehler beim Laden der Bestellungen:', e);
@@ -107,20 +103,11 @@ const loadOrders = async () => {
 
 const sortedOrders = computed(() => {
   return [...orders.value].sort((a, b) => {
-    const dateA = new Date(a.orderDate || a.createdAt);
-    const dateB = new Date(b.orderDate || b.createdAt);
+    const dateA = parseRobustDate(a.orderDate || a.createdAt) || new Date(0);
+    const dateB = parseRobustDate(b.orderDate || b.createdAt) || new Date(0);
     return dateB - dateA;
   });
 });
-
-const formatDate = (dateString) => {
-  if (!dateString) return 'Unbekannt';
-  return new Date(dateString).toLocaleDateString('de-DE', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
-};
 
 const formatPrice = (price) => {
   return Number(price || 0).toLocaleString('de-DE', {
