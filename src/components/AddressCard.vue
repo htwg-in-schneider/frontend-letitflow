@@ -73,12 +73,8 @@ const address = ref({
 });
 
 const loadAddress = async () => {
-  if (!props.userId) {
-    console.warn('No userId provided to AddressCard');
-    return;
-  }
   try {
-    const data = await fetchAddressByUserAndType(props.userId, props.type);
+    const data = await fetchAddressByUserAndType(props.type);
     if (data) {
       address.value = data;
       addressExists.value = true;

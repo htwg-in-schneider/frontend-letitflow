@@ -132,9 +132,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { fetchUsers, deleteUser } from '@/services/api'
+import { useAuthStore } from '@/stores/auth'
 
+const authStore = useAuthStore()
 const users = ref([])
 const loading = ref(false)
 const error = ref(null)
@@ -142,11 +144,12 @@ const error = ref(null)
 const filters = ref({
   firstName: '',
   lastName: '',
+  email: '',
   role: ''
 })
 
 function resetFilters() {
-  filters.value = { firstName: '', lastName: '', role: '' }
+  filters.value = { firstName: '', lastName: '', email: '', role: '' }
   loadUsers()
 }
 
@@ -174,7 +177,13 @@ async function handleDelete(id) {
   }
 }
 
-onMounted(loadUsers)
+// Warte auf isAdmin, dann lade Benutzer
+watch(() => authStore.isAdmin, (isAdmin) => {
+  console.log('isAdmin changed:', isAdmin)
+  if (isAdmin && !authStore.loading) {
+    loadUsers()
+  }
+}, { immediate: true })
 </script>
 
 <style scoped>

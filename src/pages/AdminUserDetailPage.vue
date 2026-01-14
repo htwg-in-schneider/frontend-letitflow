@@ -1,78 +1,142 @@
 <template>
-  <section class="max-w-3xl mx-auto p-6">
-    <h1 class="text-2xl font-semibold mb-4">Nutzer bearbeiten (Admin)</h1>
-
-    <div v-if="loading" class="text-gray-500">Lade...</div>
-    <div v-else-if="error" class="text-red-600 mb-4">{{ error }}</div>
-
-    <div v-else-if="user" class="bg-white border border-[#f0c9b8] rounded-xl p-6 shadow-sm">
-      <form @submit.prevent="save">
-        <div class="grid gap-4 md:grid-cols-2">
-          <div>
-            <label class="block text-sm font-medium">Vorname</label>
-            <input v-model="form.firstName" class="border rounded px-3 py-2 w-full" />
-            <p v-if="errors.firstName" class="text-xs text-red-600 mt-1">{{ errors.firstName }}</p>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium">Nachname</label>
-            <input v-model="form.lastName" class="border rounded px-3 py-2 w-full" />
-            <p v-if="errors.lastName" class="text-xs text-red-600 mt-1">{{ errors.lastName }}</p>
-          </div>
-
-          <div class="md:col-span-2">
-            <label class="block text-sm font-medium">E-Mail</label>
-            <input v-model="form.email" class="border rounded px-3 py-2 w-full" />
-            <p v-if="errors.email" class="text-xs text-red-600 mt-1">{{ errors.email }}</p>
-          </div>
-
-          <div class="md:col-span-2">
-            <label class="block text-sm font-medium">Rolle</label>
-            <select v-model="form.role" class="border rounded px-3 py-2 w-full bg-white">
-              <option value="ROLE_USER">User</option>
-              <option value="ROLE_ADMIN">Admin</option>
-            </select>
-          </div>
-
-          <!-- Passwort optional -->
-          <div class="md:col-span-2">
-            <label class="block text-sm font-medium">Passwort (optional ändern)</label>
-            <input
-              type="password"
-              v-model="form.password"
-              class="border rounded px-3 py-2 w-full"
-              placeholder="Leer lassen, wenn unverändert"
-            />
-            <p v-if="errors.password" class="text-xs text-red-600 mt-1">{{ errors.password }}</p>
-          </div>
-        </div>
-
-        <div class="mt-6 flex justify-between gap-2">
-          <router-link
-            to="/admin/users"
-            class="inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-medium border border-[#f0c9b8] text-gray-700"
-          >
-            Zurück
-          </router-link>
-
-          <button
-            type="submit"
-            class="inline-flex items-center justify-center rounded-full px-4 py-2 text-xs font-medium text-white bg-[#e09a82]"
-          >
-            Speichern
-          </button>
-        </div>
-      </form>
+  <section class="max-w-4xl mx-auto p-4 md:p-6">
+    <div class="mb-6">
+      <router-link
+        to="/admin/users"
+        class="inline-flex items-center text-sm text-[#e09a82] hover:text-[#d48366] mb-4"
+      >
+        ← Zurück zur Übersicht
+      </router-link>
+      <h1 class="text-3xl font-semibold text-gray-800">Nutzer bearbeiten</h1>
     </div>
 
-    <div v-else class="text-gray-500">Nutzer nicht gefunden.</div>
+    <div v-if="loading" class="text-center py-12 text-gray-500">
+      <div class="animate-pulse">Lade...</div>
+    </div>
+    <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-600 px-6 py-4 rounded-lg mb-6">
+      {{ error }}
+    </div>
+
+    <div v-else-if="user" class="grid gap-6 lg:grid-cols-3">
+      <!-- Nutzerformular (Linke Spalte) -->
+      <div class="lg:col-span-2">
+        <div class="bg-white border border-[#f0c9b8] rounded-xl p-6 shadow-sm">
+          <h2 class="text-lg font-semibold mb-4 text-gray-800">Grundinformationen</h2>
+          <form @submit.prevent="save">
+            <div class="grid gap-4 md:grid-cols-2">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Vorname</label>
+                <input
+                  v-model="form.firstName"
+                  class="w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#e09a82] outline-none transition"
+                />
+                <p v-if="errors.firstName" class="text-xs text-red-600 mt-1">{{ errors.firstName }}</p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nachname</label>
+                <input
+                  v-model="form.lastName"
+                  class="w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#e09a82] outline-none transition"
+                />
+                <p v-if="errors.lastName" class="text-xs text-red-600 mt-1">{{ errors.lastName }}</p>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">E-Mail</label>
+                <input
+                  v-model="form.email"
+                  class="w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#e09a82] outline-none transition"
+                />
+                <p v-if="errors.email" class="text-xs text-red-600 mt-1">{{ errors.email }}</p>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Rolle</label>
+                <select
+                  v-model="form.role"
+                  class="w-full border border-gray-200 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-[#e09a82] outline-none transition"
+                >
+                  <option value="ROLE_USER">👤 Benutzer</option>
+                  <option value="ROLE_ADMIN">⚙️ Administrator</option>
+                </select>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Passwort (optional)</label>
+                <input
+                  type="password"
+                  v-model="form.password"
+                  placeholder="Leer lassen, wenn unverändert"
+                  class="w-full border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#e09a82] outline-none transition"
+                />
+                <p v-if="errors.password" class="text-xs text-red-600 mt-1">{{ errors.password }}</p>
+              </div>
+            </div>
+
+            <div class="mt-6 flex flex-col sm:flex-row justify-end gap-3">
+              <button
+                type="submit"
+                class="inline-flex items-center justify-center rounded-full px-6 py-2 text-sm font-medium text-white bg-[#e09a82] hover:bg-[#d48366] transition"
+              >
+                ✓ Speichern
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Bestellungen (Rechte Spalte) -->
+      <div class="lg:col-span-1">
+        <div class="bg-white border border-[#f0c9b8] rounded-xl p-6 shadow-sm h-full">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-800">📋 Bestellungen</h2>
+            <span class="inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800">
+              {{ orders.length }}
+            </span>
+          </div>
+          <div v-if="ordersLoading" class="text-gray-500 text-sm text-center py-6">
+            Lade Bestellungen...
+          </div>
+          <AdminOrderDisplay v-else :orders="orders" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Wrapper für Adressen (unter dem oberen Layout) -->
+    <template v-if="user">
+      <div class="mt-6"></div>
+
+      <!-- Adressen -->
+      <div class="space-y-6">
+        <h2 class="text-lg font-semibold text-gray-800">Adressen</h2>
+        <div class="grid gap-6 lg:grid-cols-2">
+          <AddressCard
+            title="📦 Versandadresse"
+            :userId="user.id"
+            type="SHIPPING"
+          />
+          <AddressCard
+            title="💳 Rechnungsadresse"
+            :userId="user.id"
+            type="BILLING"
+          />
+        </div>
+      </div>
+    </template>
+
+    <div v-else class="text-center py-12 text-gray-500">
+      Nutzer nicht gefunden.
+    </div>
   </section>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { fetchUserById, updateUser } from '@/services/api'
+import { fetchUserById, updateUser, fetchOrdersByUserId } from '@/services/api'
+import AddressCard from '@/components/AddressCard.vue'
+import AdminOrderDisplay from '@/components/AdminOrderDisplay.vue'
 
 const route = useRoute()
 const id = Number(route.params.id)
@@ -81,12 +145,15 @@ const user = ref(null)
 const loading = ref(false)
 const error = ref(null)
 
+const orders = ref([])
+const ordersLoading = ref(false)
+
 const form = ref({
   firstName: '',
   lastName: '',
   email: '',
   role: 'ROLE_USER',
-  password: '' // optional
+  password: ''
 })
 
 const errors = ref({
@@ -133,6 +200,22 @@ async function load() {
   }
 }
 
+async function loadAddresses() {
+  // AddressCard lädt sich selbst
+}
+
+async function loadOrders() {
+  ordersLoading.value = true
+  try {
+    orders.value = await fetchOrdersByUserId(id)
+  } catch (e) {
+    console.error(e)
+    orders.value = []
+  } finally {
+    ordersLoading.value = false
+  }
+}
+
 async function save() {
   if (!validate()) return
 
@@ -143,7 +226,6 @@ async function save() {
     role: form.value.role
   }
 
-  // Passwort nur senden, wenn gesetzt
   if (form.value.password) payload.password = form.value.password
 
   try {
@@ -156,5 +238,8 @@ async function save() {
   }
 }
 
-onMounted(load)
+onMounted(() => {
+  load()
+  loadOrders()
+})
 </script>
