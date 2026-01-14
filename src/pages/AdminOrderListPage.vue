@@ -120,8 +120,8 @@
         <div v-if="loading" class="flex-1 flex items-center justify-center text-gray-500">
           Lade Bestellungen...
         </div>
-        <div v-else-if="error" class="flex-1 flex items-center justify-center text-red-600 px-6">
-          {{ error }}
+        <div v-else-if="orderError" class="flex-1 flex items-center justify-center text-red-600 px-6">
+          {{ orderError }}
         </div>
         <div v-else-if="orders.length === 0" class="flex-1 flex items-center justify-center text-gray-500">
           Keine Bestellungen gefunden.

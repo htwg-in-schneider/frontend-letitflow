@@ -13,8 +13,8 @@
     <div v-if="loading" class="text-center py-12 text-gray-500">
       <div class="animate-pulse">Lade...</div>
     </div>
-    <div v-else-if="error" class="bg-red-50 border border-red-200 text-red-600 px-6 py-4 rounded-lg mb-6">
-      {{ error }}
+    <div v-else-if="userError" class="bg-red-50 border border-red-200 text-red-600 px-6 py-4 rounded-lg mb-6">
+      {{ userError }}
     </div>
 
     <div v-else-if="user" class="space-y-6">
@@ -224,7 +224,7 @@ function validate() {
 
 async function load() {
   loading.value = true
-  error.value = null
+  userError.value = null
   try {
     user.value = await fetchUserById(id)
     form.value = {
@@ -236,7 +236,7 @@ async function load() {
     }
   } catch (e) {
     console.error(e)
-    error.value = 'Nutzer konnte nicht geladen werden.'
+    userError.value = 'Nutzer konnte nicht geladen werden.'
   } finally {
     loading.value = false
   }
