@@ -36,95 +36,50 @@
 
       <div v-else class="p-8 md:p-12 space-y-12">
         
-        <!-- Artikel Liste -->
+        <!-- Artikel Liste (wie Admin-Detail, read-only) -->
         <div>
           <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
             <span class="w-8 h-8 bg-[#fff7f3] rounded-full flex items-center justify-center text-[#e09a82] text-sm">1</span>
             Bestellte Artikel
           </h2>
           <div class="border border-orange-100 rounded-2xl overflow-hidden divide-y divide-orange-50">
-            <div 
-              v-for="item in orderDetails" 
+            <CardItem
+              v-for="item in orderDetails"
               :key="item.id"
-              class="p-6 flex flex-col sm:flex-row items-center gap-6 bg-white hover:bg-[#fffcf9] transition-colors"
-            >
-              <img 
-                :src="getProductImage(item)" 
-                :alt="getProductName(item)"
-                class="w-24 h-24 object-cover rounded-xl border border-orange-50 shadow-sm"
-              />
-              <div class="flex-1 text-center sm:text-left">
-                <h3 class="font-bold text-gray-900 text-lg">
-                  {{ getProductName(item) }}
-                </h3>
-                <p class="text-sm text-gray-500">
-                  {{ getVariantDisplay(item) }}
-                </p>
-                <p class="text-[#e09a82] font-semibold mt-1">
-                  {{ item.quantity || item.amount || item.count || 0 }}x {{ formatPrice(item.price || item.unitPrice || item.pricePerUnit) }}
-                </p>
-              </div>
-              <div class="text-right font-bold text-gray-900">
-                {{ formatPrice((item.price || item.unitPrice || item.pricePerUnit || 0) * (item.quantity || item.amount || item.count || 0)) }}
-              </div>
-            </div>
+              :item="item"
+              :showActions="false"
+              :quantityOptionsMax="20"
+            />
           </div>
         </div>
 
         <!-- Adressen & Zahlung -->
         <div class="grid md:grid-cols-2 gap-8">
-          <div>
-            <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <span class="w-8 h-8 bg-[#fff7f3] rounded-full flex items-center justify-center text-[#e09a82] text-sm">2</span>
-              Lieferadresse
-            </h2>
-            <div class="bg-[#fff7f3]/30 border border-orange-100 p-6 rounded-2xl text-gray-700 leading-relaxed">
-              <p class="font-bold text-gray-900">
-                {{ order?.shippingName || 
-                   (order?.address?.firstName && order?.address?.lastName ? order.address.firstName + ' ' + order.address.lastName : null) || 
-                   order?.address?.name || 
-                   order?.customerName || 
-                   order?.recipientName ||
-                   'Max Mustermann' }}
-              </p>
-              <p>
-                {{ order?.shippingAddress || 
-                   (order?.address?.street ? order.address.street + (order.address.housenumber ? ' ' + order.address.housenumber : '') : null) || 
-                   order?.address?.addressLine1 || 
-                   order?.address?.street ||
-                   'Musterstraße 123' }}
-              </p>
-              <p>
-                {{ order?.shippingCity || 
-                   (order?.address?.postalCode && order?.address?.city ? order.address.postalCode + ' ' + order.address.city : null) || 
-                   order?.address?.city || 
-                   '12345 Musterstadt' }}
-              </p>
-              <p>{{ order?.shippingCountry || order?.address?.country || 'Deutschland' }}</p>
-            </div>
-          </div>
+          <AddressCard v-if="order?.userId" title="Lieferadresse" :userId="order.userId" type="SHIPPING" :readonly="true" />
+          <AddressCard v-if="order?.userId" title="Rechnungsadresse" :userId="order.userId" type="BILLING" :readonly="true" />
+        </div>
 
-          <div>
-            <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <span class="w-8 h-8 bg-[#fff7f3] rounded-full flex items-center justify-center text-[#e09a82] text-sm">3</span>
-              Zahlungsinformationen
-            </h2>
-            <div class="bg-[#fff7f3]/30 border border-orange-100 p-6 rounded-2xl text-gray-700 space-y-3">
-              <div class="flex justify-between">
-                <span class="text-gray-500">Zahlungsart:</span>
-                <span class="font-semibold">{{ order?.paymentMethod || 'Rechnung' }}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-500">Zahlungsstatus:</span>
-                <span class="font-semibold" :class="order?.paid ? 'text-green-600' : 'text-orange-500'">
-                  {{ order?.paid ? 'Bezahlt' : 'Offen' }}
-                </span>
-              </div>
-              <hr class="border-orange-100" />
-              <div class="flex justify-between text-lg">
-                <span class="font-bold">Summe:</span>
-                <span class="font-black text-[#e09a82]">{{ formatPrice(order?.totalAmount || order?.totalPrice) }}</span>
-              </div>
+        <!-- Zahlungsinformationen -->
+        <div>
+          <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <span class="w-8 h-8 bg-[#fff7f3] rounded-full flex items-center justify-center text-[#e09a82] text-sm">4</span>
+            Zahlungsinformationen
+          </h2>
+          <div class="bg-[#fff7f3]/30 border border-orange-100 p-6 rounded-2xl text-gray-700 space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-500">Zahlungsart:</span>
+              <span class="font-semibold">{{ order?.paymentMethod || 'Rechnung' }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">Zahlungsstatus:</span>
+              <span class="font-semibold" :class="order?.paid ? 'text-green-600' : 'text-orange-500'">
+                {{ order?.paid ? 'Bezahlt' : 'Offen' }}
+              </span>
+            </div>
+            <hr class="border-orange-100" />
+            <div class="flex justify-between text-lg">
+              <span class="font-bold">Summe:</span>
+              <span class="font-black text-[#e09a82]">{{ formatPrice(order?.totalAmount || order?.totalPrice) }}</span>
             </div>
           </div>
         </div>
@@ -145,15 +100,19 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { fetchOrderById, fetchOrderDetailsByOrderId } from '@/services/api';
+import { fetchOrderById, fetchOrderDetailsByOrderId, fetchOrdersByUserId } from '@/services/api';
 import { formatDate } from '@/utils/dateUtils';
-import { getProductName, getProductImage, getVariantDisplay } from '@/utils/productUtils';
+import { getProductImage } from '@/utils/productUtils';
+import AddressCard from '@/components/AddressCard.vue';
+import { useAuth0 } from '@auth0/auth0-vue';
+import CardItem from '@/components/cardComponents/CardItem.vue';
 
 const route = useRoute();
 const id = route.params.id;
+const { user, isAuthenticated } = useAuth0();
 
 const order = ref(null);
-const orderDetails = ref([]); // NEU: Für die Artikel-Liste
+const orderDetails = ref([]);
 const loading = ref(true);
 const error = ref(null);
 
@@ -164,24 +123,49 @@ const loadOrder = async () => {
     // 1. Grunddaten der Bestellung laden
     order.value = await fetchOrderById(id);
     
-    // 2. Prüfen, ob Artikel bereits im Order-Objekt enthalten sind
-    console.log("shaboink")
-    console.log(order.value)
+    // 2. Bestelldetails (Artikel) laden
     const nestedItems = order.value.items || order.value.orderDetails || order.value.orderItems || order.value.order_items;
     if (nestedItems && Array.isArray(nestedItems) && nestedItems.length > 0) {
-      orderDetails.value = nestedItems;
+      orderDetails.value = normalizeItems(nestedItems);
     } else {
-      // 3. Bestelldetails (Artikel) separat laden, falls nicht enthalten
+      // Bestelldetails separat laden, falls nicht enthalten
       try {
-        orderDetails.value = await fetchOrderDetailsByOrderId(id);
+        orderDetails.value = normalizeItems(await fetchOrderDetailsByOrderId(id));
         console.log('Bestelldetails erfolgreich geladen:', orderDetails.value);
       } catch (detErr) {
         console.warn('Bestelldetails konnten nicht separat geladen werden:', detErr);
       }
     }
   } catch (e) {
-    console.error('Fehler beim Laden der Bestellung:', e);
-    error.value = 'Die Details dieser Bestellung konnten nicht geladen werden.';
+    // Fallback: Wenn GET /orders/{id} nicht erlaubt (405/403), versuche über User-Orders
+    if ((e.status === 405 || e.status === 403) && isAuthenticated.value && user.value?.sub) {
+      try {
+        const list = await fetchOrdersByUserId(user.value.sub);
+        const found = Array.isArray(list) ? list.find(o => String(o.id) === String(id)) : null;
+        if (found) {
+          order.value = found;
+          // Bestelldetails aus Liste oder nachladen
+          const nestedItems = order.value.items || order.value.orderDetails || order.value.orderItems || order.value.order_items;
+          if (nestedItems && Array.isArray(nestedItems) && nestedItems.length > 0) {
+            orderDetails.value = normalizeItems(nestedItems);
+          } else {
+            try {
+              orderDetails.value = normalizeItems(await fetchOrderDetailsByOrderId(id));
+            } catch (detErr) {
+              console.warn('Bestelldetails konnten nicht separat geladen werden (Fallback):', detErr);
+            }
+          }
+        } else {
+          error.value = 'Bestellung wurde nicht gefunden.';
+        }
+      } catch (fallbackErr) {
+        console.error('Fallback (Orders by user) fehlgeschlagen:', fallbackErr);
+        error.value = 'Die Details dieser Bestellung konnten nicht geladen werden.';
+      }
+    } else {
+      console.error('Fehler beim Laden der Bestellung:', e);
+      error.value = 'Die Details dieser Bestellung konnten nicht geladen werden.';
+    }
   } finally {
     loading.value = false;
   }
@@ -191,6 +175,28 @@ const formatPrice = (price) => {
   return Number(price || 0).toLocaleString('de-DE', {
     style: 'currency',
     currency: 'EUR'
+  });
+};
+
+// Bringt Order-Positionen in eine Form, die CardItem versteht
+const normalizeItems = (items = []) => {
+  return items.map((item) => {
+    const quantity = item.quantity ?? item.amount ?? item.count ?? 0;
+    const pricePerUnit = item.pricePerUnit ?? item.unitPrice ?? item.price ?? 0;
+    const totalPrice = item.totalPrice ?? (Number(pricePerUnit) * Number(quantity));
+    const color = item.color ?? item.variantColor ?? item.variant?.color ?? item.variante?.color;
+    const size = item.size ?? item.variantSize ?? item.variant?.size ?? item.variante?.size;
+    const imageUrl = item.imageUrl ?? item.image_url ?? getProductImage(item);
+    return {
+      ...item,
+      quantity,
+      pricePerUnit,
+      totalPrice,
+      title: item.title ?? item.productTitle ?? item.productName ?? 'Produkt',
+      imageUrl,
+      color,
+      size,
+    };
   });
 };
 

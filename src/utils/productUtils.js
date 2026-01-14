@@ -1,3 +1,5 @@
+const STATIC_BASE = 'https://htwg-in-schneider.github.io/frontend-static-letitflow';
+
 export const getProductName = (item) => {
   if (!item) return 'Produkt';
   return item.productName || 
@@ -15,7 +17,7 @@ export const getProductName = (item) => {
 };
 
 export const getProductImage = (item) => {
-  if (!item) return '/img/warenkorb_icon.png';
+  if (!item) return `${STATIC_BASE}/img/warenkorb_icon.png`;
   
   // 1. Try to get image from backend
   const src = item.imageUrl || 
@@ -38,18 +40,18 @@ export const getProductImage = (item) => {
   // 2. Fallback to local images based on name
   const name = getProductName(item).toLowerCase();
   
-  if (name.includes('soft') && name.includes('tampon')) return '/img/softtampon.png';
-  if (name.includes('tampon')) return '/img/tampon.png';
-  if (name.includes('tasse') || name.includes('cup')) return '/img/cupbunt.png';
-  if (name.includes('scheibe') || name.includes('disc')) return '/img/menstruationsscheiben_und_tassen.png';
-  if (name.includes('highwaist') || name.includes('high waist')) return '/img/highwwaist.png';
-  if (name.includes('panty') || name.includes('unterwäsche') || name.includes('slip') || name.includes('pantie')) return '/img/panty.png';
-  if (name.includes('binde') || name.includes('pad')) return '/img/binde.png';
-  if (name.includes('schwämm') || name.includes('schwaemm') || name.includes('schwamm') || name.includes('sponge')) return '/img/schwaeme.png';
-  if (name.includes('wärme') || name.includes('waerme') || name.includes('heat')) return '/img/waermehelfer.png';
+  if (name.includes('soft') && name.includes('tampon')) return `${STATIC_BASE}/img/softtampon.png`;
+  if (name.includes('tampon')) return `${STATIC_BASE}/img/tampon.png`;
+  if (name.includes('tasse') || name.includes('cup')) return `${STATIC_BASE}/img/cupbunt.png`;
+  if (name.includes('scheibe') || name.includes('disc')) return `${STATIC_BASE}/img/menstruationsscheiben_und_tassen.png`;
+  if (name.includes('highwaist') || name.includes('high waist')) return `${STATIC_BASE}/img/highwwaist.png`;
+  if (name.includes('panty') || name.includes('unterwäsche') || name.includes('slip') || name.includes('pantie')) return `${STATIC_BASE}/img/panty.png`;
+  if (name.includes('binde') || name.includes('pad')) return `${STATIC_BASE}/img/binde.png`;
+  if (name.includes('schwämm') || name.includes('schwaemm') || name.includes('schwamm') || name.includes('sponge')) return `${STATIC_BASE}/img/schwaeme.png`;
+  if (name.includes('wärme') || name.includes('waerme') || name.includes('heat')) return `${STATIC_BASE}/img/waermehelfer.png`;
 
   // 3. Default placeholder
-  return '/img/warenkorb_icon.png';
+  return `${STATIC_BASE}/img/warenkorb_icon.png`;
 };
 
 export const getVariantDisplay = (item) => {

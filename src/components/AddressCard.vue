@@ -8,12 +8,12 @@
       <p>{{ address.postalCode }} {{ address.city }}</p>
       <p>{{ address.country }}</p>
       
-      <button @click="isEditing = true" class="mt-4 text-[#e09a82] hover:text-[#d48366] text-sm font-semibold transition underline decoration-dotted">
+      <button v-if="!props.readonly" @click="isEditing = true" class="mt-4 text-[#e09a82] hover:text-[#d48366] text-sm font-semibold transition underline decoration-dotted">
         Adresse bearbeiten
       </button>
     </div>
 
-    <form v-else @submit.prevent="handleSave" class="space-y-4">
+    <form v-else-if="!props.readonly" @submit.prevent="handleSave" class="space-y-4">
       <div class="grid grid-cols-2 gap-4">
         <div class="flex flex-col">
           <label class="text-xs font-semibold text-gray-500 mb-1 ml-1">Vorname</label>
@@ -56,7 +56,7 @@ import { ref, onMounted, watch } from 'vue';
 import { fetchAddressByUserAndType, saveAddress } from '@/services/api.js';
 import { useToast } from '@/composables/useToast';
 
-const props = defineProps(['title', 'userId', 'type']);
+const props = defineProps(['title', 'userId', 'type', 'readonly']);
 const emit = defineEmits(['loaded']);
 const { error } = useToast();
 const addressExists = ref(false);

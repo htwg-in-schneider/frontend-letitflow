@@ -8,13 +8,6 @@
     </div>
 
     <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-start">
-      <!-- Neues Produkt erstellen -->
-      <AdminAddProduct
-        v-if="selectedCategoryForAdd"
-        :categoryId="selectedCategoryForAdd"
-        @created="loadData"
-      />
-
       <!-- Vorhandene Produkte -->
       <div
         v-for="product in products"
@@ -67,7 +60,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import AdminAddProduct from '@/components/AdminAddProduct.vue'
 import {
   fetchProducts,
   fetchCategories,
@@ -78,7 +70,6 @@ const products = ref([])
 const categories = ref([])
 const loading = ref(false)
 const error = ref(null)
-const selectedCategoryForAdd = ref(null)
 
 function getCategoryName(categoryId) {
   const cat = categories.value.find(c => c.id === categoryId)
@@ -91,10 +82,6 @@ async function loadData() {
   try {
     products.value = await fetchProducts()
     categories.value = await fetchCategories()
-    
-    if (categories.value.length > 0 && !selectedCategoryForAdd.value) {
-      selectedCategoryForAdd.value = categories.value[0].id
-    }
   } catch (e) {
     error.value = 'Daten konnten nicht geladen werden.'
     console.error(e)

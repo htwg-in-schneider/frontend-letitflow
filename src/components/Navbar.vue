@@ -112,13 +112,6 @@
                 class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition font-semibold"
                 @click="isAdminMenuOpen = false"
             >
-              Varianten
-            </router-link>
-            <router-link
-                to="/admin/orders"
-                class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition font-semibold"
-                @click="isAdminMenuOpen = false"
-            >
               Bestellungen
             </router-link>
             <hr class="my-1 border-orange-100" />

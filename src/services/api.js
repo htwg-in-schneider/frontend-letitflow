@@ -206,19 +206,19 @@ export function deleteAddress(id) {
  * Holt alle Bestellungen eines Nutzers
  */
 export function fetchOrdersByUserId(userId) {
-  return authFetch(`/api/orders/user/${encodeURIComponent(userId)}`)
+  return authFetch(`/api/orders/user/${encodeURIComponent(userId)}`, { method: 'GET' })
 }
 
 /**
  * Holt die Details einer spezifischen Bestellung
  */
 export function fetchOrderById(orderId) {
-  return authFetch(`/api/orders/${orderId}`)
+  return authFetch(`/api/orders/${orderId}`, { method: 'GET' })
 }
 
 /**
  * Holt die Artikel (Positionen) einer Bestellung
  */
 export function fetchOrderDetailsByOrderId(orderId) {
-  return authFetch(`/api/order-details/order/${orderId}`)
+  return authFetch(`/api/order-details/order/${orderId}`, { method: 'GET' })
 }

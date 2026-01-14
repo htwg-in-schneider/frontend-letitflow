@@ -66,16 +66,6 @@
         :key="cat.id"
         class="border border-[#f0c9b8] bg-white flex flex-col rounded-md overflow-hidden shadow-sm"
       >
-        <div v-if="authStore.isAdmin" class="bg-[#fff7f3] px-4 py-2 flex justify-between items-center border-b border-[#f0c9b8]">
-          <p class="text-xs text-gray-500">ID: <span class="font-mono">{{ cat.id }}</span></p>
-          <router-link
-            :to="{ name: 'AdminCategoryDetail', params: { id: cat.id } }"
-            class="rounded-full px-3 py-1 text-xs font-medium text-white bg-[#e09a82] hover:bg-[#d68570]"
-          >
-            Jetzt bearbeiten
-          </router-link>
-        </div>
-
         <img
           :src="cat.imageUrl || 'https://via.placeholder.com/400x300?text=Kategorie'"
           :alt="cat.name"

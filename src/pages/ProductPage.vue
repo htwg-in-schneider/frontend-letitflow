@@ -210,6 +210,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { fetchProductById, fetchProductVariants } from "@/services/api";
+import { getProductImage } from "@/utils/productUtils";
 import { useCartStore } from "@/stores/cartStores"; // NEU: Import des Pinia Stores
 import { useAuthStore } from "@/stores/auth"; // Admin Status prüfen
 
