@@ -230,7 +230,6 @@ async function loadCategoryAndProducts() {
 async function saveCategory() {
   try {
     await updateCategory(id, category.value)
-    alert('Kategorie gespeichert')
     await loadCategoryAndProducts()
   } catch (e) {
     console.error(e)
@@ -245,7 +244,11 @@ async function deleteProductById(productId) {
     await loadCategoryAndProducts()
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Löschen des Produkts')
+    if (e.status === 500) {
+      alert('Produkt kann nicht gelöscht werden, da es noch Varianten enthält. Bitte löschen Sie zuerst alle Varianten dieses Produkts.')
+    } else {
+      alert('Fehler beim Löschen des Produkts')
+    }
   }
 }
 

@@ -302,7 +302,6 @@ async function save() {
 
   try {
     await updateUser(id, payload)
-    alert('Nutzer gespeichert')
     await load()
   } catch (e) {
     console.error(e)

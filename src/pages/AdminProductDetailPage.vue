@@ -102,7 +102,6 @@ async function saveProduct() {
       infotext2: product.value.infotext2,
       infotext3: product.value.infotext3
     })
-    alert('Produkt gespeichert')
   } catch (e) {
     console.error(e)
     alert('Fehler beim Speichern des Produkts')

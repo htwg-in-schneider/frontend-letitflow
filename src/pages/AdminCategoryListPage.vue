@@ -198,7 +198,11 @@ async function handleDelete(id) {
     await loadCategories()
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Löschen der Kategorie')
+    if (e.status === 500) {
+      alert('Kategorie kann nicht gelöscht werden, da sie noch Produkte enthält. Bitte löschen aus dieser Kategorie.')
+    } else {
+      alert('Fehler beim Löschen der Kategorie')
+    }
   }
 }
 
