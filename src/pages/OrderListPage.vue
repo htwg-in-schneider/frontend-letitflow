@@ -44,9 +44,6 @@
               <h3 class="text-lg font-bold text-gray-900">
                 Bestellt am {{ formatDate(order.orderDate || order.createdAt) }}
               </h3>
-              <p class="text-sm text-gray-500">
-                {{ order.itemCount || 0 }} Artikel • Versand an {{ order.shippingName || 'Dich' }}
-              </p>
             </div>
 
             <div class="flex items-center justify-between md:justify-end gap-6">
