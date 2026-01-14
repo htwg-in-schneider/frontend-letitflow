@@ -25,7 +25,7 @@ watch(
     (targetState) => {
       if (targetState?.target) {
         router.push(targetState.target);
-      }
+      } 
     }
 );
 
