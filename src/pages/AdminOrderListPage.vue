@@ -37,8 +37,8 @@
               :key="order.id"
               @click="selectedOrderId = order.id"
               :class="[
-                'p-4 cursor-pointer hover:bg-[#fffaf7] transition border-l-4 border-transparent',
-                selectedOrderId === order.id ? 'bg-[#fff1eb] border-l-[#e09a82]' : ''
+               'p-4 cursor-pointer hover:bg-[#faf7ff] transition border-2 rounded-lg outline-none',
+              selectedOrderId === order.id ? 'border-[#e09a82]' : 'border-transparent'
               ]"
             >
               <div class="flex items-start justify-between gap-3">

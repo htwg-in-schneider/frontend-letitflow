@@ -128,6 +128,17 @@
         <p class="text-gray-400 text-sm italic">Keine Benutzer mit diesen Filtern gefunden.</p>
       </div>
     </div>
+
+    <transition name="fade">
+      <div
+        v-if="toast"
+        class="fixed bottom-6 right-6 max-w-sm rounded-xl shadow-2xl px-4 py-3 text-white flex items-start gap-3"
+        :class="toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'"
+      >
+        <div class="mt-0.5 text-sm leading-snug">{{ toast.message }}</div>
+        <button class="ml-auto text-white/80 hover:text-white" @click="toast = null">✕</button>
+      </div>
+    </transition>
   </section>
 </template>
 
@@ -140,6 +151,7 @@ const authStore = useAuthStore()
 const users = ref([])
 const loading = ref(false)
 const error = ref(null)
+const toast = ref(null)
 
 const filters = ref({
   firstName: '',
@@ -166,14 +178,24 @@ async function loadUsers() {
   }
 }
 
+function showToast(message, type = 'error') {
+  toast.value = { message, type }
+  setTimeout(() => {
+    toast.value = null
+  }, 3500)
+}
+
 async function handleDelete(id) {
   if (!confirm('Möchten Sie diesen Benutzer wirklich dauerhaft löschen?')) return
   try {
     await deleteUser(id)
     await loadUsers()
+    showToast('Benutzer gelöscht.', 'success')
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Löschen des Benutzers.')
+    const msg = e?.message || 'Fehler beim Löschen des Benutzers.'
+    const status = e?.status ? ` (Status ${e.status})` : ''
+    showToast(`${msg}${status}`, 'error')
   }
 }
 

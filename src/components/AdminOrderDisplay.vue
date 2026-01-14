@@ -3,7 +3,9 @@
     <div
       v-for="order in orders"
       :key="order.id"
-      class="border border-orange-100 bg-white rounded-lg p-4 hover:shadow-md transition"
+      class="border border-orange-100 bg-white rounded-lg p-4 hover:shadow-md transition cursor-pointer"
+      :class="order.id === selectedId ? 'ring-2 ring-[#e09a82] shadow-lg' : ''"
+      @click="$emit('select', order)"
     >
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div class="flex-1">
@@ -38,8 +40,14 @@ defineProps({
   orders: {
     type: Array,
     required: true
+  },
+  selectedId: {
+    type: [Number, String],
+    default: null
   }
 })
+
+defineEmits(['select'])
 
 function formatPrice(price) {
   return new Intl.NumberFormat('de-DE', {

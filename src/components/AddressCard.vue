@@ -28,8 +28,8 @@
       <div class="flex flex-col">
           <label class="text-xs font-semibold text-gray-500 mb-1 ml-1">Straße & Hausnummer</label>
           <div class="flex gap-2">
-            <input v-model="address.street" placeholder="Straße" class="flex-[3] border border-orange-100 bg-[#fffcf9] p-3 rounded-xl focus:ring-2 focus:ring-[#e09a82] outline-none transition" required>
-            <input v-model="address.housenumber" placeholder="Nr." class="flex-1 border border-orange-100 bg-[#fffcf9] p-3 rounded-xl focus:ring-2 focus:ring-[#e09a82] outline-none transition" required>
+            <input v-model="address.street" placeholder="Straße" class="flex-[2] border border-orange-100 bg-[#fffcf9] p-3 rounded-xl focus:ring-2 focus:ring-[#e09a82] outline-none transition" required>
+            <input v-model="address.housenumber" placeholder="Nr." class="w-20 border border-orange-100 bg-[#fffcf9] p-3 rounded-xl focus:ring-2 focus:ring-[#e09a82] outline-none transition" required>
           </div>
       </div>
 
