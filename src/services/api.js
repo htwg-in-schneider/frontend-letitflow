@@ -153,6 +153,19 @@ export function fetchAllOrders() {
   return authFetch('/api/orders')
 }
 
+export function searchOrders(params = {}) {
+  const qs = new URLSearchParams()
+  if (params.customerName) qs.set('customerName', params.customerName)
+  if (params.userId) qs.set('userId', params.userId)
+  if (params.status) qs.set('status', params.status)
+  if (params.startDate) qs.set('startDate', params.startDate)
+  if (params.endDate) qs.set('endDate', params.endDate)
+  if (params.minAmount) qs.set('minAmount', params.minAmount)
+  if (params.maxAmount) qs.set('maxAmount', params.maxAmount)
+  const query = qs.toString() ? `?${qs.toString()}` : ''
+  return authFetch(`/api/orders/search${query}`)
+}
+
 export function getOrdersByOauthId(oauthId) {
   return authFetch(`/api/orders/user/${encodeURIComponent(oauthId)}`)
 }

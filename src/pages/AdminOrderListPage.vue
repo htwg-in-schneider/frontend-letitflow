@@ -1,20 +1,116 @@
 <template>
   <main class="h-screen bg-[#fff7f3] flex flex-col">
-    <header class="bg-white border-b border-orange-100 px-6 py-4 flex items-center justify-between">
-      <div>
-        <p class="text-sm text-gray-500">Admin · Überblick</p>
-        <h1 class="text-2xl font-bold text-gray-900">Alle Bestellungen</h1>
+    <header class="bg-white border-b border-orange-100 px-6 py-4">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="text-sm text-gray-500">Admin · Überblick</p>
+          <h1 class="text-2xl font-bold text-gray-900">Alle Bestellungen</h1>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1 bg-[#fff4ea] text-[#e09a82] px-3 py-1 rounded-full text-sm font-semibold">
+            {{ orders.length }}
+          </span>
+          <button
+            @click="loadOrders"
+            class="px-4 py-2 rounded-full bg-[#e09a82] text-white font-semibold hover:bg-[#d68570] transition shadow-sm"
+          >
+            Aktualisieren
+          </button>
+        </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1 bg-[#fff4ea] text-[#e09a82] px-3 py-1 rounded-full text-sm font-semibold">
-          {{ orders.length }}
-        </span>
-        <button
-          @click="loadOrders"
-          class="px-4 py-2 rounded-full bg-[#e09a82] text-white font-semibold hover:bg-[#d68570] transition shadow-sm"
-        >
-          Aktualisieren
-        </button>
+
+      <!-- Filter Section -->
+      <div class="bg-[#fff7f3] border border-orange-100 rounded-xl p-4">
+        <div class="grid gap-3 md:grid-cols-7">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Kundenname</label>
+            <input
+              v-model="filters.customerName"
+              type="text"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#e09a82] outline-none transition-all"
+              placeholder="Suchen..."
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">User ID</label>
+            <input
+              v-model="filters.userId"
+              type="number"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#e09a82] outline-none transition-all"
+              placeholder="z.B. 2"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Status</label>
+            <select
+              v-model="filters.status"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-[#e09a82] outline-none"
+            >
+              <option value="">Alle</option>
+              <option value="PENDING">Pending</option>
+              <option value="SHIPPED">Shipped</option>
+              <option value="DELIVERED">Delivered</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Von Datum</label>
+            <input
+              v-model="filters.startDate"
+              type="date"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#e09a82] outline-none transition-all"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Bis Datum</label>
+            <input
+              v-model="filters.endDate"
+              type="date"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#e09a82] outline-none transition-all"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Min Betrag</label>
+            <input
+              v-model="filters.minAmount"
+              type="number"
+              step="0.01"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#e09a82] outline-none transition-all"
+              placeholder="0.00"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Max Betrag</label>
+            <input
+              v-model="filters.maxAmount"
+              type="number"
+              step="0.01"
+              class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#e09a82] outline-none transition-all"
+              placeholder="1000.00"
+            />
+          </div>
+        </div>
+
+        <div class="mt-3 flex gap-3">
+          <button
+            class="inline-flex items-center justify-center rounded-full px-6 py-2 text-sm font-medium text-white bg-[#e09a82] hover:bg-[#d08a72] transition-colors shadow-sm"
+            @click="applyFilters"
+          >
+            Filtern anwenden
+          </button>
+          <button
+            class="inline-flex items-center justify-center rounded-full px-6 py-2 text-sm font-medium border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors"
+            @click="resetFilters"
+          >
+            Leeren
+          </button>
+        </div>
       </div>
     </header>
 
@@ -172,12 +268,23 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import { fetchAllOrders, fetchUserById } from '@/services/api'
+import { fetchAllOrders, fetchUserById, searchOrders } from '@/services/api'
 import CardItem from '@/components/cardComponents/CardItem.vue'
 
 const orders = ref([])
+const allOrders = ref([]) // Speichere alle Orders für Filterung
 const loading = ref(false)
 const error = ref(null)
+
+const filters = ref({
+  customerName: '',
+  userId: '',
+  status: '',
+  startDate: '',
+  endDate: '',
+  minAmount: '',
+  maxAmount: ''
+})
 
 const selectedOrderId = ref(null)
 const selectedOrder = ref(null)
@@ -188,23 +295,102 @@ const loadOrders = async () => {
   loading.value = true
   error.value = null
   try {
-    orders.value = await fetchAllOrders()
-    // Lade Kundendaten für alle Bestellungen in der Liste
-    for (const order of orders.value) {
-      if (order.userId && !order.customer) {
-        try {
-          order.customer = await fetchUserById(order.userId)
-        } catch (e) {
-          console.warn(`Kunde für Order ${order.id} konnte nicht geladen werden:`, e)
-        }
-      }
-    }
+    const data = await fetchAllOrders()
+    allOrders.value = data
+    orders.value = data
+    // Keine zusätzlichen Customer-Daten mehr nötig - Backend liefert jetzt customerName
   } catch (e) {
     console.error(e)
     error.value = 'Bestellungen konnten nicht geladen werden.'
   } finally {
     loading.value = false
   }
+}
+
+const applyFilters = () => {
+  loading.value = true
+  error.value = null
+  
+  try {
+    // Clientseitige Filterung auf allOrders
+    let filtered = [...allOrders.value]
+    
+    // Filter nach Kundenname (case-insensitive)
+    if (filters.value.customerName) {
+      const search = filters.value.customerName.toLowerCase()
+      filtered = filtered.filter(order => 
+        order.customerName?.toLowerCase().includes(search)
+      )
+    }
+    
+    // Filter nach User ID
+    if (filters.value.userId) {
+      filtered = filtered.filter(order => 
+        order.userId === Number(filters.value.userId)
+      )
+    }
+    
+    // Filter nach Status
+    if (filters.value.status) {
+      filtered = filtered.filter(order => 
+        order.status === filters.value.status
+      )
+    }
+    
+    // Filter nach Startdatum
+    if (filters.value.startDate) {
+      const startDate = new Date(`${filters.value.startDate}T00:00:00`)
+      filtered = filtered.filter(order => {
+        const orderDate = new Date(order.orderDate || order.createdAt)
+        return orderDate >= startDate
+      })
+    }
+    
+    // Filter nach Enddatum
+    if (filters.value.endDate) {
+      const endDate = new Date(`${filters.value.endDate}T23:59:59`)
+      filtered = filtered.filter(order => {
+        const orderDate = new Date(order.orderDate || order.createdAt)
+        return orderDate <= endDate
+      })
+    }
+    
+    // Filter nach Mindestbetrag
+    if (filters.value.minAmount) {
+      const minAmount = Number(filters.value.minAmount)
+      filtered = filtered.filter(order => 
+        (order.totalAmount || order.totalPrice || 0) >= minAmount
+      )
+    }
+    
+    // Filter nach Maximalbetrag
+    if (filters.value.maxAmount) {
+      const maxAmount = Number(filters.value.maxAmount)
+      filtered = filtered.filter(order => 
+        (order.totalAmount || order.totalPrice || 0) <= maxAmount
+      )
+    }
+    
+    orders.value = filtered
+  } catch (e) {
+    console.error(e)
+    error.value = 'Filter konnte nicht angewendet werden.'
+  } finally {
+    loading.value = false
+  }
+}
+
+const resetFilters = () => {
+  filters.value = {
+    customerName: '',
+    userId: '',
+    status: '',
+    startDate: '',
+    endDate: '',
+    minAmount: '',
+    maxAmount: ''
+  }
+  orders.value = allOrders.value
 }
 
 const loadOrderDetail = async (orderId) => {
@@ -280,21 +466,12 @@ const formatPrice = (price) => {
 const getCustomerDisplay = (order) => {
   if (!order) return 'Unbekannt'
   
-  // Versuche zuerst den geladenen Customer zu nutzen
-  if (order.customer) {
-    const c = order.customer
-    const fullName = [c.firstName, c.lastName].filter(Boolean).join(' ').trim()
-    if (fullName) return fullName
-    if (c.email) return c.email
-  }
+  // NEU: Nutze nur das vom Backend gelieferte customerName Feld (basiert auf User-Daten)
+  if (order.customerName) return order.customerName
   
-  // Fallback auf user/email/shippingName
-  const u = order.user || {}
-  const fullName = [u.firstName, u.lastName].filter(Boolean).join(' ').trim()
-  if (fullName) return fullName
-  if (u.email) return u.email
-  if (order.shippingName) return order.shippingName
-  if (order.userEmail) return order.userEmail
+  // Fallback nur auf shippingAddressName wenn customerName fehlt
+  if (order.shippingAddressName) return order.shippingAddressName
+  
   return 'Unbekannt'
 }
 
