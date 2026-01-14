@@ -38,6 +38,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import ProductCard from '@/components/ProductCard.vue'
 import { fetchCategories, fetchProducts, fetchProductVariants } from '@/services/api'
+import { getProductImage } from '@/utils/productUtils'
 
 const route = useRoute()
 const router = useRouter()
@@ -93,7 +94,7 @@ const loadCategoryPage = async (slug) => {
           return {
             id: p.id,
             title: p.title || p.name,
-            image: p.imageUrl || '/img/placeholder.png',
+            image: getProductImage(p),
             colors: Array.from(colorSet).join(', '),
             sizes: Array.from(sizeSet).join(', '),
             price:

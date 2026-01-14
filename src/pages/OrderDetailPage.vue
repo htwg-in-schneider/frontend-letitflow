@@ -49,25 +49,23 @@
               class="p-6 flex flex-col sm:flex-row items-center gap-6 bg-white hover:bg-[#fffcf9] transition-colors"
             >
               <img 
-                :src="item.imageUrl || '/img/placeholder.png'" 
-                :alt="item.productName"
+                :src="getProductImage(item)" 
+                :alt="getProductName(item)"
                 class="w-24 h-24 object-cover rounded-xl border border-orange-50 shadow-sm"
               />
               <div class="flex-1 text-center sm:text-left">
-                <h3 class="font-bold text-gray-900 text-lg">{{ item.productName }}</h3>
+                <h3 class="font-bold text-gray-900 text-lg">
+                  {{ getProductName(item) }}
+                </h3>
                 <p class="text-sm text-gray-500">
-                  <span v-if="item.variantName || item.variantTitle">{{ item.variantName || item.variantTitle }}</span>
-                  <span v-else-if="item.color || item.size">Variante:</span>
-                  <span v-else>Standard</span>
-                  <span v-if="item.color" class="mx-1">•</span> {{ item.color }}
-                  <span v-if="item.size" class="mx-1">•</span> {{ item.size }}
+                  {{ getVariantDisplay(item) }}
                 </p>
                 <p class="text-[#e09a82] font-semibold mt-1">
-                  {{ item.quantity }}x {{ formatPrice(item.price) }}
+                  {{ item.quantity || item.amount || item.count || 0 }}x {{ formatPrice(item.price || item.unitPrice || item.pricePerUnit) }}
                 </p>
               </div>
               <div class="text-right font-bold text-gray-900">
-                {{ formatPrice(item.price * item.quantity) }}
+                {{ formatPrice((item.price || item.unitPrice || item.pricePerUnit || 0) * (item.quantity || item.amount || item.count || 0)) }}
               </div>
             </div>
           </div>
@@ -81,10 +79,28 @@
               Lieferadresse
             </h2>
             <div class="bg-[#fff7f3]/30 border border-orange-100 p-6 rounded-2xl text-gray-700 leading-relaxed">
-              <p class="font-bold text-gray-900">{{ order?.shippingName || 'Max Mustermann' }}</p>
-              <p>{{ order?.shippingAddress || 'Musterstraße 123' }}</p>
-              <p>{{ order?.shippingCity || '12345 Musterstadt' }}</p>
-              <p>{{ order?.shippingCountry || 'Deutschland' }}</p>
+              <p class="font-bold text-gray-900">
+                {{ order?.shippingName || 
+                   (order?.address?.firstName && order?.address?.lastName ? order.address.firstName + ' ' + order.address.lastName : null) || 
+                   order?.address?.name || 
+                   order?.customerName || 
+                   order?.recipientName ||
+                   'Max Mustermann' }}
+              </p>
+              <p>
+                {{ order?.shippingAddress || 
+                   (order?.address?.street ? order.address.street + (order.address.housenumber ? ' ' + order.address.housenumber : '') : null) || 
+                   order?.address?.addressLine1 || 
+                   order?.address?.street ||
+                   'Musterstraße 123' }}
+              </p>
+              <p>
+                {{ order?.shippingCity || 
+                   (order?.address?.postalCode && order?.address?.city ? order.address.postalCode + ' ' + order.address.city : null) || 
+                   order?.address?.city || 
+                   '12345 Musterstadt' }}
+              </p>
+              <p>{{ order?.shippingCountry || order?.address?.country || 'Deutschland' }}</p>
             </div>
           </div>
 
@@ -130,6 +146,8 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { fetchOrderById, fetchOrderDetailsByOrderId } from '@/services/api';
+import { formatDate } from '@/utils/dateUtils';
+import { getProductName, getProductImage, getVariantDisplay } from '@/utils/productUtils';
 
 const route = useRoute();
 const id = route.params.id;
@@ -146,12 +164,20 @@ const loadOrder = async () => {
     // 1. Grunddaten der Bestellung laden
     order.value = await fetchOrderById(id);
     
-    // 2. Bestelldetails (Artikel) separat laden, da diese im OrderDTO oft nicht enthalten sind
-    try {
-      orderDetails.value = await fetchOrderDetailsByOrderId(id);
-    } catch (detErr) {
-      console.warn('Bestelldetails konnten nicht geladen werden:', detErr);
-      // Nicht kritisch, wenn die Grunddaten da sind, zeigen wir zumindest den Header an
+    // 2. Prüfen, ob Artikel bereits im Order-Objekt enthalten sind
+    console.log("shaboink")
+    console.log(order.value)
+    const nestedItems = order.value.items || order.value.orderDetails || order.value.orderItems || order.value.order_items;
+    if (nestedItems && Array.isArray(nestedItems) && nestedItems.length > 0) {
+      orderDetails.value = nestedItems;
+    } else {
+      // 3. Bestelldetails (Artikel) separat laden, falls nicht enthalten
+      try {
+        orderDetails.value = await fetchOrderDetailsByOrderId(id);
+        console.log('Bestelldetails erfolgreich geladen:', orderDetails.value);
+      } catch (detErr) {
+        console.warn('Bestelldetails konnten nicht separat geladen werden:', detErr);
+      }
     }
   } catch (e) {
     console.error('Fehler beim Laden der Bestellung:', e);
@@ -159,17 +185,6 @@ const loadOrder = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const formatDate = (dateString) => {
-  if (!dateString) return 'Unbekannt';
-  return new Date(dateString).toLocaleDateString('de-DE', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
 };
 
 const formatPrice = (price) => {
