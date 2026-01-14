@@ -69,6 +69,16 @@
         :key="cat.id"
         class="border border-[#f0c9b8] bg-white flex flex-col rounded-md overflow-hidden shadow-sm"
       >
+        <div v-if="authStore.isAdmin" class="bg-[#fff7f3] px-4 py-2 flex justify-between items-center border-b border-[#f0c9b8]">
+          <p class="text-xs text-gray-500">ID: <span class="font-mono">{{ cat.id }}</span></p>
+          <router-link
+            :to="{ name: 'AdminCategoryDetail', params: { id: cat.id } }"
+            class="rounded-full px-3 py-1 text-xs font-medium text-white bg-[#e09a82] hover:bg-[#d68570]"
+          >
+            Jetzt bearbeiten
+          </router-link>
+        </div>
+
         <img
           :src="cat.imageUrl || 'https://via.placeholder.com/400x300?text=Kategorie'"
           :alt="cat.name"
@@ -87,6 +97,7 @@
 
           <div class="mt-4 flex justify-between gap-2">
             <router-link
+              v-if="authStore.isAdmin"
               :to="{ name: 'AdminCategoryDetail', params: { id: cat.id } }"
               class="inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium text-white bg-[#e09a82]"
             >
@@ -94,6 +105,7 @@
             </router-link>
 
             <button
+              v-if="authStore.isAdmin"
               class="inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium text-white bg-red-500"
               @click="handleDelete(cat.id)"
             >
@@ -115,6 +127,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import ImagePickerCard from '@/components/ImagePickerCard.vue'
 
 import {
@@ -123,6 +136,7 @@ import {
   deleteCategory
 } from '@/services/api'
 
+const authStore = useAuthStore()
 const categories = ref([])
 const newCategory = ref({
   name: '',

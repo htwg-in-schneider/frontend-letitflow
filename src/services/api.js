@@ -34,13 +34,13 @@ async function requestJson(path, options = {}) {
 export function fetchCategories() { return getJson('/api/categories') }
 export function fetchCategoryById(id) { return getJson(`/api/categories/${id}`) }
 export function createCategory(payload) {
-  return requestJson('/api/categories', { method: 'POST', body: JSON.stringify(payload) })
+  return authFetch('/api/categories', { method: 'POST', body: JSON.stringify(payload) })
 }
 export function updateCategory(id, payload) {
-  return requestJson(`/api/categories/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
+  return authFetch(`/api/categories/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
 }
 export function deleteCategory(id) {
-  return requestJson(`/api/categories/${id}`, { method: 'DELETE' })
+  return authFetch(`/api/categories/${id}`, { method: 'DELETE' })
 }
 
 // --- PRODUKTE ---
@@ -56,25 +56,25 @@ export function fetchProducts(filters = {}) {
 export function fetchProductById(id) { return getJson(`/api/products/${id}`) }
 export function fetchProductVariants(id) { return getJson(`/api/products/${id}/variants`) }
 export function createProduct(payload) {
-  return requestJson('/api/products', { method: 'POST', body: JSON.stringify(payload) })
+  return authFetch('/api/products', { method: 'POST', body: JSON.stringify(payload) })
 }
 export function updateProduct(id, payload) {
-  return requestJson(`/api/products/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
+  return authFetch(`/api/products/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
 }
 export function deleteProduct(id) {
-  return requestJson(`/api/products/${id}`, { method: 'DELETE' })
+  return authFetch(`/api/products/${id}`, { method: 'DELETE' })
 }
 
 // --- VARIANTEN ---
 
 export function createVariant(productId, payload) {
-  return requestJson(`/api/products/${productId}/variants`, { method: 'POST', body: JSON.stringify(payload) })
+  return authFetch(`/api/products/${productId}/variants`, { method: 'POST', body: JSON.stringify(payload) })
 }
 export function updateVariant(id, payload) {
-  return requestJson(`/api/variants/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
+  return authFetch(`/api/variants/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
 }
 export function deleteVariant(id) {
-  return requestJson(`/api/variants/${id}`, { method: 'DELETE' })
+  return authFetch(`/api/variants/${id}`, { method: 'DELETE' })
 }
 export function fetchVariantById(id) { return getJson(`/api/variants/${id}`) }
 

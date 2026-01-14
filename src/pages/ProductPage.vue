@@ -3,9 +3,18 @@
     <section
       class="w-full max-w-5xl bg-white border border-orange-100 shadow-sm rounded-xl px-6 py-8"
     >
-      <router-link to="/" class="text-sm text-[#e09a82] hover:underline">
-        ← Zurück zur Übersicht
-      </router-link>
+      <div class="flex items-center justify-between">
+        <router-link to="/" class="text-sm text-[#e09a82] hover:underline">
+          ← Zurück zur Übersicht
+        </router-link>
+        <router-link 
+          v-if="authStore.isAdmin && product" 
+          :to="`/admin/products/${product.id}`"
+          class="px-4 py-2 text-sm font-semibold text-white bg-[#e09a82] hover:bg-[#d68570] rounded-full transition shadow-sm"
+        >
+          Jetzt bearbeiten
+        </router-link>
+      </div>
 
       <div v-if="loading" class="mt-6 text-gray-500">
         Produkt wird geladen...
@@ -216,10 +225,12 @@ import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { fetchProductById, fetchProductVariants } from "@/services/api";
 import { useCartStore } from "@/stores/cartStores"; // NEU: Import des Pinia Stores
+import { useAuthStore } from "@/stores/auth"; // Admin Status prüfen
 
 const route = useRoute();
 const router = useRouter();
 const cartStore = useCartStore(); // NEU: Store nutzen
+const authStore = useAuthStore(); // Admin Status
 
 const productId = route.params.id;
 
