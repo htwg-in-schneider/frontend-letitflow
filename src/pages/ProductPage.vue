@@ -122,17 +122,10 @@
                 class="w-full max-w-xs sm:max-w-sm md:max-w-xs lg:max-w-sm rounded-3xl overflow-hidden border border-orange-100 bg-[#fff7f3] flex items-center justify-center"
               >
                 <img
-                  v-if="product.imageUrl"
-                  :src="product.imageUrl"
+                  :src="getProductImage(product)"
                   :alt="product.title"
                   class="w-full h-auto object-contain"
                 />
-                <div
-                  v-else
-                  class="w-full h-full min-h-[12rem] flex items-center justify-center text-gray-400 text-sm"
-                >
-                  Kein Bild vorhanden
-                </div>
               </div>
             </div>
           </div>
@@ -216,6 +209,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { fetchProductById, fetchProductVariants } from "@/services/api";
 import { useCartStore } from "@/stores/cartStores"; // NEU: Import des Pinia Stores
+import { getProductImage } from "@/utils/productUtils";
 
 const route = useRoute();
 const router = useRouter();

@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col md:flex-row gap-6 p-4 rounded-3xl bg-[#fff4ea] border border-orange-100 items-center">
     <div class="w-28 h-28 bg-[#fff7f3] rounded-2xl border border-orange-100 flex items-center justify-center overflow-hidden flex-shrink-0">
-      <img :src="item.imageUrl" :alt="item.title" class="w-full h-full object-contain p-2" />
+      <img :src="getProductImage(item)" :alt="item.title" class="w-full h-full object-contain p-2" />
     </div>
 
     <div class="flex-1 text-center md:text-left">
@@ -35,6 +35,8 @@
 </template>
 
 <script setup>
+import { getProductImage } from '@/utils/productUtils';
+
 // Props empfangen
 const props = defineProps({
   item: {

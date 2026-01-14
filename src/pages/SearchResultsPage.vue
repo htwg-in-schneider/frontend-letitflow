@@ -46,6 +46,7 @@ import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import ProductCard from '@/components/ProductCard.vue'
 import { fetchProducts, fetchProductVariants } from '@/services/api'
+import { getProductImage } from '@/utils/productUtils'
 
 const route = useRoute()
 
@@ -124,7 +125,7 @@ const loadResults = async () => {
             id: p.id,
             title: p.title || p.name,
             description: p.description || '',      
-            image: p.imageUrl || '/img/placeholder.png',
+            image: getProductImage(p),
             colors: colorArray.join(', '),
             sizes: sizeArray.join(', '),
             price: displayPrice,
