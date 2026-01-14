@@ -20,9 +20,16 @@ export async function authFetch(path, options = {}) {
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    const error = new Error(errorData.message || `Request failed with status ${response.status}`);
+    const rawText = await response.text().catch(() => '');
+    let parsed = {};
+    try {
+      parsed = rawText ? JSON.parse(rawText) : {};
+    } catch (_) {
+      parsed = {};
+    }
+    const error = new Error(parsed.message || rawText || `Request failed with status ${response.status}`);
     error.status = response.status;
+    error.responseBody = rawText;
     throw error;
   }
 
@@ -30,5 +37,22 @@ export async function authFetch(path, options = {}) {
     return null;
   }
 
-  return response.json();
+  const contentType = response.headers.get('content-type') || '';
+  const isJson = contentType.includes('application/json');
+
+  if (!isJson) {
+    // Fallback: plain text or other payloads
+    return response.text();
+  }
+
+  // Robust JSON parse with fallback to text
+  const raw = await response.text();
+  try {
+    return raw ? JSON.parse(raw) : null;
+  } catch (err) {
+    const parseError = new Error('Konnte JSON nicht parsen');
+    parseError.status = response.status;
+    parseError.responseBody = raw;
+    throw parseError;
+  }
 }

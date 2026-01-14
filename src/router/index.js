@@ -20,7 +20,9 @@ import UserView from "@/pages/UserView.vue";
 
 import AdminCategoryListPage from '@/pages/AdminCategoryListPage.vue'
 import AdminCategoryDetailPage from '@/pages/AdminCategoryDetailPage.vue'
+import AdminProductListPage from '@/pages/AdminProductListPage.vue'
 import AdminProductDetailPage from '@/pages/AdminProductDetailPage.vue'
+import AdminOrderListPage from '@/pages/AdminOrderListPage.vue'
 
 import AdminUserListPage from '@/pages/AdminUserListPage.vue'
 import AdminUserDetailPage from '@/pages/AdminUserDetailPage.vue'
@@ -129,10 +131,22 @@ const routes = [
     beforeEnter: authGuard
   },
   {
+    path: '/admin/products',
+    name: 'AdminProductList',
+    component: AdminProductListPage,
+    beforeEnter: authGuard
+  },
+  {
     path: '/admin/products/:id',
     name: 'AdminProductDetail',
     component: AdminProductDetailPage,
     props: true,
+    beforeEnter: authGuard
+  },
+  {
+    path: '/admin/orders',
+    name: 'AdminOrderList',
+    component: AdminOrderListPage,
     beforeEnter: authGuard
   },
   {

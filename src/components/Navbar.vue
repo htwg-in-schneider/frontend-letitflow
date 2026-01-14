@@ -71,6 +71,67 @@
       <div class="flex items-center gap-6 text-sm text-black">
         <NavbarSearch />
 
+        <!-- Admin Dropdown (nur für Admins) -->
+        <div
+            v-if="isAdmin"
+            class="relative flex items-center"
+            @mouseenter="isAdminMenuOpen = true"
+            @mouseleave="isAdminMenuOpen = false"
+        >
+          <div class="cursor-pointer py-1 flex items-center justify-center">
+            <svg class="h-8 w-8 text-[#e09a82]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+
+          <!-- Admin Popup Menu -->
+          <div
+              v-if="isAdminMenuOpen"
+              class="absolute right-0 top-full mt-0 w-48 bg-white border border-orange-200 shadow-lg rounded-xl py-2 z-50"
+          >
+            <div class="px-4 py-1.5 text-xs font-bold text-[#e09a82] uppercase tracking-wider">
+              Admin-Panel
+            </div>
+            <router-link
+                to="/admin/categories"
+                class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition font-semibold"
+                @click="isAdminMenuOpen = false"
+            >
+              Kategorien
+            </router-link>
+            <router-link
+                to="/admin/products"
+                class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition font-semibold"
+                @click="isAdminMenuOpen = false"
+            >
+              Produkte
+            </router-link>
+            <router-link
+                to="/admin/products"
+                class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition font-semibold"
+                @click="isAdminMenuOpen = false"
+            >
+              Varianten
+            </router-link>
+            <router-link
+                to="/admin/orders"
+                class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition font-semibold"
+                @click="isAdminMenuOpen = false"
+            >
+              Bestellungen
+            </router-link>
+            <hr class="my-1 border-orange-100" />
+            <router-link
+                to="/admin/users"
+                class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition font-semibold"
+                @click="isAdminMenuOpen = false"
+            >
+              Benutzer
+            </router-link>
+          </div>
+        </div>
+
         <!-- User Dropdown (Hover) -->
         <div
             class="relative flex items-center"
@@ -104,12 +165,14 @@
                 Mein Profil
               </router-link>
               <router-link
+                  v-if="!isAdmin"
                   to="/orders"
                   class="block px-4 py-2 text-sm text-gray-800 hover:bg-[#fff1eb] hover:text-[#e09a82] transition font-semibold"
                   @click="isUserMenuOpen = false"
               >
                 Meine Bestellungen
               </router-link>
+
               <hr class="my-1 border-orange-100" />
               <button
                   @click="handleLogout"
@@ -132,19 +195,29 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import NavbarSearch from '@/components/NavbarSearch.vue'
 import { fetchCategories } from '@/services/api'
 import { useAuth0 } from '@auth0/auth0-vue'
+import { useAuthStore } from '@/stores/auth'
 
 const { user, isAuthenticated, logout } = useAuth0()
+const authStore = useAuthStore()
 const route = useRoute()
 
+const isAdmin = computed(() => {
+  const val = authStore.isAdmin
+  console.debug('Navbar admin state', { roles: authStore.roles, isAdmin: val, profile: authStore.profile })
+  return val
+})
+
 const isUserMenuOpen = ref(false)
+const isAdminMenuOpen = ref(false)
 
 const handleLogout = () => {
   logout({ logoutParams: { returnTo: window.location.origin } })
+  authStore.logoutCleanup()
 }
 
 const isCategoriesOpen = ref(false)
@@ -189,7 +262,21 @@ const loadCategories = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   loadCategories()
+  // Sync Auth0 user into store and load roles/profile
+  authStore.setAuth0User(user.value)
+  if (isAuthenticated.value) {
+    await authStore.loadProfile()
+  }
+})
+
+watch(isAuthenticated, async (val) => {
+  authStore.setAuth0User(user.value)
+  if (val) {
+    await authStore.loadProfile()
+  } else {
+    authStore.logoutCleanup()
+  }
 })
 </script>

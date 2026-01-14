@@ -22,8 +22,8 @@
         </div>
 
         <div class="space-y-6">
-          <AddressCard v-if="cartStore.currentUserId" title="Lieferadresse" type="SHIPPING" :userId="cartStore.currentUserId" />
-          <AddressCard v-if="cartStore.currentUserId" title="Rechnungsadresse" type="BILLING" :userId="cartStore.currentUserId" />
+          <AddressCard v-if="cartStore.currentUserId" title="Lieferadresse" type="SHIPPING" :userId="cartStore.currentUserId" @loaded="handleAddressLoaded" />
+          <AddressCard v-if="cartStore.currentUserId" title="Rechnungsadresse" type="BILLING" :userId="cartStore.currentUserId" @loaded="handleAddressLoaded" />
         </div>
 
         <div class="bg-white border border-orange-100 rounded-xl p-6 flex justify-between items-center shadow-sm">
@@ -55,10 +55,12 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth0 } from '@auth0/auth0-vue';
 import { useCartStore } from '@/stores/cartStores';
+import { useToast } from '@/composables/useToast';
+import * as api from '@/services/api';
 
 import AddressCard from '@/components/AddressCard.vue';
 import CardItem from '@/components/cardComponents/CardItem.vue';
@@ -67,6 +69,18 @@ import PriceSummary from '@/components/cardComponents/PriceSummary.vue';
 const cartStore = useCartStore();
 const { user, isAuthenticated } = useAuth0();
 const router = useRouter();
+const { success, error, warning } = useToast();
+const shippingAddressId = ref(null);
+const billingAddressId = ref(null);
+
+const handleAddressLoaded = ({ type, addressId }) => {
+  console.log(`Address loaded: ${type} = ${addressId}`);
+  if (type === 'SHIPPING') {
+    shippingAddressId.value = addressId;
+  } else if (type === 'BILLING') {
+    billingAddressId.value = addressId;
+  }
+};
 
 onMounted(async () => {
   // WICHTIG: UserId ZUERST setzen, dann Warenkorb laden!
@@ -89,10 +103,103 @@ const handleUpdateQuantity = async ({ variantId, quantity }) => {
 };
 
 const finishOrder = async () => {
-  alert("Bestellung abgeschlossen!");
-  if (!cartStore.currentUserId) localStorage.removeItem('cart');
-  await cartStore.loadCart();
-  router.push("/");
+  console.group('Checkout flow');
+  console.log('Auth state', { isAuthenticated: isAuthenticated.value, user: user.value });
+  console.log('Current userId in cartStore', cartStore.currentUserId);
+  console.log('Cart items', cartStore.items);
+  console.log('Total sum', cartStore.totalSum);
+
+  if (!cartStore.items.length) {
+    warning('Dein Warenkorb ist leer.');
+    console.groupEnd();
+    return;
+  }
+
+  if (!shippingAddressId.value || !billingAddressId.value) {
+    warning('Liefer- und Rechnungsadresse nicht gefunden. Bitte lege diese unter Adressen an.');
+    console.warn('Missing addresses', { shippingAddressId: shippingAddressId.value, billingAddressId: billingAddressId.value });
+    console.groupEnd();
+    return;
+  }
+
+  const itemsPayload = cartStore.items.map((item) => {
+    const unitPrice = Number(item.price ?? item.pricePerUnit ?? 0);
+    const qty = Number(item.quantity ?? 0);
+    return {
+      productId: item.productId ?? item.id ?? null,
+      variantId: item.variantId ?? null,
+      quantity: qty,
+      pricePerUnit: unitPrice,
+      totalPrice: unitPrice * qty,
+    };
+  });
+
+  const orderPayload = {
+    userId: cartStore.currentUserId,  // oauthId direkt verwenden
+    billingAdressId: billingAddressId.value,
+    shippingAdressId: shippingAddressId.value,
+    totalAmount: cartStore.totalSum,
+    items: itemsPayload,
+  };
+
+  console.log('Sending order payload', orderPayload);
+
+  try {
+    const response = await api.createOrder(orderPayload);
+    console.log('Order response', response);
+    success('Bestellung abgeschlossen!');
+
+    // Warenkorb auf dem Server löschen
+    try {
+      await fetch('http://localhost:8081/api/cart', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth0_token')}`
+        }
+      });
+    } catch (deleteError) {
+      console.error('Warenkorb konnte nicht gelöscht werden:', deleteError);
+    }
+
+    // Frontend Warenkorb leeren
+    cartStore.items = [];
+    cartStore.totalSum = 0;
+    localStorage.removeItem('cart');
+    
+    console.log('Cart cleared, redirecting to home');
+    router.push('/');
+  } catch (err) {
+    console.error('Checkout error', err);
+    console.error('Error details:', {
+      message: err.message,
+      status: err.status,
+      stack: err.stack
+    });
+    
+    // Versuche die detaillierte Fehlermeldung vom Backend zu extrahieren
+    let errorMessage = 'Beim Abschluss der Bestellung ist ein Fehler aufgetreten.';
+    
+    if (err.message) {
+      // Prüfe ob es eine Stock-Fehlermeldung ist
+      if (err.message.includes('Stock') || err.message.includes('stock') || err.message.includes('Bestand')) {
+        errorMessage = err.message;
+      } else if (err.status === 400) {
+        errorMessage = err.message || 'Nicht genug Bestand für eine oder mehrere Varianten. Bitte überprüfe deinen Warenkorb.';
+      } else if (err.status === 500) {
+        errorMessage = 'Serverfehler beim Erstellen der Bestellung. Bitte versuche es später erneut.';
+        if (err.message && !err.message.includes('Request failed')) {
+          errorMessage += `\n\nDetails: ${err.message}`;
+        }
+      } else if (!err.message.includes('Request failed')) {
+        // Zeige jede andere spezifische Fehlermeldung vom Backend
+        errorMessage = err.message;
+      }
+    }
+    
+    error(errorMessage);
+  } finally {
+    console.groupEnd();
+  }
 };
 </script>
 

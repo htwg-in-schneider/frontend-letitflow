@@ -1,3 +1,5 @@
+import { authFetch } from '@/api/authFetch'
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081'
 
 // --- HELFER FUNKTIONEN ---
@@ -32,13 +34,13 @@ async function requestJson(path, options = {}) {
 export function fetchCategories() { return getJson('/api/categories') }
 export function fetchCategoryById(id) { return getJson(`/api/categories/${id}`) }
 export function createCategory(payload) {
-  return requestJson('/api/categories', { method: 'POST', body: JSON.stringify(payload) })
+  return authFetch('/api/categories', { method: 'POST', body: JSON.stringify(payload) })
 }
 export function updateCategory(id, payload) {
-  return requestJson(`/api/categories/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
+  return authFetch(`/api/categories/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
 }
 export function deleteCategory(id) {
-  return requestJson(`/api/categories/${id}`, { method: 'DELETE' })
+  return authFetch(`/api/categories/${id}`, { method: 'DELETE' })
 }
 
 // --- PRODUKTE ---
@@ -54,26 +56,28 @@ export function fetchProducts(filters = {}) {
 export function fetchProductById(id) { return getJson(`/api/products/${id}`) }
 export function fetchProductVariants(id) { return getJson(`/api/products/${id}/variants`) }
 export function createProduct(payload) {
-  return requestJson('/api/products', { method: 'POST', body: JSON.stringify(payload) })
+  return authFetch('/api/products', { method: 'POST', body: JSON.stringify(payload) })
 }
 export function updateProduct(id, payload) {
-  return requestJson(`/api/products/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
+  return authFetch(`/api/products/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
 }
 export function deleteProduct(id) {
-  return requestJson(`/api/products/${id}`, { method: 'DELETE' })
+  return authFetch(`/api/products/${id}`, { method: 'DELETE' })
 }
 
 // --- VARIANTEN ---
 
 export function createVariant(productId, payload) {
-  return requestJson(`/api/products/${productId}/variants`, { method: 'POST', body: JSON.stringify(payload) })
+  return authFetch(`/api/products/${productId}/variants`, { method: 'POST', body: JSON.stringify(payload) })
 }
 export function updateVariant(id, payload) {
-  return requestJson(`/api/variants/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
+  console.log('updateVariant API call:', id, payload)
+  return authFetch(`/api/variants/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
 }
 export function deleteVariant(id) {
-  return requestJson(`/api/variants/${id}`, { method: 'DELETE' })
+  return authFetch(`/api/variants/${id}`, { method: 'DELETE' })
 }
+export function fetchVariantById(id) { return getJson(`/api/variants/${id}`) }
 
 // --- IMAGE UPLOAD ---
 
@@ -94,32 +98,37 @@ export function fetchUsers(params = {}) {
   if (params.email) qs.set('email', params.email)
   if (params.role) qs.set('role', params.role)
   const query = qs.toString() ? `?${qs.toString()}` : ''
-  return getJson(`/api/users${query}`)
+  return authFetch(`/api/users${query}`)
 }
-export function fetchUserById(id) { return getJson(`/api/users/${id}`) }
+export function fetchUserById(id) { return authFetch(`/api/users/${id}`) }
 export function updateUser(id, payload) {
-  return requestJson(`/api/users/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
+  return authFetch(`/api/users/${id}`, { method: 'PUT', body: JSON.stringify(payload) })
 }
 export function deleteUser(id) {
-  return requestJson(`/api/users/${id}`, { method: 'DELETE' })
+  return authFetch(`/api/users/${id}`, { method: 'DELETE' })
+}
+
+// --- AUTHENTICATED USER ---
+export function fetchCurrentUser() {
+  return authFetch('/api/users/me')
 }
 
 // --- WARENKORB (MIT ENCODING) ---
 
 export function fetchCartByUserId(userId) {
-  return getJson(`/api/cart?userId=${encodeURIComponent(userId)}`)
+  return authFetch(`/api/cart?userId=${encodeURIComponent(userId)}`)
 }
 
 export function addToCart(userId, productId, variantId, quantity) {
   const uId = encodeURIComponent(userId)
-  return requestJson(`/api/cart/add?userId=${uId}&productId=${productId}&variantId=${variantId}&quantity=${quantity}`, {
+  return authFetch(`/api/cart/add?userId=${uId}&productId=${productId}&variantId=${variantId}&quantity=${quantity}`, {
     method: 'POST'
   })
 }
 
 export function deleteCartItem(userId, cartItemId) {
   const uId = encodeURIComponent(userId)
-  return requestJson(`/api/cart/item/${cartItemId}?userId=${uId}`, { method: 'DELETE' })
+  return authFetch(`/api/cart/item/${cartItemId}?userId=${uId}`, { method: 'DELETE' })
 }
 
 /**
@@ -129,32 +138,66 @@ export function deleteCartItem(userId, cartItemId) {
  */
 export function updateCartItemQuantity(userId, variantId, newQuantity) {
   const uId = encodeURIComponent(userId);
-  // Korrektur: Nutzt requestJson statt axios
-  return requestJson(`/api/cart/item/${variantId}/quantity?userId=${uId}&quantity=${newQuantity}`, {
+  return authFetch(`/api/cart/item/${variantId}/quantity?userId=${uId}&quantity=${newQuantity}`, {
     method: 'PUT'
   });
 }
 
-// --- ADRESSEN (MIT ENCODING) ---
-
-export function fetchAddressByUserId(userId) {
-  return getJson(`/api/addresses/user/${encodeURIComponent(userId)}`)
+export function clearCart(userId) {
+  const uId = encodeURIComponent(userId);
+  return authFetch(`/api/cart/clear?userId=${uId}`, { method: 'DELETE' });
 }
 
-export function fetchAddressByUserAndType(userId, type) {
-  return getJson(`/api/addresses/user/${encodeURIComponent(userId)}?type=${type}`)
+// --- ORDERS ---
+
+export function createOrder(payload) {
+  return authFetch('/api/orders', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function fetchAllOrders() {
+  // Admin-Endpoint: liefert alle Bestellungen
+  return authFetch('/api/orders')
+}
+
+export function searchOrders(params = {}) {
+  const qs = new URLSearchParams()
+  if (params.customerName) qs.set('customerName', params.customerName)
+  if (params.userId) qs.set('userId', params.userId)
+  if (params.status) qs.set('status', params.status)
+  if (params.startDate) qs.set('startDate', params.startDate)
+  if (params.endDate) qs.set('endDate', params.endDate)
+  if (params.minAmount) qs.set('minAmount', params.minAmount)
+  if (params.maxAmount) qs.set('maxAmount', params.maxAmount)
+  const query = qs.toString() ? `?${qs.toString()}` : ''
+  return authFetch(`/api/orders/search${query}`)
+}
+
+export function getOrdersByOauthId(oauthId) {
+  return authFetch(`/api/orders/user/${encodeURIComponent(oauthId)}`)
+}
+
+// --- ADRESSEN (MIT ENCODING / OAUTH-ID) ---
+
+export function fetchAddressByUserId(userId) {
+  // Backend identifiziert den User über JWT oder explizit über userId
+  return authFetch(`/api/addresses`)
+}
+
+export function fetchAddressByUserAndType(type) {
+  // Backend nutzt JWT für den Nutzerkontext; Typ wird als Query übergeben
+  return authFetch(`/api/addresses?type=${type}`)
 }
 
 export function fetchAddressById(id) {
-  return getJson(`/api/addresses/${id}`)
+  return authFetch(`/api/addresses/${id}`)
 }
 
 export function saveAddress(payload) {
-  return requestJson('/api/addresses', { method: 'POST', body: JSON.stringify(payload) })
+  return authFetch('/api/addresses', { method: 'POST', body: JSON.stringify(payload) })
 }
 
 export function deleteAddress(id) {
-  return requestJson(`/api/addresses/${id}`, { method: 'DELETE' })
+  return authFetch(`/api/addresses/${id}`, { method: 'DELETE' })
 }
 
 // --- BESTELLUNGEN ---
@@ -163,19 +206,19 @@ export function deleteAddress(id) {
  * Holt alle Bestellungen eines Nutzers
  */
 export function fetchOrdersByUserId(userId) {
-  return getJson(`/api/orders/user/${encodeURIComponent(userId)}`)
+  return authFetch(`/api/orders/user/${encodeURIComponent(userId)}`)
 }
 
 /**
  * Holt die Details einer spezifischen Bestellung
  */
 export function fetchOrderById(orderId) {
-  return getJson(`/api/orders/${orderId}`)
+  return authFetch(`/api/orders/${orderId}`)
 }
 
 /**
  * Holt die Artikel (Positionen) einer Bestellung
  */
 export function fetchOrderDetailsByOrderId(orderId) {
-  return getJson(`/api/order-details/order/${orderId}`)
+  return authFetch(`/api/order-details/order/${orderId}`)
 }

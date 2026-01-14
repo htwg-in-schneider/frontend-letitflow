@@ -1,8 +1,17 @@
 <template>
   <section class="max-w-5xl mx-auto p-4 md:p-8">
-    <h1 class="text-3xl md:text-4xl font-semibold mb-8">
-      {{ categoryTitle }}
-    </h1>
+    <div class="flex items-center justify-between mb-8 gap-4">
+      <h1 class="text-3xl md:text-4xl font-semibold">
+        {{ categoryTitle }}
+      </h1>
+      <router-link
+        v-if="authStore.isAdmin && categoryId"
+        :to="`/admin/categories/${categoryId}`"
+        class="rounded-full px-4 py-2 text-sm font-medium text-white bg-[#e09a82] hover:bg-[#d68570] whitespace-nowrap"
+      >
+        Jetzt bearbeiten
+      </router-link>
+    </div>
 
     <div v-if="loading" class="text-gray-500">Lade Produkte...</div>
     <p v-else-if="error" class="text-red-500">{{ error }}</p>
@@ -25,15 +34,18 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import ProductCard from '@/components/ProductCard.vue'
 import { fetchCategories, fetchProducts, fetchProductVariants } from '@/services/api'
 import { getProductImage } from '@/utils/productUtils'
 
 const route = useRoute()
-
+const router = useRouter()
+const authStore = useAuthStore()
 
 const categorySlug = computed(() => route.params.slug)
+const categoryId = ref(null)
 
 const categoryTitle = ref('Kategorie')
 const products = ref([])
@@ -53,6 +65,7 @@ const loadCategoryPage = async (slug) => {
   
     const cat = categories.find((c) => (c.slug ?? c.id) === slug)
     categoryTitle.value = cat ? cat.name : 'Kategorie'
+    categoryId.value = cat ? cat.id : null
 
  
     const backendProducts = await fetchProducts({ categorySlug: slug })

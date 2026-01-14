@@ -42,6 +42,7 @@
       <AdminVariantCard
         :variants="variants"
         :busy="variantBusy"
+        @create="createVariantHandler"
         @save="saveVariant"
         @delete="deleteVariantById"
       />
@@ -54,6 +55,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { useToast } from '@/composables/useToast'
 
 import AdminFormCard from '@/components/AdminFormCard.vue'
 import ImagePickerCard from '@/components/ImagePickerCard.vue'
@@ -64,12 +66,14 @@ import {
   fetchProductById,
   fetchProductVariants,
   updateProduct,
+  createVariant,
   updateVariant,
   deleteVariant
 } from '@/services/api'
 
 const route = useRoute()
 const id = Number(route.params.id)
+const { success, error } = useToast()
 
 const product = ref(null)
 const variants = ref([])
@@ -83,7 +87,7 @@ async function loadProductAndVariants() {
     variants.value = await fetchProductVariants(id)
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Laden von Produkt oder Varianten')
+    error('Fehler beim Laden von Produkt oder Varianten')
   } finally {
     loading.value = false
   }
@@ -100,16 +104,30 @@ async function saveProduct() {
       infotext2: product.value.infotext2,
       infotext3: product.value.infotext3
     })
-    alert('Produkt gespeichert')
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Speichern des Produkts')
+    error('Fehler beim Speichern des Produkts')
+  }
+}
+
+async function createVariantHandler(variantData) {
+  variantBusy.value = true
+  try {
+    await createVariant(id, variantData)
+    success('Variante erstellt')
+    await loadProductAndVariants()
+  } catch (e) {
+    console.error(e)
+    error('Fehler beim Erstellen der Variante')
+  } finally {
+    variantBusy.value = false
   }
 }
 
 async function saveVariant(v) {
   variantBusy.value = true
   try {
+    console.log('saveVariant called with:', v)
     await updateVariant(v.id, {
       size: v.size,
       color: v.color,
@@ -117,11 +135,11 @@ async function saveVariant(v) {
       available: Number(v.stock) > 0,
       price: v.price
     })
-    alert('Variante gespeichert')
+    success('Variante gespeichert')
     await loadProductAndVariants()
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Speichern der Variante')
+    error('Fehler beim Speichern der Variante')
   } finally {
     variantBusy.value = false
   }
@@ -131,10 +149,11 @@ async function deleteVariantById(variantId) {
   variantBusy.value = true
   try {
     await deleteVariant(variantId)
+    success('Variante gelöscht')
     await loadProductAndVariants()
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Löschen der Variante')
+    error('Fehler beim Löschen der Variante')
   } finally {
     variantBusy.value = false
   }

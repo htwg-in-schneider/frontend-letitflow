@@ -3,9 +3,6 @@
     <h1 class="text-2xl font-semibold mb-4">Kategorien (Admin)</h1>
 
     <div v-if="loading">Lade Kategorien...</div>
-    <div v-else-if="error" class="text-red-600 mb-4">
-      {{ error }}
-    </div>
 
     <div v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 items-start">
       <div
@@ -69,6 +66,16 @@
         :key="cat.id"
         class="border border-[#f0c9b8] bg-white flex flex-col rounded-md overflow-hidden shadow-sm"
       >
+        <div v-if="authStore.isAdmin" class="bg-[#fff7f3] px-4 py-2 flex justify-between items-center border-b border-[#f0c9b8]">
+          <p class="text-xs text-gray-500">ID: <span class="font-mono">{{ cat.id }}</span></p>
+          <router-link
+            :to="{ name: 'AdminCategoryDetail', params: { id: cat.id } }"
+            class="rounded-full px-3 py-1 text-xs font-medium text-white bg-[#e09a82] hover:bg-[#d68570]"
+          >
+            Jetzt bearbeiten
+          </router-link>
+        </div>
+
         <img
           :src="cat.imageUrl || 'https://via.placeholder.com/400x300?text=Kategorie'"
           :alt="cat.name"
@@ -87,6 +94,7 @@
 
           <div class="mt-4 flex justify-between gap-2">
             <router-link
+              v-if="authStore.isAdmin"
               :to="{ name: 'AdminCategoryDetail', params: { id: cat.id } }"
               class="inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium text-white bg-[#e09a82]"
             >
@@ -94,6 +102,7 @@
             </router-link>
 
             <button
+              v-if="authStore.isAdmin"
               class="inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium text-white bg-red-500"
               @click="handleDelete(cat.id)"
             >
@@ -115,6 +124,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { useToast } from '@/composables/useToast'
 import ImagePickerCard from '@/components/ImagePickerCard.vue'
 
 import {
@@ -123,6 +134,8 @@ import {
   deleteCategory
 } from '@/services/api'
 
+const authStore = useAuthStore()
+const { success, error, warning } = useToast()
 const categories = ref([])
 const newCategory = ref({
   name: '',
@@ -130,7 +143,6 @@ const newCategory = ref({
   imageUrl: ''
 })
 const loading = ref(false)
-const error = ref(null)
 
 function slugify(str) {
   if (!str) return ''
@@ -143,11 +155,10 @@ function slugify(str) {
 
 async function loadCategories() {
   loading.value = true
-  error.value = null
   try {
     categories.value = await fetchCategories()
   } catch (e) {
-    error.value = 'Kategorien konnten nicht geladen werden.'
+    error('Kategorien konnten nicht geladen werden.')
     console.error(e)
   } finally {
     loading.value = false
@@ -163,28 +174,33 @@ async function handleCreate() {
   }
 
   if (!payload.name) {
-    alert('Name darf nicht leer sein')
+    warning('Name darf nicht leer sein')
     return
   }
 
   try {
     await createCategory(payload)
+    success('Kategorie erstellt')
     newCategory.value = { name: '', description: '', imageUrl: '' }
     await loadCategories()
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Erstellen der Kategorie (Slug evtl. schon vergeben?)')
+    error('Fehler beim Erstellen der Kategorie (Slug evtl. schon vergeben?)')
   }
 }
 
 async function handleDelete(id) {
-  if (!confirm('Kategorie wirklich löschen?')) return
   try {
     await deleteCategory(id)
+    success('Kategorie gelöscht')
     await loadCategories()
   } catch (e) {
     console.error(e)
-    alert('Fehler beim Löschen der Kategorie')
+    if (e.status === 500) {
+      error('Kategorie kann nicht gelöscht werden, da sie noch Produkte enthält. Bitte löschen oder verschieben Sie zuerst alle Produkte aus dieser Kategorie.')
+    } else {
+      error('Fehler beim Löschen der Kategorie')
+    }
   }
 }
 

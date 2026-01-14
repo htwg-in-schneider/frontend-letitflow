@@ -108,7 +108,6 @@ async function handleCreateProduct() {
 
     resetCreateForm()
     emit('created') 
-    alert('Produkt und Varianten wurden erstellt.')
   } catch (e) {
     console.error(e)
     createError.value = 'Fehler beim Erstellen des Produkts oder der Varianten.'

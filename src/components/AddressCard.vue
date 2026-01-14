@@ -28,8 +28,8 @@
       <div class="flex flex-col">
           <label class="text-xs font-semibold text-gray-500 mb-1 ml-1">Straße & Hausnummer</label>
           <div class="flex gap-2">
-            <input v-model="address.street" placeholder="Straße" class="flex-[3] border border-orange-100 bg-[#fffcf9] p-3 rounded-xl focus:ring-2 focus:ring-[#e09a82] outline-none transition" required>
-            <input v-model="address.housenumber" placeholder="Nr." class="flex-1 border border-orange-100 bg-[#fffcf9] p-3 rounded-xl focus:ring-2 focus:ring-[#e09a82] outline-none transition" required>
+            <input v-model="address.street" placeholder="Straße" class="flex-[2] border border-orange-100 bg-[#fffcf9] p-3 rounded-xl focus:ring-2 focus:ring-[#e09a82] outline-none transition" required>
+            <input v-model="address.housenumber" placeholder="Nr." class="w-20 border border-orange-100 bg-[#fffcf9] p-3 rounded-xl focus:ring-2 focus:ring-[#e09a82] outline-none transition" required>
           </div>
       </div>
 
@@ -54,8 +54,11 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { fetchAddressByUserAndType, saveAddress } from '@/services/api.js';
+import { useToast } from '@/composables/useToast';
 
 const props = defineProps(['title', 'userId', 'type']);
+const emit = defineEmits(['loaded']);
+const { error } = useToast();
 const addressExists = ref(false);
 const isEditing = ref(false);
 
@@ -72,21 +75,18 @@ const address = ref({
 });
 
 const loadAddress = async () => {
-  if (!props.userId) {
-    console.warn('No userId provided to AddressCard');
-    return;
-  }
   try {
-    const data = await fetchAddressByUserAndType(props.userId, props.type);
+    const data = await fetchAddressByUserAndType(props.type);
     if (data) {
       address.value = data;
       addressExists.value = true;
+      // Emittiere die geladene Address-ID an Parent
+      emit('loaded', { type: props.type, addressId: data.id });
     } else {
       addressExists.value = false;
     }
   } catch (e) {
     console.error('Fehler beim Laden der Adresse:', e);
-    // Bei 400 oder wenn keine Adresse existiert, einfach Formular anzeigen
     addressExists.value = false;
     address.value.userId = props.userId;
     address.value.adressType = props.type;
@@ -114,9 +114,11 @@ const handleSave = async () => {
     address.value = saved;
     addressExists.value = true;
     isEditing.value = false;
+    // Emittiere auch nach dem Speichern
+    emit('loaded', { type: props.type, addressId: saved.id });
   } catch (e) {
     console.error('Fehler beim Speichern:', e);
-    alert("Fehler beim Speichern");
+    error('Fehler beim Speichern');
   }
 };
 </script>
