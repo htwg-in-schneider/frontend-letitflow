@@ -19,7 +19,6 @@
         </div>
       </div>
 
-      <!-- Filter Section -->
       <div class="bg-[#fff7f3] border border-orange-100 rounded-xl p-4">
         <div class="grid gap-3 md:grid-cols-7">
           <div>
@@ -115,7 +114,6 @@
     </header>
 
     <div class="flex flex-1 overflow-hidden flex-col md:flex-row">
-      <!-- Liste (Links / Vollbild auf Mobile) -->
       <div class="w-full md:w-1/2 lg:w-2/5 border-r border-orange-100 bg-white flex flex-col">
         <div v-if="loading" class="flex-1 flex items-center justify-center text-gray-500">
           Lade Bestellungen...
@@ -152,7 +150,6 @@
         </div>
       </div>
 
-      <!-- Detail Panel (Rechts auf Desktop) -->
       <div class="hidden md:flex md:w-1/2 lg:w-3/5 flex-col bg-[#fff7f3] min-h-0">
         <div v-if="!selectedOrderId" class="flex-1 flex items-center justify-center text-gray-400 px-6">
           <p class="text-center">Wähle eine Bestellung aus, um Details anzuzeigen</p>
@@ -162,22 +159,16 @@
         </div>
         <div v-else-if="selectedOrder" class="flex-1 overflow-y-auto p-6">
           <div class="bg-white rounded-xl border border-orange-100 overflow-hidden">
-            <!-- Header -->
             <div class="bg-[#fff7f3] p-6 border-b border-orange-100">
               <h2 class="text-xl font-bold text-gray-900">Bestellung #{{ selectedOrder.id }}</h2>
               <p class="text-sm text-gray-500 mt-1">{{ formatDate(selectedOrder.orderDate || selectedOrder.createdAt) }}</p>
               <p class="text-2xl font-bold text-[#e09a82] mt-3">{{ formatPrice(selectedOrder.totalAmount || selectedOrder.totalPrice) }}</p>
             </div>
-
-            <!-- Content -->
             <div class="p-6 space-y-6">
-              <!-- Kunde -->
               <div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Kunde</p>
                 <p class="font-semibold text-gray-900">{{ getCustomerDisplay(selectedOrder) }}</p>
               </div>
-
-              <!-- Artikel -->
               <div v-if="selectedOrderDetails.length > 0">
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Bestellte Artikel</p>
                 <div class="space-y-3">
@@ -192,8 +183,6 @@
                   />
                 </div>
               </div>
-
-              <!-- Adressen -->
               <div v-if="selectedOrder.shippingName" class="space-y-4 border-t border-orange-100 pt-4">
                 <div>
                   <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Lieferadresse</p>
@@ -208,7 +197,6 @@
       </div>
     </div>
 
-    <!-- Modal für Mobile Detail-View -->
     <div v-if="selectedOrderId && selectedOrder" class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40" @click="selectedOrderId = null"></div>
     <div v-if="selectedOrderId && selectedOrder" class="md:hidden fixed inset-0 z-50 flex flex-col">
       <header class="bg-white border-b border-orange-100 px-4 py-3 flex items-center gap-3">
@@ -226,15 +214,11 @@
             <p class="text-xl font-bold text-[#e09a82] mt-2">{{ formatPrice(selectedOrder.totalAmount || selectedOrder.totalPrice) }}</p>
           </div>
 
-          <!-- Content -->
           <div class="p-4 space-y-4">
-            <!-- Kunde -->
             <div>
               <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Kunde</p>
               <p class="font-semibold text-gray-900">{{ getCustomerDisplay(selectedOrder) }}</p>
             </div>
-
-            <!-- Artikel -->
             <div v-if="selectedOrderDetails.length > 0">
               <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Bestellte Artikel</p>
               <div class="space-y-3">
@@ -249,8 +233,6 @@
                 />
               </div>
             </div>
-
-            <!-- Adressen -->
             <div v-if="selectedOrder.shippingName" class="space-y-3 border-t border-orange-100 pt-4">
               <div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Lieferadresse</p>
@@ -275,7 +257,7 @@ import CardItem from '@/components/cardComponents/CardItem.vue'
 const { error } = useToast()
 
 const orders = ref([])
-const allOrders = ref([]) // Speichere alle Orders für Filterung
+const allOrders = ref([])
 const loading = ref(false)
 const orderError = ref(null)
 
@@ -301,7 +283,6 @@ const loadOrders = async () => {
     const data = await fetchAllOrders()
     allOrders.value = data
     orders.value = data
-    // Keine zusätzlichen Customer-Daten mehr nötig - Backend liefert jetzt customerName
   } catch (e) {
     console.error(e)
     orderError.value = 'Bestellungen konnten nicht geladen werden.'
@@ -315,10 +296,7 @@ const applyFilters = () => {
   orderError.value = null
   
   try {
-    // Clientseitige Filterung auf allOrders
     let filtered = [...allOrders.value]
-    
-    // Filter nach Kundenname (case-insensitive)
     if (filters.value.customerName) {
       const search = filters.value.customerName.toLowerCase()
       filtered = filtered.filter(order => 
@@ -406,14 +384,10 @@ const loadOrderDetail = async (orderId) => {
   loadingDetail.value = true
   try {
     selectedOrder.value = orders.value.find(o => o.id === orderId)
-    // Items sind bereits in der Order-Response eingebettet
     selectedOrderDetails.value = selectedOrder.value?.items || []
-    
-    // Lade Kundeninformationen mit der userId
     if (selectedOrder.value?.userId) {
       try {
         const customerData = await fetchUserById(selectedOrder.value.userId)
-        // Merge Kundendetails in die Order
         if (customerData) {
           selectedOrder.value.customer = customerData
         }
@@ -439,11 +413,9 @@ const sortedOrders = computed(() => {
 
 const parseDateValue = (value) => {
   if (!value) return new Date(0)
-  // Wenn es ein Array ist [year, month, day, hour, min, sec, nanos]
   if (Array.isArray(value) && value.length >= 3) {
     return new Date(value[0], value[1] - 1, value[2])
   }
-  // Sonst versuch es als String zu parsen
   const d = new Date(value)
   return Number.isNaN(d.getTime()) ? new Date(0) : d
 }
@@ -468,11 +440,7 @@ const formatPrice = (price) => {
 
 const getCustomerDisplay = (order) => {
   if (!order) return 'Unbekannt'
-  
-  // NEU: Nutze nur das vom Backend gelieferte customerName Feld (basiert auf User-Daten)
   if (order.customerName) return order.customerName
-  
-  // Fallback nur auf shippingAddressName wenn customerName fehlt
   if (order.shippingAddressName) return order.shippingAddressName
   
   return 'Unbekannt'
@@ -481,13 +449,11 @@ const getCustomerDisplay = (order) => {
 const updateQuantity = async (item, event) => {
   const newQuantity = Number.parseInt(event.target.value)
   try {
-    // API-Call: Menge aktualisieren (PUT /api/order-details/{id})
     await fetch(`/api/order-details/${item.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ quantity: newQuantity })
     })
-    // Lokal aktualisieren
     item.quantity = newQuantity
   } catch (e) {
     console.error('Fehler beim Update:', e)
@@ -512,17 +478,13 @@ const updateQuantityDirect = async (item, newQuantity) => {
 const removeItem = async (item) => {
   if (!confirm(`Artikel "${item.title}" wirklich aus der Bestellung entfernen?`)) return
   try {
-    // API-Call: Artikel löschen (DELETE /api/order-details/{id})
     await fetch(`/api/order-details/${item.id}`, { method: 'DELETE' })
-    // Aus Liste entfernen
     selectedOrderDetails.value = selectedOrderDetails.value.filter(i => i.id !== item.id)
   } catch (e) {
     console.error('Fehler beim Löschen:', e)
     error('Artikel konnte nicht entfernt werden')
   }
 }
-
-// Watch selectedOrderId und lade Details
 const watchSelectedOrder = computed(() => selectedOrderId.value)
 watch(watchSelectedOrder, (newId) => {
   loadOrderDetail(newId)
@@ -538,5 +500,5 @@ const onRemoveFromCardItem = async (payload) => {
 onMounted(loadOrders)
 </script>
 <script>
-// Hilfsfunktionen außerhalb von <script setup> sind nicht nötig; wir definieren sie im setup.
+
 </script>

@@ -50,5 +50,5 @@
 </template>
 
 <script setup lang="ts">
-// Keine Logik erforderlich
+
 </script>

@@ -168,8 +168,6 @@ const router = useRouter()
 const route = useRoute()
 
 const isOpen = ref(false)
-
-// Schließe die Suche, wenn sich die Route ändert
 watch(
   () => route.fullPath,
   () => {
@@ -237,7 +235,6 @@ const onSearch = () => {
     query: queryParams
   })
 
-  // Felder zurücksetzen
   query.value = ''
   selectedCategory.value = ''
   selectedPriceRange.value = ''

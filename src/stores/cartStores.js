@@ -74,7 +74,6 @@ export const useCartStore = defineStore('cart', {
     async updateQuantity(variantId, newQuantity) {
       if (this.currentUserId) {
         try {
-          // KORREKTUR: Sicherstellen, dass es eine Zahl ist
           const qty = Number(newQuantity)
           await api.updateCartItemQuantity(this.currentUserId, variantId, qty)
           await this.loadCart()

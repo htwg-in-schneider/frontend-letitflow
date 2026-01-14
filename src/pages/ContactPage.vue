@@ -2,7 +2,6 @@
   <main class="min-h-screen bg-[#fff7f3] px-4 py-12">
     <section class="mx-auto max-w-3xl bg-white rounded-2xl border border-orange-100 p-8 shadow-sm">
 
-      <!-- Headline -->
       <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-[#e09a82]">
         Hast du noch Fragen?
       </h1>
@@ -12,7 +11,6 @@
         Customer Team hilft dir gerne weiter.
       </p>
 
-      <!-- Form -->
       <form class="space-y-6" @submit.prevent="submit">
 
         <div>
@@ -58,7 +56,6 @@
           />
         </div>
 
-        <!-- Actions -->
         <div class="flex items-center gap-4">
           <button
               type="submit"

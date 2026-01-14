@@ -19,11 +19,15 @@
 
           <section class="space-y-6">
             <p>
-              Die Zahlung auf Rechnung ermöglicht es, Produkte in Ruhe zu prüfen, bevor der Rechnungsbetrag innerhalb der angegebenen Frist beglichen wird. Diese Zahlungsart bietet ein hohes Maß an Flexibilität und Vertrauen und eignet sich besonders für einen unkomplizierten Einkauf ohne direkte Zahlungsabwicklung während des Bestellvorgangs.
+              Die Zahlung auf Rechnung ermöglicht es, Produkte in Ruhe zu prüfen, bevor der Rechnungsbetrag innerhalb
+              der angegebenen Frist beglichen wird. Diese Zahlungsart bietet ein hohes Maß an Flexibilität und Vertrauen
+              und eignet sich besonders für einen unkomplizierten Einkauf ohne direkte Zahlungsabwicklung während des
+              Bestellvorgangs.
             </p>
 
             <p>
-              Alle relevanten Zahlungsinformationen würden im Rahmen eines realen Bestellprozesses übersichtlich bereitgestellt, sodass jederzeit Klarheit über Fristen und Beträge besteht.
+              Alle relevanten Zahlungsinformationen würden im Rahmen eines realen Bestellprozesses übersichtlich
+              bereitgestellt, sodass jederzeit Klarheit über Fristen und Beträge besteht.
             </p>
           </section>
 
@@ -39,5 +43,5 @@
 </template>
 
 <script setup lang="ts">
-// Keine Logik erforderlich
+
 </script>

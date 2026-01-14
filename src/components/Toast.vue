@@ -81,7 +81,6 @@ const removeToast = (id) => {
   toasts.value = toasts.value.filter(t => t.id !== id)
 }
 
-// Expose functions für globale Verwendung
 defineExpose({
   showToast,
   removeToast

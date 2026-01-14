@@ -4,7 +4,6 @@
 
     <div class="max-w-6xl mx-auto px-6 py-10 text-neutral-900">
       <div class="flex flex-col gap-10 md:flex-row md:justify-between">
-        <!-- Logo -->
         <div class="flex flex-col gap-3 md:w-1/3">
           <img
               src="/img/hauptlogo_Footer.png"

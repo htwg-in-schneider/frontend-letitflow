@@ -1,8 +1,7 @@
 <template>
   <main class="min-h-screen bg-[#fff7f3] px-4 py-12 flex justify-center">
     <section class="w-full max-w-5xl bg-white rounded-3xl border border-orange-100 shadow-sm overflow-hidden">
-      
-      <!-- Header Area -->
+
       <div class="bg-[#fff7f3] p-8 md:p-12 border-b border-orange-100">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
@@ -35,34 +34,35 @@
       </div>
 
       <div v-else class="p-8 md:p-12 space-y-12">
-        
-        <!-- Artikel Liste (wie Admin-Detail, read-only) -->
+
         <div>
           <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span class="w-8 h-8 bg-[#fff7f3] rounded-full flex items-center justify-center text-[#e09a82] text-sm">1</span>
+            <span
+                class="w-8 h-8 bg-[#fff7f3] rounded-full flex items-center justify-center text-[#e09a82] text-sm">1</span>
             Bestellte Artikel
           </h2>
           <div class="border border-orange-100 rounded-2xl overflow-hidden divide-y divide-orange-50">
             <CardItem
-              v-for="item in orderDetails"
-              :key="item.id"
-              :item="item"
-              :showActions="false"
-              :quantityOptionsMax="20"
+                v-for="item in orderDetails"
+                :key="item.id"
+                :item="item"
+                :showActions="false"
+                :quantityOptionsMax="20"
             />
           </div>
         </div>
 
-        <!-- Adressen & Zahlung -->
         <div class="grid md:grid-cols-2 gap-8">
-          <AddressCard v-if="order?.userId" title="Lieferadresse" :userId="order.userId" type="SHIPPING" :readonly="true" />
-          <AddressCard v-if="order?.userId" title="Rechnungsadresse" :userId="order.userId" type="BILLING" :readonly="true" />
+          <AddressCard v-if="order?.userId" title="Lieferadresse" :userId="order.userId" type="SHIPPING"
+                       :readonly="true"/>
+          <AddressCard v-if="order?.userId" title="Rechnungsadresse" :userId="order.userId" type="BILLING"
+                       :readonly="true"/>
         </div>
 
-        <!-- Zahlungsinformationen -->
         <div>
           <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span class="w-8 h-8 bg-[#fff7f3] rounded-full flex items-center justify-center text-[#e09a82] text-sm">4</span>
+            <span
+                class="w-8 h-8 bg-[#fff7f3] rounded-full flex items-center justify-center text-[#e09a82] text-sm">4</span>
             Zahlungsinformationen
           </h2>
           <div class="bg-[#fff7f3]/30 border border-orange-100 p-6 rounded-2xl text-gray-700 space-y-3">
@@ -76,7 +76,7 @@
                 {{ order?.paid ? 'Bezahlt' : 'Offen' }}
               </span>
             </div>
-            <hr class="border-orange-100" />
+            <hr class="border-orange-100"/>
             <div class="flex justify-between text-lg">
               <span class="font-bold">Summe:</span>
               <span class="font-black text-[#e09a82]">{{ formatPrice(order?.totalAmount || order?.totalPrice) }}</span>
@@ -84,11 +84,12 @@
           </div>
         </div>
 
-        <!-- Fußzeile -->
         <div class="pt-10 border-t border-orange-100 text-center">
           <p class="text-sm text-gray-400 italic">
-            Vielen Dank für dein Vertrauen in LetItFlow. <br />
-            Bei Fragen wende dich gerne an unseren <router-link to="/contact" class="text-[#e09a82] underline">Support</router-link>.
+            Vielen Dank für dein Vertrauen in LetItFlow. <br/>
+            Bei Fragen wende dich gerne an unseren
+            <router-link to="/contact" class="text-[#e09a82] underline">Support</router-link>
+            .
           </p>
         </div>
 
@@ -98,18 +99,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { fetchOrderById, fetchOrderDetailsByOrderId, fetchOrdersByUserId } from '@/services/api';
-import { formatDate } from '@/utils/dateUtils';
-import { getProductImage } from '@/utils/productUtils';
+import {ref, onMounted} from 'vue';
+import {useRoute} from 'vue-router';
+import {fetchOrderById, fetchOrderDetailsByOrderId, fetchOrdersByUserId} from '@/services/api';
+import {formatDate} from '@/utils/dateUtils';
+import {getProductImage} from '@/utils/productUtils';
 import AddressCard from '@/components/AddressCard.vue';
-import { useAuth0 } from '@auth0/auth0-vue';
+import {useAuth0} from '@auth0/auth0-vue';
 import CardItem from '@/components/cardComponents/CardItem.vue';
 
 const route = useRoute();
 const id = route.params.id;
-const { user, isAuthenticated } = useAuth0();
+const {user, isAuthenticated} = useAuth0();
 
 const order = ref(null);
 const orderDetails = ref([]);
@@ -120,15 +121,12 @@ const loadOrder = async () => {
   loading.value = true;
   error.value = null;
   try {
-    // 1. Grunddaten der Bestellung laden
     order.value = await fetchOrderById(id);
-    
-    // 2. Bestelldetails (Artikel) laden
+
     const nestedItems = order.value.items || order.value.orderDetails || order.value.orderItems || order.value.order_items;
     if (nestedItems && Array.isArray(nestedItems) && nestedItems.length > 0) {
       orderDetails.value = normalizeItems(nestedItems);
     } else {
-      // Bestelldetails separat laden, falls nicht enthalten
       try {
         orderDetails.value = normalizeItems(await fetchOrderDetailsByOrderId(id));
         console.log('Bestelldetails erfolgreich geladen:', orderDetails.value);
@@ -137,14 +135,12 @@ const loadOrder = async () => {
       }
     }
   } catch (e) {
-    // Fallback: Wenn GET /orders/{id} nicht erlaubt (405/403), versuche über User-Orders
     if ((e.status === 405 || e.status === 403) && isAuthenticated.value && user.value?.sub) {
       try {
         const list = await fetchOrdersByUserId(user.value.sub);
         const found = Array.isArray(list) ? list.find(o => String(o.id) === String(id)) : null;
         if (found) {
           order.value = found;
-          // Bestelldetails aus Liste oder nachladen
           const nestedItems = order.value.items || order.value.orderDetails || order.value.orderItems || order.value.order_items;
           if (nestedItems && Array.isArray(nestedItems) && nestedItems.length > 0) {
             orderDetails.value = normalizeItems(nestedItems);
@@ -178,7 +174,6 @@ const formatPrice = (price) => {
   });
 };
 
-// Bringt Order-Positionen in eine Form, die CardItem versteht
 const normalizeItems = (items = []) => {
   return items.map((item) => {
     const quantity = item.quantity ?? item.amount ?? item.count ?? 0;

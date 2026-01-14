@@ -77,7 +77,6 @@ const categories = ref([])
 const loading = ref(true)
 const error = ref(null)
 
-// Kategorien aus dem Backend laden
 onMounted(async () => {
   loading.value = true
   error.value = null

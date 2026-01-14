@@ -7,8 +7,6 @@
       </h1>
 
       <div class="space-y-6 text-neutral-800 leading-relaxed text-sm md:text-base">
-
-        <!-- Projekt-Hinweis -->
         <section>
           <h2 class="text-lg font-semibold mb-2 text-[#e09a82]">
             Hinweis zum Projekt
@@ -23,18 +21,16 @@
           </p>
         </section>
 
-        <!-- Anbieter -->
         <section>
           <h2 class="text-lg font-semibold mb-2">Angaben gemäß § 5 TMG</h2>
           <p>
-            LetItFlow – Studienprojekt<br />
-            Musterstraße 12<br />
-            12345 Musterstadt<br />
+            LetItFlow – Studienprojekt<br/>
+            Musterstraße 12<br/>
+            12345 Musterstadt<br/>
             Deutschland
           </p>
         </section>
 
-        <!-- Vertretung -->
         <section>
           <h2 class="text-lg font-semibold mb-2">Vertreten durch</h2>
           <p>
@@ -42,7 +38,6 @@
           </p>
         </section>
 
-        <!-- Kontakt -->
         <section>
           <h2 class="text-lg font-semibold mb-2">Kontakt</h2>
           <p>
@@ -50,7 +45,6 @@
           </p>
         </section>
 
-        <!-- Haftung -->
         <section>
           <h2 class="text-lg font-semibold mb-2">Haftung für Inhalte</h2>
           <p>
@@ -68,5 +62,5 @@
 </template>
 
 <script setup lang="ts">
-// keine Logik nötig
+
 </script>

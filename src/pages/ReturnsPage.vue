@@ -12,21 +12,25 @@
         <div class="space-y-8 text-neutral-800 leading-relaxed text-lg md:text-xl">
           <section>
             <p class="font-semibold text-2xl text-neutral-900 mb-6 leading-snug">
-              Sollte ein Produkt einmal nicht den eigenen Erwartungen entsprechen, ist eine unkomplizierte Rückgabe ein wichtiger Servicefaktor.
+              Sollte ein Produkt einmal nicht den eigenen Erwartungen entsprechen, ist eine unkomplizierte Rückgabe ein
+              wichtiger Servicefaktor.
             </p>
           </section>
 
           <section class="space-y-6">
             <p>
-              In einem realen Onlineshop würden Rücksendungen klar geregelt und transparent kommuniziert, um den Prozess für Kund:innen so einfach wie möglich zu gestalten.
+              In einem realen Onlineshop würden Rücksendungen klar geregelt und transparent kommuniziert, um den Prozess
+              für Kund:innen so einfach wie möglich zu gestalten.
             </p>
 
             <p>
-              Unbenutzte Artikel könnten innerhalb einer definierten Frist zurückgesendet werden. Nach Eingang der Retoure würde eine entsprechende Abwicklung erfolgen.
+              Unbenutzte Artikel könnten innerhalb einer definierten Frist zurückgesendet werden. Nach Eingang der
+              Retoure würde eine entsprechende Abwicklung erfolgen.
             </p>
 
             <p>
-              Unser Ziel ist es, Vertrauen zu schaffen und einen respektvollen Umgang mit den Bedürfnissen der Kund:innen zu ermöglichen – auch über den Kauf hinaus.
+              Unser Ziel ist es, Vertrauen zu schaffen und einen respektvollen Umgang mit den Bedürfnissen der
+              Kund:innen zu ermöglichen – auch über den Kauf hinaus.
             </p>
           </section>
 
@@ -42,5 +46,5 @@
 </template>
 
 <script setup lang="ts">
-// Keine Logik erforderlich
+
 </script>

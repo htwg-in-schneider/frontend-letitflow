@@ -3,10 +3,8 @@ export const parseRobustDate = (dateInput) => {
   
   let date;
   if (Array.isArray(dateInput)) {
-    // Jackson Array [YYYY, MM, DD, HH, mm]
     date = new Date(dateInput[0], dateInput[1] - 1, dateInput[2], dateInput[3] || 0, dateInput[4] || 0);
   } else if (typeof dateInput === 'object' && dateInput.year) {
-    // Jackson Objekt {year, monthValue, dayOfMonth, ...}
     date = new Date(dateInput.year, (dateInput.monthValue || 1) - 1, dateInput.dayOfMonth || 1, dateInput.hour || 0, dateInput.minute || 0);
   } else {
     date = new Date(dateInput);

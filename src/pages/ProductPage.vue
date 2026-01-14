@@ -1,16 +1,16 @@
 <template>
   <main class="min-h-screen bg-[#fff7f3] flex justify-center px-4 py-10">
     <section
-      class="w-full max-w-5xl bg-white border border-orange-100 shadow-sm rounded-xl px-6 py-8"
+        class="w-full max-w-5xl bg-white border border-orange-100 shadow-sm rounded-xl px-6 py-8"
     >
       <div class="flex items-center justify-between">
         <router-link to="/" class="text-sm text-[#e09a82] hover:underline">
           ← Zurück zur Übersicht
         </router-link>
-        <router-link 
-          v-if="authStore.isAdmin && product" 
-          :to="`/admin/products/${product.id}`"
-          class="px-4 py-2 text-sm font-semibold text-white bg-[#e09a82] hover:bg-[#d68570] rounded-full transition shadow-sm"
+        <router-link
+            v-if="authStore.isAdmin && product"
+            :to="`/admin/products/${product.id}`"
+            class="px-4 py-2 text-sm font-semibold text-white bg-[#e09a82] hover:bg-[#d68570] rounded-full transition shadow-sm"
         >
           Jetzt bearbeiten
         </router-link>
@@ -40,7 +40,7 @@
         </div>
 
         <div
-          class="w-full bg-[#fff4ea] border border-orange-100 rounded-3xl px-4 py-6 md:px-6"
+            class="w-full bg-[#fff4ea] border border-orange-100 rounded-3xl px-4 py-6 md:px-6"
         >
           <div class="flex flex-col md:flex-row gap-6 md:gap-8">
             <div class="flex-1 space-y-5">
@@ -57,14 +57,14 @@
               <div>
                 <label class="font-medium text-gray-800">Farben</label>
                 <select
-                  v-if="uniqueColors.length"
-                  v-model="selectedColor"
-                  class="block w-full border border-[#f6b88c] rounded-xl bg-white px-3 py-2 mt-1 text-sm md:text-base"
+                    v-if="uniqueColors.length"
+                    v-model="selectedColor"
+                    class="block w-full border border-[#f6b88c] rounded-xl bg-white px-3 py-2 mt-1 text-sm md:text-base"
                 >
                   <option
-                    v-for="color in uniqueColors"
-                    :key="color"
-                    :value="color"
+                      v-for="color in uniqueColors"
+                      :key="color"
+                      :value="color"
                   >
                     {{ color }}
                   </option>
@@ -77,14 +77,14 @@
               <div>
                 <label class="font-medium text-gray-800">Größen</label>
                 <select
-                  v-if="uniqueSizes.length"
-                  v-model="selectedSize"
-                  class="block w-full border border-[#f6b88c] rounded-xl bg-white px-3 py-2 mt-1 text-sm md:text-base"
+                    v-if="uniqueSizes.length"
+                    v-model="selectedSize"
+                    class="block w-full border border-[#f6b88c] rounded-xl bg-white px-3 py-2 mt-1 text-sm md:text-base"
                 >
                   <option
-                    v-for="size in uniqueSizes"
-                    :key="size"
-                    :value="size"
+                      v-for="size in uniqueSizes"
+                      :key="size"
+                      :value="size"
                   >
                     {{ size }}
                   </option>
@@ -97,13 +97,13 @@
               <div>
                 <label class="font-medium text-gray-800">Menge</label>
                 <select
-                  v-model.number="selectedQuantity"
-                  class="block w-full border border-[#f6b88c] rounded-xl bg-white px-3 py-2 mt-1 text-sm md:text-base"
+                    v-model.number="selectedQuantity"
+                    class="block w-full border border-[#f6b88c] rounded-xl bg-white px-3 py-2 mt-1 text-sm md:text-base"
                 >
                   <option
-                    v-for="n in quantityOptions"
-                    :key="n"
-                    :value="n"
+                      v-for="n in quantityOptions"
+                      :key="n"
+                      :value="n"
                   >
                     {{ n }}
                   </option>
@@ -111,9 +111,9 @@
               </div>
 
               <button
-                @click="handleAddToCart"
-                class="w-full py-3 text-sm md:text-base text-white bg-[#e09a82] hover:bg-[#d48366] rounded-2xl transition disabled:opacity-40 disabled:cursor-not-allowed"
-                :disabled="!selectedVariant"
+                  @click="handleAddToCart"
+                  class="w-full py-3 text-sm md:text-base text-white bg-[#e09a82] hover:bg-[#d48366] rounded-2xl transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  :disabled="!selectedVariant"
               >
                 In den Warenkorb
               </button>
@@ -121,12 +121,12 @@
 
             <div class="flex-1 flex items-center justify-center">
               <div
-                class="w-full max-w-xs sm:max-w-sm md:max-w-xs lg:max-w-sm rounded-3xl overflow-hidden border border-orange-100 bg-[#fff7f3] flex items-center justify-center"
+                  class="w-full max-w-xs sm:max-w-sm md:max-w-xs lg:max-w-sm rounded-3xl overflow-hidden border border-orange-100 bg-[#fff7f3] flex items-center justify-center"
               >
                 <img
-                  :src="getProductImage(product)"
-                  :alt="product.title"
-                  class="w-full h-auto object-contain"
+                    :src="getProductImage(product)"
+                    :alt="product.title"
+                    class="w-full h-auto object-contain"
                 />
               </div>
             </div>
@@ -147,20 +147,20 @@
 
         <div>
           <div
-            class="border border-orange-200 bg-[#fff7f3] rounded-xl px-6 py-5 space-y-3"
+              class="border border-orange-200 bg-[#fff7f3] rounded-xl px-6 py-5 space-y-3"
           >
             <div>
               <button
-                @click="showMaterial = !showMaterial"
-                class="flex justify-between w-full font-semibold text-gray-800"
-                type="button"
+                  @click="showMaterial = !showMaterial"
+                  class="flex justify-between w-full font-semibold text-gray-800"
+                  type="button"
               >
                 <span>Materialhinweis</span>
                 <span>{{ showMaterial ? "▴" : "▾" }}</span>
               </button>
               <p
-                v-if="showMaterial && product.infotext1"
-                class="mt-1 whitespace-pre-line text-sm text-gray-700"
+                  v-if="showMaterial && product.infotext1"
+                  class="mt-1 whitespace-pre-line text-sm text-gray-700"
               >
                 {{ product.infotext1 }}
               </p>
@@ -168,16 +168,16 @@
 
             <div>
               <button
-                @click="showApplication = !showApplication"
-                class="flex justify-between w-full font-semibold text-gray-800"
-                type="button"
+                  @click="showApplication = !showApplication"
+                  class="flex justify-between w-full font-semibold text-gray-800"
+                  type="button"
               >
                 <span>Anwendungshinweis</span>
                 <span>{{ showApplication ? "▴" : "▾" }}</span>
               </button>
               <p
-                v-if="showApplication && product.infotext2"
-                class="mt-1 whitespace-pre-line text-sm text-gray-700"
+                  v-if="showApplication && product.infotext2"
+                  class="mt-1 whitespace-pre-line text-sm text-gray-700"
               >
                 {{ product.infotext2 }}
               </p>
@@ -185,16 +185,16 @@
 
             <div>
               <button
-                @click="showCare = !showCare"
-                class="flex justify-between w-full font-semibold text-gray-800"
-                type="button"
+                  @click="showCare = !showCare"
+                  class="flex justify-between w-full font-semibold text-gray-800"
+                  type="button"
               >
                 <span>Pflegehinweis</span>
                 <span>{{ showCare ? "▴" : "▾" }}</span>
               </button>
               <p
-                v-if="showCare && product.infotext3"
-                class="mt-1 whitespace-pre-line text-sm text-gray-700"
+                  v-if="showCare && product.infotext3"
+                  class="mt-1 whitespace-pre-line text-sm text-gray-700"
               >
                 {{ product.infotext3 }}
               </p>
@@ -207,17 +207,17 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { fetchProductById, fetchProductVariants } from "@/services/api";
-import { getProductImage } from "@/utils/productUtils";
-import { useCartStore } from "@/stores/cartStores"; // NEU: Import des Pinia Stores
-import { useAuthStore } from "@/stores/auth"; // Admin Status prüfen
+import {ref, computed, onMounted} from "vue";
+import {useRoute, useRouter} from "vue-router";
+import {fetchProductById, fetchProductVariants} from "@/services/api";
+import {getProductImage} from "@/utils/productUtils";
+import {useCartStore} from "@/stores/cartStores";
+import {useAuthStore} from "@/stores/auth";
 
 const route = useRoute();
 const router = useRouter();
-const cartStore = useCartStore(); // NEU: Store nutzen
-const authStore = useAuthStore(); // Admin Status
+const cartStore = useCartStore();
+const authStore = useAuthStore();
 
 const productId = route.params.id;
 
@@ -247,11 +247,11 @@ const uniqueSizes = computed(() => {
 });
 
 const selectedVariant = computed(() =>
-  variants.value.find(
-    (v) =>
-      (!selectedColor.value || v.color === selectedColor.value) &&
-      (!selectedSize.value || v.size === selectedSize.value)
-  )
+    variants.value.find(
+        (v) =>
+            (!selectedColor.value || v.color === selectedColor.value) &&
+            (!selectedSize.value || v.size === selectedSize.value)
+    )
 );
 
 const maxQuantity = computed(() => {
@@ -262,7 +262,7 @@ const maxQuantity = computed(() => {
 });
 
 const quantityOptions = computed(() =>
-  Array.from({ length: maxQuantity.value }, (_, i) => i + 1)
+    Array.from({length: maxQuantity.value}, (_, i) => i + 1)
 );
 
 const displayPrice = computed(() => {
@@ -273,16 +273,15 @@ const displayPrice = computed(() => {
     return Number(product.value.price);
   }
   const variantPrices = variants.value
-    .map((v) => v.price)
-    .filter((p) => p != null)
-    .map(Number);
+      .map((v) => v.price)
+      .filter((p) => p != null)
+      .map(Number);
   if (variantPrices.length) {
     return Math.min(...variantPrices);
   }
   return null;
 });
 
-// GEÄNDERT: Nutzt jetzt die addItem Action aus dem Pinia Store
 const handleAddToCart = async () => {
   if (!selectedVariant.value || !product.value) return;
 
@@ -297,10 +296,8 @@ const handleAddToCart = async () => {
     imageUrl: product.value.imageUrl
   };
 
-  // Die gesamte Logik (API vs LocalStorage) passiert im Store!
   await cartStore.addItem(itemToAdd);
-  
-  // Navigation zur Warenkorb-Seite
+
   router.push("/cartView");
 };
 

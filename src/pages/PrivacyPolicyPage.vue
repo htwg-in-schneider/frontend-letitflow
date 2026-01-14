@@ -2,12 +2,9 @@
   <main class="min-h-screen bg-[#fff7f3] px-4 py-12">
     <section class="mx-auto max-w-4xl bg-white rounded-2xl border border-orange-100 p-8 shadow-sm">
 
-      <!-- Headline -->
       <h1 class="text-3xl md:text-4xl tracking-wide uppercase mb-8 text-[#e09a82] font-semibold">
         Datenschutzerklärung
       </h1>
-
-      <!-- Content -->
       <div class="space-y-8 text-neutral-800 leading-relaxed text-sm md:text-base">
 
         <section>
@@ -26,9 +23,9 @@
             2. Verantwortliche Stelle
           </h2>
           <p>
-            LetItFlow GmbH<br />
-            Musterstraße 12<br />
-            12345 Musterstadt<br />
+            LetItFlow GmbH<br/>
+            Musterstraße 12<br/>
+            12345 Musterstadt<br/>
             Deutschland
           </p>
         </section>
@@ -89,5 +86,5 @@
 </template>
 
 <script setup lang="ts">
-// keine Logik nötig
+
 </script>
