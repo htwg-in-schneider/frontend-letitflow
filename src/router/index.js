@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 import {authGuard} from '@auth0/auth0-vue'
 
 import HomePage from '@/pages/HomePage.vue'
@@ -106,11 +106,6 @@ const routes = [
         component: LogoutView
     },
     {
-        path: '/user',
-        name: 'User',
-        component: UserView
-    },
-    {
         path: '/profile',
         name: 'Profile',
         component: () => import('@/pages/ProfileView.vue'),
@@ -187,7 +182,7 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHashHistory(),
     routes
 })
 
