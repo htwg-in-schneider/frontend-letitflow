@@ -108,13 +108,6 @@
                     {{ n }}
                   </option>
                 </select>
-
-                <p
-                  v-if="selectedVariant && selectedVariant.stock !== undefined"
-                  class="text-sm text-gray-500 mt-1"
-                >
-                  Lagerbestand: {{ selectedVariant.stock }}
-                </p>
               </div>
 
               <button

@@ -157,7 +157,33 @@ const finishOrder = async () => {
     router.push('/');
   } catch (err) {
     console.error('Checkout error', err);
-    alert('Beim Abschluss der Bestellung ist ein Fehler aufgetreten.');
+    console.error('Error details:', {
+      message: err.message,
+      status: err.status,
+      stack: err.stack
+    });
+    
+    // Versuche die detaillierte Fehlermeldung vom Backend zu extrahieren
+    let errorMessage = 'Beim Abschluss der Bestellung ist ein Fehler aufgetreten.';
+    
+    if (err.message) {
+      // Prüfe ob es eine Stock-Fehlermeldung ist
+      if (err.message.includes('Stock') || err.message.includes('stock') || err.message.includes('Bestand')) {
+        errorMessage = err.message;
+      } else if (err.status === 400) {
+        errorMessage = err.message || 'Nicht genug Bestand für eine oder mehrere Varianten. Bitte überprüfe deinen Warenkorb.';
+      } else if (err.status === 500) {
+        errorMessage = 'Serverfehler beim Erstellen der Bestellung. Bitte versuche es später erneut.';
+        if (err.message && !err.message.includes('Request failed')) {
+          errorMessage += `\n\nDetails: ${err.message}`;
+        }
+      } else if (!err.message.includes('Request failed')) {
+        // Zeige jede andere spezifische Fehlermeldung vom Backend
+        errorMessage = err.message;
+      }
+    }
+    
+    alert(errorMessage);
   } finally {
     console.groupEnd();
   }

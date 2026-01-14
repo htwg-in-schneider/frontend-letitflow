@@ -15,8 +15,11 @@
           @change="onQuantityChange($event)"
           class="bg-white border border-[#f6b88c] rounded-xl px-3 py-1 text-sm outline-none cursor-pointer hover:border-orange-400 transition-colors"
         >
-          <option v-for="n in quantityOptionsMax" :key="n" :value="n">{{ n }}</option>
+          <option v-for="n in maxQuantity" :key="n" :value="n">{{ n }}</option>
         </select>
+        <span v-if="availableStock !== null && availableStock <= 5" class="text-xs text-orange-600 font-medium">
+          Nur noch {{ availableStock }} verfügbar
+        </span>
       </div>
       <p v-else class="mt-2 text-sm text-gray-600">Menge: <span class="font-semibold">{{ displayItem.quantity }}</span></p>
     </div>
@@ -37,7 +40,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { fetchProductById, fetchVariantById } from '@/services/api'
 
 // Props empfangen
@@ -52,6 +55,17 @@ const props = defineProps({
 const emit = defineEmits(['update', 'remove']);
 
 const displayItem = ref({ ...props.item })
+const availableStock = ref(null)
+
+const maxQuantity = computed(() => {
+  // Wenn wir Stock-Info haben, nutze den verfügbaren Stock
+  if (availableStock.value !== null && availableStock.value >= 0) {
+    return Math.min(availableStock.value, props.quantityOptionsMax)
+  }
+  // Sonst nutze das prop-default
+  return props.quantityOptionsMax
+})
+
 
 const safeNumber = (val) => {
   const n = Number(val)
@@ -81,6 +95,11 @@ const enrich = async () => {
       item.size = variant?.size ?? item.size
       item.imageUrl = variant?.imageUrl ?? item.imageUrl
       if (item.pricePerUnit == null && variant?.price != null) item.pricePerUnit = variant.price
+      
+      // Stock laden
+      if (variant?.stock != null) {
+        availableStock.value = variant.stock
+      }
     }
   } catch (e) {
     console.warn('Variante konnte nicht geladen werden:', e)
