@@ -1,48 +1,77 @@
-# LetItFlow
-Frontend for a period products webshop.
+# LetItFlow 🩸
+
+Ein moderner, robuster Frontend-Webshop für Periodenprodukte, entwickelt mit **Vue 3**, **Vite** und **Tailwind CSS**.
+
+---
+
+## 🚀 Überblick
+
+LetItFlow ist ein benutzerfreundlicher Webshop, der darauf ausgelegt ist, den Kauf von Menstruationsprodukten so einfach und angenehm wie möglich zu gestalten.
+
+---
 
 ## 🧱 Tech-Stack
-- Vue 3 
-- Vite (Development & Build Tool)
-- Tailwind CSS
-- Vue Router
+
+- **Framework:** [Vue 3](https://vuejs.org/) 
+- **Build-Tool:** [Vite](https://vitejs.dev/)
+- **State Management:** [Pinia](https://pinia.vuejs.org/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Routing:** [Vue Router](https://router.vuejs.org/)
+- **Authentifizierung:** [Auth0](https://auth0.com/)
 
 ---
 
-## 🚀 Features
+## 🛠 Features
 
-### 🔍 Search & Filter
-The application provides:
-- Filtering by:
-    - Category
-    - Color (from product variants)
-    - Size (from product variants)
-    - Price ranges (unter 10 €, 10–20 €, 20–30 €, über 30 €)
+### 🛒 Warenkorb & Checkout
+- Lokaler Warenkorb für Gäste.
+- Synchronisation mit dem Backend für eingeloggte User.
 
-### 🛍 Product Overview
-- Dynamic loading of products from the backend
-- Product cards display:
-    - Title
-    - Image
-    - Available colors & sizes
-    - Price
-    - Availability information
+### 📦 Bestellverwaltung
+- Übersicht aller getätigten Bestellungen.
+- Detaillierte Bestellansicht mit Artikelliste und Preisinformationen.
 
-### 🗂 Category Overview
-- Categories are loaded dynamically from the backend
-- Clicking a category shows products filtered by the category slug
+### 🔍 Suche & Filter
+- Dynamische Suche über das gesamte Sortiment.
+- Filterung nach Kategorien, Farben, Größen und Preisspannen.
 
 ---
 
-## 📦 Installation
+## 📂 Projektstruktur
 
-### Install dependencies
+```text
+src/
+├── api/            # API-Interzeptoren (AuthFetch)
+├── components/     # Wiederverwendbare UI-Komponenten
+├── composables/    # Shared Logic (Toasts, etc.)
+├── pages/          # Seiten-Komponenten (Views)
+├── services/       # API-Service-Definitionen
+├── stores/         # Pinia Stores (Warenkorb, Auth)
+├── utils/          # Hilfsfunktionen (Date, Product-Mapping)
+└── assets/         # Statische Ressourcen
+```
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1. Repository klonen
+```bash
+git clone https://github.com/dein-repo/frontend-letitflow.git
+cd frontend-letitflow
+```
+
+### 2. Abhängigkeiten installieren
 ```bash
 npm install
+```
 
-### 🚀 *Run the application in development mode*
-
+### 4. Development Server starten
+```bash
 npm run dev
+```
+
+*Dieses Projekt ist ein Studienprojekt an der **HTWG Konstanz**.*
 
 
 
