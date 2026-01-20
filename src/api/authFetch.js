@@ -1,6 +1,6 @@
 import {auth0} from '../main';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 export async function authFetch(path, options = {}) {
     const token = await auth0.getAccessTokenSilently();

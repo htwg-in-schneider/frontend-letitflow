@@ -11,6 +11,14 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+      },
+    },
+  },
   base: process.env.NODE_ENV === 'production' ? repoName : '/',
   resolve: {
     alias: {

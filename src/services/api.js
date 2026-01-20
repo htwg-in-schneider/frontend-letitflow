@@ -1,6 +1,6 @@
 import {authFetch} from '@/api/authFetch'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL !== undefined ? import.meta.env.VITE_API_BASE_URL : 'http://localhost:8081'
 
 
 async function getJson(path, options = {}) {
