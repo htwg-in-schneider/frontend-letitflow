@@ -202,7 +202,7 @@ const isUserMenuOpen = ref(false)
 const isAdminMenuOpen = ref(false)
 
 const handleLogout = () => {
-  logout({logoutParams: {returnTo: window.location.origin}})
+  logout({logoutParams: {returnTo: window.location.origin + window.location.pathname}})
   authStore.logoutCleanup()
 }
 
