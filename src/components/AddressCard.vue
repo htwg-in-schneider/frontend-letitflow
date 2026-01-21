@@ -90,7 +90,7 @@ const address = ref({
 
 const loadAddress = async () => {
   try {
-    const data = await fetchAddressByUserAndType(props.type);
+    const data = await fetchAddressByUserAndType(props.type, props.userId);
     if (data) {
       address.value = data;
       addressExists.value = true;

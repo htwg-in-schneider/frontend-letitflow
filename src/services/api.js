@@ -195,8 +195,10 @@ export function fetchAddressByUserId(userId) {
     return authFetch(`/api/addresses`)
 }
 
-export function fetchAddressByUserAndType(type) {
-    return authFetch(`/api/addresses?type=${type}`)
+export function fetchAddressByUserAndType(type, userId = null) {
+    const params = new URLSearchParams({ type })
+    if (userId) params.set('userId', userId)
+    return authFetch(`/api/addresses?${params.toString()}`)
 }
 
 export function fetchAddressById(id) {
