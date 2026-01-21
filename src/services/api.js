@@ -191,15 +191,15 @@ export function getOrdersByOauthId(oauthId) {
 
 
 export function fetchAddressByUserId(userId) {
-    return authFetch(`/api/addresses?userId=${encodeURIComponent(userId)}`)
+    const params = new URLSearchParams()
+    if (userId) params.set('userId', userId)
+    const query = params.toString() ? `?${params.toString()}` : ''
+    return authFetch(`/api/addresses${query}`)
 }
 
 export function fetchAddressByUserAndType(type, userId = null) {
     const params = new URLSearchParams({ type })
-    // Nur userId hinzufügen, wenn es nicht null/undefined/leere Zeichenkette ist
-    if (userId && userId !== 'undefined') {
-        params.set('userId', encodeURIComponent(userId))
-    }
+    if (userId) params.set('userId', userId)
     return authFetch(`/api/addresses?${params.toString()}`)
 }
 
