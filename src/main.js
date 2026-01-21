@@ -16,7 +16,7 @@ export const auth0 = createAuth0({
     clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
     authorizationParams: {
        
-        redirect_uri: window.location.origin + window.location.pathname,
+        redirect_uri: window.location.origin + import.meta.env.BASE_URL,
         audience: import.meta.env.VITE_AUTH0_AUDIENCE,
     }
 })
